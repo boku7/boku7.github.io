@@ -64,4 +64,12 @@ eog execNC.png
 ```
 ![](/execNC.png)
 
+At first this may look a little over-whelming, but once we start breaking it down, we will see it is not that bad.
+In the top most block, we can see that the shellcode is using the Jump-Call-Pop technique.
+The first instruction `jmp 0x25`, jumps forward 25 bytes. This is a short jump. Short jumps use offsets instead of a hard-coded address. This allows the shellcode to work in the programs it is injected into.
+The next instruction `call 0xffffffdd`, is a call instruction. This is similar to a jump instruction. Although before jumping, the instruction after the call instruction is pushed onto the stack. This allows the program to return to where it was, once it is done execution where it was called to. In our situation, the next instruction is actually the memory location to our string. Our string is our entire, XOR'd shellcode payload. 
+The 3rd instruction `pop ebx`, pop's the pointer to our payload off into the EBX Register. Once in the EBX Register, it is duplicated to the EDI Register using the instruction `mov, edi,ebx`.
+We can see that the loop, outlined using the blue arrow, is a XOR decoder loop. The decoder decodes our shellcode byte by byte using the instruction `xor [edi], al`. After the byte is decoded, the EDI Register is moved forward one byte using the instruction `inc edi`. The instruction `cmp word [edi],0x971b` compares 2 bytes (a word) starting at the memory location of EDI, with the value 0x971b. If the compare instruction returns that the 2 words match, then the result will return a 0 (the cmp instruction subtracts the two values and sets the Zero Flag if Zero). The instruction `jz 0xa` will jump EIP (the instruction Pointer) forward 10 bytes if the last instruction returned zero. This insturction is "Jump if Zero", also know as "Jump if Equal". If we do the math we can see that that would change our location from 0x00417019, to 0x00417023 (indicated by the black arrow). Remember that this is in Hex not in Decimal, do not be decieved thinking it is only moving forward four. 
+    0  > 1  > 2  > 3  > 4  > 5  > 6  > 7  > 8  > 9  > 10
+    19 > 1a > 1b > 1c > 1d > 1e > 1f > 20 > 21 > 22 > 23
 
