@@ -1,4 +1,5 @@
 For the 5th assignment of the SLAE Exam, I will be analyzing 3 different linux x86 shellcodes created with MSF Venom.
+![](/msfLogo.png)
 The first will be the payload: /linux/x86/exec
 The command being executed will be: nc -nlp 4444 -e "/bin/sh" &
   - This will create a bind shell, on TCP port 4444, on all network interfaces, and then background the process.
