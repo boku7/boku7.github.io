@@ -1,3 +1,29 @@
+# Site Author
+author:
+  name             : "boku7"
+  avatar           : "/assets/images/avatar.jpg"
+  bio              : "OSCP | OSCE | Idiot"
+  location         : "American East Coast"
+  email            :
+  links:
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: mailto:zenstate41@gmail.com
+    - label: "Website"
+      icon: "fas fa-fw fa-link"
+      # url: "https://your-website.com"
+    - label: "Twitter"
+      icon: "fab fa-fw fa-twitter-square"
+      url: "https://twitter.com/h0mbre_"
+    - label: "Facebook"
+      icon: "fab fa-fw fa-facebook-square"
+      # url: "https://facebook.com/"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/h0mbre"
+    - label: "Instagram"
+      icon: "fab fa-fw fa-instagram"
+# url: "https://instagram.com/"
 theme: jekyll-theme-hacker
 # Conversion
 markdown: kramdown
@@ -15,3 +41,5 @@ kramdown:
   toc_levels: 1..6
   smart_quotes: lsquo,rsquo,ldquo,rdquo
 enable_coderay: false
+encoding: "utf-8"
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
