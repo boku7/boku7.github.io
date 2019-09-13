@@ -1,5 +1,7 @@
 
-Hello World
+Hello World, my name is Bobby.
++[Analyze msfvenom/linux/x86/exec](/5_MSF_Analyze/1_exec_nc)
+
 
 ```c
 #include <stdio.h>
