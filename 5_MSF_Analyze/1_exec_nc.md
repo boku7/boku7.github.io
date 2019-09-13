@@ -1,4 +1,5 @@
 ![](/msfLogo.png)
+
 For the 5th assignment of the SLAE Exam, I will be analyzing 3 different linux x86 shellcodes created with MSF Venom.
 The first will be the payload: /linux/x86/exec
 The command being executed will be: nc -nlp 4444 -e "/bin/sh" &
