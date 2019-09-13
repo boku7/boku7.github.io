@@ -4,7 +4,9 @@ author:
   avatar           : "/BOKU.png"
   bio              : "OSCP | OSWP | CCNA"
   location         : "West Coast"
-theme: jekyll-theme-hacker
+# theme                  : "minimal-mistakes-jekyll"
+remote_theme             : "mmistakes/minimal-mistakes@4.15.1"
+minimal_mistakes_skin    : "contrast" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 # Conversion
 markdown: kramdown
 highlighter: rouge
