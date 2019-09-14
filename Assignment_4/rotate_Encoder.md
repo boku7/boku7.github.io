@@ -76,7 +76,7 @@ This assembly program will use the Jump-Call-Pop technique to save the memory lo
 Once in the ESI Register, we will decode our encoded shellcode byte by byte using the instructions `ror byte [esi], 1` (rotate to the right one bit, one byte at a time), and `inc esi`. If the decoded byte is `\xff` then we will jump to the shellcode using the instruction `je Shellcode`. 
 If the byte is not `\xff` then the zero flag will not be set, and that jump will be ignored. 
 The next instruction `jmp short decode` is an unconditional jump. We use this to create the loop to decode our shellcode.
-```assembly
+```nasm
 ; Filename: rotateRightDecoder.nasm
 ; Author:  Bobby Cooke
 
