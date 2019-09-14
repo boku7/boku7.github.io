@@ -1,4 +1,4 @@
-# 1. Clear the registers.
+## 1. Clear the registers.
 ```nasm 
 	xor eax, eax	; Clear EAX Register. EAX = 0x00000000
 	xor ebx, ebx	; Clear EBX Register. EBX = 0x00000000
@@ -6,9 +6,9 @@
 	xor edx, edx	; Clear EDX Register. EDX = 0x00000000
 ```  
 
-2. Create the Socket.
-Create Socket - `int socket(int domain, int type, int protocol);`  
-C Function	- 
+## 2. Create the Socket.
+Create Socket C Function: `int socket(int domain, int type, int protocol);`  
+Our C Function:
 ```c
             socket(PF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
 EAX=0x66     EBX    ECX[0]     ECX[1]      ECX[2]
