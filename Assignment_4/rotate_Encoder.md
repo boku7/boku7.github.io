@@ -3,11 +3,13 @@ How this works is to encode the payload, it rotates every bit to the left by one
 Example:
 
 1 0 0 0 1 0 1 0 
+
 0 0 0 1 0 1 0 1
 
 To decode, all the bits are rotated to the right by one. If there is a low bit, it is moved to the highest bit.
 
 0 0 0 1 0 1 0 1
+
 1 0 0 0 1 0 1 0 
 
 
