@@ -1,4 +1,3 @@
-![](/BOKU.PNG)
 
 ## SLAE32 Assignments
 + [Assignment 4 - Rotate Encoder](/Assignment_4/rotate_Encoder.md)
