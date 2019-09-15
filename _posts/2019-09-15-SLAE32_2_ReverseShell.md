@@ -16,8 +16,7 @@ tags:
   - Shellcoding
   - Shellcode
 --- 
-![](/assets/images/SLAE32.jpg)
-
+![](/assets/images/SLAE32.png)
 
 ## 1. Clear the registers.
 ```nasm 

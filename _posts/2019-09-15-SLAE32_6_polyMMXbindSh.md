@@ -18,7 +18,7 @@ tags:
   - Shellcoding
   - Shellcode
 --- 
-![](/assets/images/SLAE32.jpg)
+![](/assets/images/SLAE32.png)
 
 For the sixth assignment in the SLAE32 Exam, we needed to create 3 polymorphic shellcodes; from existing shellcodes at shell-storm.org. A polymorphic shellcode means that it uses different instructions to deliver the same payload.  
 For example, all of these instructions will result in the same action within a program.

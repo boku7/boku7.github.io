@@ -16,9 +16,7 @@ tags:
   - Shellcoding
   - Shellcode
 ---
-![](/assets/images/SLAE32.jpg)
-
-
+![](/assets/images/SLAE32.png)
 
 ```nasm
 ; Filename: execve-stack.nasm

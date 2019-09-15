@@ -17,7 +17,7 @@ tags:
   - Linux
   - x86
 --- 
-![](/assets/images/SLAE32.jpg)
+![](/assets/images/SLAE32.png)
 
 For the seventh assignment of the SLAE32 course we were required to create a custom cryptor and decryptor. Online I found many examples for RC4, AES, DES and other common encryptors, so I decided to do something different.  
 For my cryptor I decided to create somewhat of a Cesaer Chipher. The cryptor takes a key, the example key is `key = "HelloFriend"`, and for every byte of the shellcode adds to it the corresponding byte of the key. When the key length is exceeded, the key repeats itself.  

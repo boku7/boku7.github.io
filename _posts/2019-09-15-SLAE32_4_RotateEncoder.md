@@ -17,7 +17,7 @@ tags:
   - Shellcoding
   - Shellcode
 --- 
-![](/assets/images/SLAE32.jpg)
+![](/assets/images/SLAE32.png)
 
 For my fourth assignment in the SLAE32 course, I created a custom Rotation Encoder. 
 How this works is to encode the payload, it rotates every bit to the left by one. If the greatest bit (valued 128) falls off the left, it wraps around to the lowest bit (valued 1).

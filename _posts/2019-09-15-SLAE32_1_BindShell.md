@@ -16,7 +16,7 @@ tags:
   - Shellcoding
   - Shellcode
 --- 
-![](/assets/images/SLAE32.jpg)
+![](/assets/images/SLAE32.png)
 
 ## Creating a TCP Bind Shell in C
 To better understand how linux 32-bit shellcode works, I created a simple TCP Bind Shell in C.  
