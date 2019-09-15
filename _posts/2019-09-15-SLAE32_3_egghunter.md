@@ -16,6 +16,8 @@ tags:
   - Shellcoding
   - Shellcode
 ---
+![](/assets/images/SLAE32.jpg)
+
 
 
 ```nasm

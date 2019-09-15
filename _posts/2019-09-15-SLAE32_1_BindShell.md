@@ -16,6 +16,8 @@ tags:
   - Shellcoding
   - Shellcode
 --- 
+![](/assets/images/SLAE32.jpg)
+
 ## Creating a TCP Bind Shell in C
 To better understand how linux 32-bit shellcode works, I created a simple TCP Bind Shell in C.  
 + While creating the bindshell, I heavily commented to grasp exactly how it was working.
