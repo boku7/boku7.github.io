@@ -1,11 +1,11 @@
 
 ![](/pics/BOKU7.PNG)
 # SLAE32 Assignments
-+ [Assignment 1 - Bind Shell - Shellcode](/Assignment_1/bindShell.md)
-+ [Assignment 2 - Reverse Shell - Shellcode](/Assignment_2/Reverse_Shell.md)
-+ [Assignment 3 - Egghunter - Shellcode](/Assignment_3/egghunter.md)
-+ [Assignment 4 - Rotate Encoder](/Assignment_4/rotate_Encoder.md)
-+ [Assignment 5 - Analyze msfvenom/linux/x86/exec](/Assignment_5/1_exec_nc.md)
-+ [Assignment 6 - Polymorphic MMX TCP Bind Shellcode](/Assignment_6/tcpbindsh.md)
-+ [Assignment 7 - Add+Rotate Cryptor](/Assignment_7/addRotateCryptor.md)
++ [Assignment 1 - Bind Shell - Shellcode](/_posts/2019-09-15-SLAE32_1_BindShell.md)
++ [Assignment 2 - Reverse Shell - Shellcode](/_posts/2019-09-15-SLAE32_2_ReverseShell.md)
++ [Assignment 3 - Egghunter - Shellcode](/_posts/2019-09-15-SLAE32_3_egghunter.md)
++ [Assignment 4 - Rotate Encoder](/_posts/2019-09-15-SLAE32_4_RotateEncoder.md)
++ [Assignment 5 - Analyze msfvenom/linux/x86/exec](/_posts/2019-09-15-SLAE32_5_msfExec.md)
++ [Assignment 6 - Polymorphic MMX TCP Bind Shellcode](/_posts/2019-09-15-SLAE32_6_polyMMXbindSh.md)
++ [Assignment 7 - Add+Rotate Cryptor](/_posts/2019-09-15-SLAE32_7_AddRotateCryptor.md)
 
