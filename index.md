@@ -1,5 +1,5 @@
 
-![](/BOKU7.PNG)
+![](/pics/BOKU7.PNG)
 # SLAE32 Assignments
 + [Assignment 1 - Bind Shell - Shellcode](/Assignment_1/bindShell.md)
 + [Assignment 2 - Reverse Shell - Shellcode](/Assignment_2/Reverse_Shell.md)

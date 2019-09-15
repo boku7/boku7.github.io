@@ -1,4 +1,4 @@
-![](/msfLogo.png)
+![](/pics/msfLogo.png)
 
 For the 5th assignment of the SLAE Exam, I will be analyzing 3 different linux x86 shellcodes created with MSF Venom.
 The first will be the payload: /linux/x86/exec
@@ -62,7 +62,7 @@ root# dot -Tpng execNC.dot -o execNC.png
 # open png picture with eog
 eog execNC.png
 ```
-![](/execNC.png)
+![](/pics/execNC.png)
 
 At first this may look a little over-whelming, but once we start breaking it down, we will see it is not that bad.
 In the top most block, we can see that the shellcode is using the Jump-Call-Pop technique.
