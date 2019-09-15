@@ -1,3 +1,22 @@
+---
+title: SLAE32 Assignment 2 -- TCP Reverse Shellcode
+date: 2019-9-15
+layout: single
+classes: wide
+header:
+  teaser: /assets/images/SLAE32.jpg
+tags:
+  - reverse
+  - Shell
+  - Assembly
+  - Code
+  - SLAE
+  - Linux
+  - x86
+  - Shellcoding
+  - Shellcode
+--- 
+
 ## 1. Clear the registers.
 ```nasm 
 	xor eax, eax	; Clear EAX Register. EAX = 0x00000000

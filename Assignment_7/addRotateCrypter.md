@@ -1,3 +1,23 @@
+---
+title: SLAE32 Assignment 7 -- Add + Rotate Cryptor 
+date: 2019-9-15
+layout: single
+classes: wide
+header:
+  teaser: /assets/images/SLAE32.jpg
+tags:
+  - Cryptor
+  - Crypto
+  - Cesaer
+  - modulus
+  - Bind
+  - Assembly
+  - Code
+  - SLAE
+  - Linux
+  - x86
+--- 
+
 For the seventh assignment of the SLAE32 course we were required to create a custom cryptor and decryptor. Online I found many examples for RC4, AES, DES and other common encryptors, so I decided to do something different.  
 For my cryptor I decided to create somewhat of a Cesaer Chipher. The cryptor takes a key, the example key is `key = "HelloFriend"`, and for every byte of the shellcode adds to it the corresponding byte of the key. When the key length is exceeded, the key repeats itself.  
 In the example, the strength of this cryptor is quite terrible. Although it can be used in a way that makes it good. If the key is the same length of the shellcode, then this works as a One-Time Pad (OTP). For good encryption though, the key or "pad" should not be words, or even letters, of the english language. Each byte of the key should be a randomly generated hex value, ranging from `\x00` to `\xff`.   

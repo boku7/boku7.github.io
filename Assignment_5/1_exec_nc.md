@@ -1,3 +1,25 @@
+---
+title: SLAE32 Assignment 5 -- Analyzing MSF-Venom Dynamic XOR Encoded Exec Shellcode
+date: 2019-9-15
+layout: single
+classes: wide
+header:
+  teaser: /assets/images/SLAE32.jpg
+tags:
+  - Reverse
+  - Netcat
+  - metasploit
+  - msfvenom
+  - Shell
+  - Assembly
+  - Code
+  - SLAE
+  - Linux
+  - x86
+  - Shellcoding
+  - Shellcode
+--- 
+
 ![](/pics/msfLogo.png)
 
 For the 5th assignment of the SLAE Exam, I will be analyzing 3 different linux x86 shellcodes created with MSF Venom.

@@ -1,3 +1,23 @@
+---
+title: SLAE32 Assignment 4 -- Rotation Encoder
+date: 2019-9-15
+layout: single
+classes: wide
+header:
+  teaser: /assets/images/SLAE32.jpg
+tags:
+  - rotate
+  - Encoder
+  - Decoder
+  - Assembly
+  - Code
+  - SLAE
+  - Linux
+  - x86
+  - Shellcoding
+  - Shellcode
+--- 
+
 For my fourth assignment in the SLAE32 course, I created a custom Rotation Encoder. 
 How this works is to encode the payload, it rotates every bit to the left by one. If the greatest bit (valued 128) falls off the left, it wraps around to the lowest bit (valued 1).
 Example:

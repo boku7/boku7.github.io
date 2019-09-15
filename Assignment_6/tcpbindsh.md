@@ -1,3 +1,23 @@
+---
+title: SLAE32 Assignment 6 -- Polymorphic MMX TCP Bind Shellcode
+date: 2019-9-15
+layout: single
+classes: wide
+header:
+  teaser: /assets/images/SLAE32.jpg
+tags:
+  - Bind
+  - Shell
+  - polymorphic
+  - MMX
+  - Assembly
+  - Code
+  - SLAE
+  - Linux
+  - x86
+  - Shellcoding
+  - Shellcode
+--- 
 
 
 
