@@ -19,29 +19,34 @@ tags:
 ![](/assets/images/SLAE32.png)
 ## Overview
 For the first Assigment of the SLAE32 course, we were tasked with creating shellcode for a TCP bind shell.  
-What is shellcode? Shellcode is executable code that can be injected into any program, that will preform a task.  
+
+_What is shellcode?_  Shellcode is executable code that can be injected into any program, that will preform a task.  
+
 Since we need to create executable code that can be injected into a program, we will need to write this code in Assembly Language.  
-Assembly Language is dependant on the processor it is executing on, and the operating system.  
-For this course all Assembly course will be written for Intel 32-bit Architecture, and for the Linux Operating System.  
-To map out how I was going to write Assembly Code for this bind shell, I first created a tcp bind shell in C.  
-C is the closest programming language to Assembly. Once I figured out which C functions I needed, I then had to figure out how to replace those functions with linux System Calls.  
-This is the C Functions we will need, and the order they will need to be executed:  
+  - Assembly Language is dependant on the processor it is executing on, and the operating system.  
+For this course all Assembly will be written for Intel 32-bit Architecture, and the Linux Operating System.  
+
+To map out how I was going to write Assembly Code for this assgnment, I first created a tcp bind shell using C.  
+  - C is the closest programming language to Assembly.   
+Once I figured out which C functions I needed, I then had to figure out how to replace them with Linux System-Calls.  
+
+These are the C functions we need, in the order they will be executed:  
 1. Create Socket.
-        `int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);`
+  - `int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);`
 2. Create IP-Socket Address.
-        `struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };`
+  - `struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };`
 3. Bind the IP-Socket Address to the Socket.
-        `bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));`
+  - `bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));`
 4. Listen for incoming connections on Socket at IP-Socket Address.
-        `listen(ipv4Socket, 0);`
+  - `listen(ipv4Socket, 0);`
 5. Accept the incoming connection on the listening Socket and create a new, connected socket for client.
-         `int clientSocket = accept(ipv4Socket, NULL, NULL);`
+  - `int clientSocket = accept(ipv4Socket, NULL, NULL);`
 6. Duplicate Standard Input, Standard Output, and Standard Error File-Descriptors to the newly created, connected Socket.
-        `dup2(clientSocket, 0); // STDIN`
-        `dup2(clientSocket, 1); // STDOUT`
-        `dup2(clientSocket, 2); // STDERR`
+  - `dup2(clientSocket, 0); // STDIN`
+  - `dup2(clientSocket, 1); // STDOUT`
+  - `dup2(clientSocket, 2); // STDERR`
 7. Spawn a bash shell for the client in the newly created, connected Socket that has Input, Output, and Error output.
-        `execve("/bin/bash", NULL, NULL);`  
+  - `execve("/bin/bash", NULL, NULL);`  
 
 
 ## Creating a TCP Bind Shell in C
@@ -67,7 +72,7 @@ int main(void)
 	execve("/bin/bash", NULL, NULL);
 }	
 ```  
-Great, now lets take a deeper dive into how to find all these function, and what they mean, using the linux man (manual) pages.   
+Great, now lets take a deeper dive into how to find all these function, and what they mean, using the linux manual (man) pages.   
 
 ###socket()
 Our first function is `socket()`. We already know that this function is used to create a new socket. To find out more about this function we will use the command `man 7 socket` from our linux terminal.  
@@ -84,7 +89,7 @@ Reviewing the socket() man pages we discover we will need the following values/v
 + `int protocol` = `0`                // 
   - The protocol to be used with the socket. Normally there is only one protocol per socket type. In this case the protocol value is 0.
 
-Our C socket function will therefor be:  
+Our C socket function will be:  
         `int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);`
 
 ### bind()
@@ -103,11 +108,12 @@ struct in_addr {
      uint32_t       s_addr;     /* address in network byte order */
  };
 ```
+
 From the above information, we know that we will need to use the Address Family `AF_INET`, then give it a port number (we will use TCP port 4444), and finally we will bind it to any/all interfaces using `INADDR_ANY`.  
 The struct we will use is:  
         `struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };`  
-+ `man htons` - The `htons()` function converts an unsigned short integer hostshort from host byte order to network byte order.
-+ `man htonl` - The `htonl()` function converts the unsigned integer hostlong from host byte order to network byte order.
+  - `man htons` - The `htons()` function converts an unsigned short integer hostshort from host byte order to network byte order.
+  - `man htonl` - The `htonl()` function converts the unsigned integer hostlong from host byte order to network byte order.
 
 Now that we have a socket, a TCP port, and an IPv4 interface, we need to `bind` them all together.  
 we will use the `bind()` C function to accomplish this, and dive into the man pages to discover the values/variables we will need, with the command `man 2 bind`.  
