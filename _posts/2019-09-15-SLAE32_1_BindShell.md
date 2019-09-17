@@ -102,7 +102,7 @@ Great, before we dive into how this was created, lets test it to make sure it wo
 root# gcc basicBindShell.c -o basicBindShell
 ```
 
-### Testing the Shellcode within by Executing the Host Program
+### Testing Our Shellcode in the Host Program
 #### Terminal Window 1
 ```console
 root# ./basicBindShell
@@ -271,17 +271,17 @@ cat /usr/include/linux/net.h
   #define SYS_LISTEN   4   /* sys_listen(2)   */
   #define SYS_ACCEPT   5   /* sys_accept(2)   */
 ```    
-Like all System Calls Linux, they are triggered when the Assembly instruction "int 0x80" is executed.  
-At the time of the interrupt, the value stored in the EAX register determines which system call is executed.  
-From above, we see the 5 C funtions we need, all use the same system call `socketcall 102`.  
-Therefor for these functions, EAX will hold the value 102 (0x66 in Hex) for all of them.  
+Like all System Calls Linux, they are triggered when the Assembly instruction `int 0x80` is executed.  
++ At the time of the interrupt, the value stored in the `EAX` register determines which system call is executed.  
 
-The system call `socketcall` will know what to do (create a socket, listen, accept incoming connection, etc), 
-based on the value stored in the EBX register.   
-The arguments of the C level function will be pushed onto the stack, and the ECX register will point to the top of the stack.  
+From above, we see that five of our C funtions use the same system call - `socketcall 102`.  
++ For these functions, `EAX` will hold the value `102` (`0x66` in Hex).
+
+The system call `socketcall` will know what to do (create a socket, listen, accept incoming connection, etc), based on the value stored in the `EBX` register.   
+The arguments of the C level function will be pushed onto the stack, and the `ECX` register will point to the top of the `stack`.  
 + Stack Memory grows from high memory to low memory.
 + We will need to store arguements in reverse order on the stack.  
-Once we have pushed our array of consecutive arguments onto the stack, all we need to do is point the ECX register to the top of the stack.
+Once we have pushed our array of consecutive arguments onto the stack, all we need to do is point the `ECX` register to the top of the `stack`.
 
 ## Creating the Assembly Shellcode
 ### 1. Create a new Socket
@@ -302,24 +302,24 @@ int socket(int domain, int type, int protocol);
 #define SYS_SOCKET      1          // sys_socket(2)
 ```
 + `ECX[0] = AF_INET = 2 = 0x2`
-  - Find value of AF\_INET:  
+  - Find value of `AF_INET`:  
   ```console
   cat /usr/include/i386-linux-gnu/bits/socket.h | grep AF_INET
     #define AF_INET         PF_INET    // We see that AF_INET is mapped to PF_INET
   ```		
-  - Find value of PF\_INET: 
+  - Find value of `PF_INET`: 
   ```console
   cat /usr/include/i386-linux-gnu/bits/socket.h | grep PF_INET
     #define PF_INET         2          // IP protocol family.
   ```  
 + `ECX[1] = SOCK_STREAM = 1 = 0x1`
-  - Find value of SOCK\_STREAM: 
+  - Find value of `SOCK_STREAM`: 
   ```console
   cat /usr/src/linux-headers-$(uname -r)/include/linux/net.h | grep SOCK_STREAM
     SOCK_STREAM	= 1
 ```  
 + `ECX[2] = 0 = 0x0`
-  - The value `0` is only option for the variable `int protocol`; for a TCP Socket.
+  - For a TCP socket, the only option for the `int protocol` is `0`.
 
 ```nasm
 xor eax, eax      ; This sets the EAX Register to NULL (all zeros).
@@ -387,7 +387,8 @@ struct sockaddr_in ipSocketAddr = {
 ```console
  cat /usr/src/linux-headers-$(uname -r)/include/uapi/linux/in.h | grep INADDR_ANY  
    #define INADDR_ANY ((unsigned long int) 0x00000000)
-```  
+```
+ 
  The order to push all this on the stack will be:   
 1. `ARG[2]`  
 2. `ARG[1]`  
