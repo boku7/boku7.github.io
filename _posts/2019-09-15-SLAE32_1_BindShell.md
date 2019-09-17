@@ -280,7 +280,8 @@ From above, we see that five of our C funtions use the same system call - `socke
 The system call `socketcall` will know what to do (create a socket, listen, accept incoming connection, etc), based on the value stored in the `EBX` register.   
 The arguments of the C level function will be pushed onto the stack, and the `ECX` register will point to the top of the `stack`.  
 + Stack Memory grows from high memory to low memory.
-+ We will need to store arguements in reverse order on the stack.  
++ We will need to store arguements in reverse order on the stack.
+
 Once we have pushed our array of consecutive arguments onto the stack, all we need to do is point the `ECX` register to the top of the `stack`.
 
 ## Creating the Assembly Shellcode
