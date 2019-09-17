@@ -564,7 +564,7 @@ mov al, 0xb      ; execve System Call Number
 int 0x80         ; execute execve
 ```
 
-## Complete Assembly Code for TCP Reverse Shell Shellcode
+## Complete TCP Bind Shell Assembly Code
 
 ```nasm
 ; Author: boku
