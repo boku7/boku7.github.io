@@ -1,3 +1,4 @@
+---
 title: SLAE32 Assignment 5.2 -- Analyzing MSFVenom `linux/x86/chmod` Shellcode
 date: 2019-9-15
 layout: single
@@ -70,9 +71,6 @@ Encoded shellcode ...
 0x01,0x00,0x00,0x59,0xcd,0x80,0x6a,0x01,0x58,\
 0xcd,0x80
 ```
-
-
-
 ### Adding the Shellcode to our `JMP|Call|POP` Assembly Program
 + To get nasm syntax highlighting in Vim I used the command `:set syn=nasm`.
 
