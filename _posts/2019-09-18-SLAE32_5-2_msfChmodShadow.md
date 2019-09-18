@@ -197,7 +197,7 @@ We also know that the value of the `eax` register controls which systemcall will
 + Our first systemcall has the eax value of `0xf`.
 + Our second systemcall has the eax value of `0x1`.
 
-### chmod Systemcall Section
+### chmod() Systemcall Section
 #### Finding the Systemcall in the Header File
 ```console
 i /usr/include/i386-linux-gnu/asm/unistd_32.h
@@ -205,7 +205,7 @@ i /usr/include/i386-linux-gnu/asm/unistd_32.h
 ```
 + The hex value `0xf` translates to `15` in decimal.
 
-#### chmod C Function
+#### chmod() C Function
 ```console
 root# man 2 chmod
   int chmod(const char *path, mode_t mode);
@@ -213,7 +213,7 @@ root# man 2 chmod
 ```
 + The corresonding assembly register values have been tagged onto the C function.
 
-## chmod Broken Down by Blocks
+## chmod() Broken Down by Blocks
 ### First Block 
 ```console
 => 0x0804806b <+0>:     cdq
@@ -231,13 +231,11 @@ root# man 2 chmod
 2. Instruction `push 0xf` pushes the byte `0xf` onto the top of the stack.
 3. Instruction `pop eax` puts the value `0xf` into the `eax` register from the top of the `stack`.
 + `EAX: 0xf`
++ This is the `EAX` value for the `chmod` systemcall.
 4. Instruction `push edx` pushes 4 bytes `0x00` (a dword) onto the top of the stack.
   
 ### Second Block
 This block of code uses the `call` instruction to jump over the block shown here, and continue execution of the shellcode. 
-+ When the `call` instruction is executed, the memory location of the next instruction will be stored otno the top of the stack before maing the jump.
-+ The memory location stored on the top of the stack is actually the address of our string used for the filename `/etc/shadow`.
-  - Any time I see `das` after a call in shellcode, it typically means it is a string operation.
 
 ```console
    0x08048070 <+5>:     call   0x8048081 <shellcode+22>
@@ -250,6 +248,9 @@ This block of code uses the `call` instruction to jump over the block shown here
    0x0804807d <+18>:    outs   dx,DWORD PTR fs:[esi]
    0x0804807f <+20>:    ja     0x8048081 <shellcode+22>
 ```
++ When the `call` instruction is executed, the memory location of the next instruction will be stored otno the top of the stack before maing the jump.
++ The memory location stored on the top of the stack is actually the address of our string used for the filename `/etc/shadow`.
+  - Any time I see `das` after a call in shellcode, it typically means it is a string operation.
 
 ##### Pointer to /etc/shadow string on the top of the Stack
 ```console
@@ -258,7 +259,7 @@ This block of code uses the `call` instruction to jump over the block shown here
 ```
 
 ### Third Block
-This block finishs setting up the registers 
+This block finishes setting up the registers and then executes the `chmod` systemcall.
 
 ```console
    0x08048081 <+22>:    pop    ebx
@@ -267,44 +268,41 @@ This block finishs setting up the registers
    0x08048088 <+29>:    int    0x80
 ```
 
+
+Looking back at our C `chmod()` function, and it's required arguments.
 ```c
   int chmod(const char *path, mode_t mode);
        EAX         EBX             ECX
 ```
-Looking back at our C `chmod()` function, we know the following arguments are required:
 + `const char *path`
   - This means the `EBX` register will be a pointer to the memory location holding our string `/etc/shadow`.
 + `mode_t mode`
   - This meas the `ECX` register will hold the permissions we wish to change the file to.
 
-Consulting the manual pages with `man 2 chmod` we find the following for the `mode`.
+Consulting the manual pages with `man 2 chmod`, we find the following for the `mode`.
 ```console
  The new file permissions are specified in mode, which is a bit mask  created  by  ORing
-       together zero or more of the following:
-       S_ISUID  (04000)  set-user-ID (set process effective user ID on execve(2))
-       S_ISGID  (02000)  set-group-ID  (set process effective group ID on execve(2); mandatory
-                         locking, as described in fcntl(2); take a new file's group from  par‐
-                         ent directory, as described in chown(2) and mkdir(2))
-       S_ISVTX  (01000)  sticky bit (restricted deletion flag, as described in unlink(2))
-       S_IRUSR  (00400)  read by owner
-       S_IWUSR  (00200)  write by owner
-       S_IXUSR  (00100)  execute/search  by owner ("search" applies for directories, and means
-                         that entries within the directory can be accessed)
-       S_IRGRP  (00040)  read by group
-       S_IWGRP  (00020)  write by group
-       S_IXGRP  (00010)  execute/search by group
-       S_IROTH  (00004)  read by others
-       S_IWOTH  (00002)  write by others
-       S_IXOTH  (00001)  execute/search by others
+together zero or more of the following:
+S_ISUID  (04000)  set-user-ID (set process effective user ID on execve(2))
+S_ISGID  (02000)  set-group-ID  (set process effective group ID on execve(2); mandatory
+                  locking, as described in fcntl(2); take a new file's group from  par‐
+                  ent directory, as described in chown(2) and mkdir(2))
+S_ISVTX  (01000)  sticky bit (restricted deletion flag, as described in unlink(2))
+S_IRUSR  (00400)  read by owner
+S_IWUSR  (00200)  write by owner
+S_IXUSR  (00100)  execute/search  by owner ("search" applies for directories, and means
+                  that entries within the directory can be accessed)
+S_IRGRP  (00040)  read by group
+S_IWGRP  (00020)  write by group
+S_IXGRP  (00010)  execute/search by group
+S_IROTH  (00004)  read by others
+S_IWOTH  (00002)  write by others
+S_IXOTH  (00001)  execute/search by others
 ```
-The istruction `push  0x1b6` and `pop ecx` are used to fufill the `mode` arguement.  
-Hex `1b6` translates to `666` in ocatal. This sets read(4) & write(2) permissions for user, group, and others.
++ The instruction `push  0x1b6` and `pop ecx` are used to fufill the `mode` arguement.  
++ Hex `1b6` translates to `666` in ocatal. This sets read(4) & write(2) permissions for user, group, and others.
 
- The new file permissions are specified in mode, which is a bit mask  created  by  ORing
-       together zero or more of the following:
-
-
-### exit Systemcall Section
+### exit() Systemcall Section
 + Our second systemcall had the  hex value `0x1` in the `eax` register.
 #### Finding the Systemcall in the Header File
 
