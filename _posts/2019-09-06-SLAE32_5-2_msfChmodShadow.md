@@ -88,6 +88,7 @@ Encoded shellcode ...
 + The `\<Return>` at the end was added after for formatting.
   - This format does work when compiling shellcode with `nasm`.
   - Nasm does not seem to care about `<space>` characters either.
+
 ### Adding the Shellcode to our `JMP|Call|POP` Assembly Program
 
 ```nasm
