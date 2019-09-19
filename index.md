@@ -6,8 +6,9 @@
 + [Assignment 3 - Egghunter - Shellcode](/_posts/2019-09-03-SLAE32_3_egghunter.md)
 + [Assignment 4 - Rotate Encoder](/_posts/2019-09-04-SLAE32_4_RotateEncoder.md)
 + [Assignment 5.1 - Shellcode Analysis - linux/x86/exec](/_posts/2019-09-05-SLAE32_5-1_msfExec.md)
-+ [Assignment 5.2 - Shellcode Analysis - linux/x86/chmod](/_posts/2019-09-05-SLAE32_5-2_msfChmodShadow.md)
-+ [Assignment 5.3 - Shellcode Analysis - linux/x86/adduser](/_posts/2019-09-05-SLAE32_5-3_addUser.md)
-+ [Assignment 6.1 - Polymorphic MMX TCP Bind Shellcode](/_posts/2019-09-06-SLAE32_6-1_polyMMXbindSh.md)
++ [Assignment 5.2 - Shellcode Analysis - linux/x86/chmod](/_posts/2019-09-06-SLAE32_5-2_msfChmodShadow.md)
++ [Assignment 5.3 - Shellcode Analysis - linux/x86/adduser](/_posts/2019-09-07-SLAE32_5-3_addUser.md)
++ [Assignment 6.1 - Polymorphic MMX TCP Bind Shellcode](/_posts/2019-09-08-SLAE32_6-1_polyMMXbindSh.md)
++ [Assignment 6.1 - Polymorphic Ret x86 Deactivate ASLR](/_posts/2019-09-10-SLAE32_6-2_offASLR.md)
 + [Assignment 7 - Add-Rotate Cryptor](/_posts/2019-09-15-SLAE32_7_AddRotateCryptor.md)
 
