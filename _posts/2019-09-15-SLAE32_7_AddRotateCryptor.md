@@ -26,13 +26,15 @@ Online I found many examples for RC4, AES, DES and other common encryptors, so I
 For my cryptor I decided to create somewhat of a Cesaer Chipher. The cryptor takes a key, and for every byte of the shellcode adds to it the corresponding byte of the key. 
 + When the key length is exceeded, the key repeats itself.  
 + the example key is `key = "HelloFriend"`
+
 In the example, the strength of this cryptor is quite terrible. Although it can be used in a way that makes it good. If the key is the same length of the shellcode, then this works as a One-Time Pad (OTP). 
 ### Using the Cryptor Smartly
 + The key or "pad" should not be words, or even letters, of the english language. 
 + Each byte of the key should be a randomly generated hex value, ranging from `\x00` to `\xff`.   
 
 This encryption method is not typically seen in production because the key lengths are huge, non-memerable strings, and the key is needed both at the cryptor and decryptor sides.   
-Instead of XOR'ing I chose to use the bitwise AND operation, since I have used XOR quite a bit in the SLAE32 course.  
+
++ Instead of XOR'ing I chose to use the bitwise AND operation, since I have used XOR quite a bit in the SLAE32 course.  
 
 Obviously adding a byte from the shellcode and the key together is likely to exceed the maximum value of the result space. If this happens, the cryptor will subtract 256 (one byte) from the result, and store the remainder in the encrypted byte.  
 
