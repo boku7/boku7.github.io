@@ -1,6 +1,6 @@
 ---
 title: SLAE32 Assignment 7 -- Add + Rotate Cryptor 
-date: 2019-9-20
+date: 2019-9-22
 layout: single
 classes: wide
 header:
