@@ -10,5 +10,6 @@
 + [Assignment 5.3 - Shellcode Analysis - linux/x86/adduser](/_posts/2019-09-07-SLAE32_5-3_addUser.md)
 + [Assignment 6.1 - Polymorphic MMX TCP Bind Shellcode](/_posts/2019-09-08-SLAE32_6-1_polyMMXbindSh.md)
 + [Assignment 6.2 - Polymorphic Deactivate ASLR](/_posts/2019-09-10-SLAE32_6-2_offASLR.md)
++ [Assignment 6.2 - Polymorphic Add User /etc/passwd](posts/2019-09-11-SLAE32_6-3_addAcct.md)
 + [Assignment 7 - Add-Rotate Cryptor](/_posts/2019-09-15-SLAE32_7_AddRotateCryptor.md)
 
