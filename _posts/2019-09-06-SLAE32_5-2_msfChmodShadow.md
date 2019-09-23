@@ -1,5 +1,5 @@
 ---
-title: SLAE32 Assignment 5.2 -- Analyzing chmod Shellcode
+title: SLAE32 Assignment 5.2 - Analyzing msf `chmod`
 date: 2019-9-15
 layout: single
 classes: wide
@@ -18,10 +18,9 @@ tags:
 ## Overview
 For the fifth assignment in the SLAE32 course we were tasked with analyzing three shellcodes from the Metasploit Framework.  
 + In this blog post we will be analyzing the `linux/x86/chmod` payload.  
-
-#### Purpose:
 + This shellcode will change the permissions of the file `/etc/shadow` on the victims device allowing any and all users to read & write to the file.  
 
+#### Choosing the longer Path
 There are much easier ways of creating an executable to test the shellcode than what is shown here. Instead we could have used the C program provided, output the shellcode into a file, or piped the payload to the analysis program.  
 + The method of adding the shellcode to our own `JMP|Call|POP` Assembly program was used to gain a better grasp on the assembly concepts.  
 
