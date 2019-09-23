@@ -824,6 +824,20 @@ for x in bytearray(scPart2) :
     shellcode += '\\x'
     shellcode += '%02x' %x
 
-print "[-----------------------Your-Shellcode----------------------]\n"
-print shellcode
+print "Choose your shellcode export format."
+exportFormat = raw_input("[1] = C Format\n[2] = Python Format\n[1]: ")
+if exportFormat == "2" : 
+    #print "python format"
+    formatSC = '"\nshellcode += "'.join(shellcode[i:i+48] for i in range(0,len(shellcode), 48))
+    print "[-----------------------Your-Shellcode------------------------]"
+    print 'shellcode = "'+formatSC+'"'
+else :
+    #print "C format"
+    formatSC = '"\n"'.join(shellcode[i:i+48] for i in range(0,len(shellcode), 48))
+    print "[----------------Your-Shellcode------------------]"
+    print 'shellcode = \\\n"'+formatSC+'";'
+#formatSC = "\n".join(shellcode[i:i+48] for i in range(0,len(shellcode), 48))
 ```
+
+
+
