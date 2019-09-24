@@ -15,7 +15,7 @@ search: true
 author:
   name: "Boku"
   avatar: "/assets/images/boku7.png"
-  bio: "OSCP|OSWP|CCNA|LPIC"
+  bio: "OSCP\|OSWP\|CCNA\|LPIC"
   location: "West Coast"
   links:
     - label: "GitHub"
