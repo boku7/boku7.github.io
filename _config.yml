@@ -8,8 +8,8 @@ plugins:
   - jekyll-feed
   - jemoji
   - jekyll-seo-tag
-logo: "/assests/images/masthead.png"
-masthead_title: "Boku Ninja Code.. ya know what i'm Saiyan?"
+logo: "/assets/images/masthead.png"
+masthead_title: "Kamahamaha"
 search: true
 # Site Author
 author:
