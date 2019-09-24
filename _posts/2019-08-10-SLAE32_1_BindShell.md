@@ -34,6 +34,10 @@ Shellcode is machine code that is digestable by the processor it is executing on
 ### Assembly
 Processors only understand `Machine Code`. The closest thing to writing in `Binary` is writing in `Assembly` code.
 + Compiled Assembly code has a 1:1 correlation with Machine code.
+  - _pretty much..._ - The compiler will typically add some extra stuff.
+  - You can strip the extra stuff and just get your shellcode.
+  - Sometimes the compiler has built in functions or different ways of doing things.
+  - Ultimately, if you know the hex of the assembly instructions you want, you can write a program using all hex and execute it on the processor.
 
 #### For Example:
 ```console
