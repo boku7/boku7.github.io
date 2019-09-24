@@ -32,6 +32,7 @@ Shellcode is machine code that is digestable by the processor it is executing on
 ### Assembly
 Processors only understand `Machine Code`. The closest thing to writing in `Binary` is to write `Assembly` code.
 + Compiled Assembly code has a 1:1 correlation with Machine code.
+
 #### For Example:
 ```console
 beta@zed$ msf-nasm_shell 
@@ -47,6 +48,7 @@ nasm > mov bl, 0x1
 nasm > add al, bl
 00000000  00D8              add al,bl
 ```
+
 + Assembly Language is dependant on the processor it is executing on, and the operating system.
 + For this course all Assembly will be written for Intel 32-bit Architecture, and the Linux Operating System.
 
