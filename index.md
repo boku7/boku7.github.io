@@ -1,5 +1,7 @@
 
-![](/pics/BOKU7.PNG)
+![](/pics/BOKU7.PNG)  
+### OSCP|OSWP|CCNA|LPIC
+<script src="https://www.hackthebox.eu/badge/151672"></script>
 # SLAE32 Assignments
 + [Assignment 1 - Bind Shell - Shellcode](/_posts/2019-08-10-SLAE32_1_BindShell.md)
 + [Assignment 2 - Reverse Shell - Shellcode](/_posts/2019-08-14-SLAE32_2_ReverseShell.md)
