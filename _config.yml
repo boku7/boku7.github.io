@@ -31,7 +31,7 @@ url: "https://boku7.github.io" # the base hostname & protocol for your site e.g.
 baseurl: # the subpath of your site, e.g. "/blog"
 repository: "boku7/boku7.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 breadcrumbs: true # true, false (default)
-words_per_minute: 200
+words_per_minute: 110
 
 # mimic GitHub Pages with --safe
 whitelist:
