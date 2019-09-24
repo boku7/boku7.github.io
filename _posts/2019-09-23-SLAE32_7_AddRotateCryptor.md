@@ -16,13 +16,6 @@ tags:
   - x86
 --- 
 ![](/assets/images/SLAE32.png)
-```console
-This blog post has been created for completing the requirements
- of the SecurityTube Linux Assembly Expert certification:
-http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
-	- Now at: https://www.pentesteracademy.com/course?id=3
-SLAE/Student ID: PA-10913
-```
 ## Overview
 For the seventh assignment of the SLAE32 course we were required to create a custom cryptor and decryptor. 
 
@@ -128,5 +121,14 @@ for x in bytearray(encrypted) :
 	count += 1
 
 print decrypted
+```
+
+## SLAE32 Blog Proof
+```console
+This blog post has been created for completing the requirements
+ of the SecurityTube Linux Assembly Expert certification:
+http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+	- Now at: https://www.pentesteracademy.com/course?id=3
+SLAE/Student ID: PA-10913
 ```
 

@@ -16,13 +16,6 @@ tags:
   - Shellcode
 --- 
 ![](/assets/images/SLAE32.png)
-```console
-This blog post has been created for completing the requirements
- of the SecurityTube Linux Assembly Expert certification:
-http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
-	- Now at: https://www.pentesteracademy.com/course?id=3
-SLAE/Student ID: PA-10913
-```
 ## Overview
 For my fourth assignment in the SLAE32 course, I created a custom Rotation Encoder.   
 + How this works is to encode the payload, it rotates every bit to the left by one. 
@@ -309,4 +302,12 @@ uid=0(root) gid=0(root) groups=0(root)
 ```
 + Boom! Our decoded works!
 
+## SLAE32 Blog Proof
+```console
+This blog post has been created for completing the requirements
+ of the SecurityTube Linux Assembly Expert certification:
+http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+	- Now at: https://www.pentesteracademy.com/course?id=3
+SLAE/Student ID: PA-10913
+```
 

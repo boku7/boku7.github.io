@@ -15,13 +15,6 @@ tags:
 --- 
 ![](/assets/images/SLAE32.png)
 ![](/pics/msfLogo.png)
-```console
-This blog post has been created for completing the requirements
- of the SecurityTube Linux Assembly Expert certification:
-http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
-	- Now at: https://www.pentesteracademy.com/course?id=3
-SLAE/Student ID: PA-10913
-```
 ## Overview
 For the fifth assignment in the SLAE32 course we were tasked with analyzing three shellcodes from the Metasploit Framework.  
 + In this blog post we will be analyzing the `linux/x86/chmod` payload.  
@@ -337,3 +330,13 @@ root# vi /usr/include/i386-linux-gnu/asm/unistd_32.h
 ```
 + before the `exit` systemcall, its number `0x1` is popped into the `eax` register from the `stack`.
 + The value in the `ebx` register doesn't really matter since it is just the exit code number.
+
+## SLAE32 Blog Proof
+```console
+This blog post has been created for completing the requirements
+ of the SecurityTube Linux Assembly Expert certification:
+http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+	- Now at: https://www.pentesteracademy.com/course?id=3
+SLAE/Student ID: PA-10913
+```
+
