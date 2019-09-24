@@ -4,3 +4,13 @@ plugins:
   - jekyll-include-cache
 logo: "/assests/images/boku7.png"
 search: true
+# Site Author
+author:
+name             : "boku7"
+avatar           : "/assets/images/boku7.png"
+bio              : "OSCP | OSWP | CCNA | LPIC"
+location         : "West Coast"
+links:
+        - label: "GitHub"
+        icon: "fab fa-fw fa-github"
+        url: "https://github.com/boku7"
