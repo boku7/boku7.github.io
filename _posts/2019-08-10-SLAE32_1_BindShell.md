@@ -32,7 +32,7 @@ Shellcode is machine code that is digestable by the processor it is executing on
 + This makes `shellcode` perfect for `malware` and `exploits`. 
 
 ### Assembly
-Processors only understand `Machine Code`. The closest thing to writing in `Binary` is to write `Assembly` code.
+Processors only understand `Machine Code`. The closest thing to writing in `Binary` is writing `Assembly` code.
 + Compiled Assembly code has a 1:1 correlation with Machine code.
 
 #### For Example:
