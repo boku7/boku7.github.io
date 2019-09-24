@@ -3,7 +3,7 @@ minimal_mistakes_skin: "dark"   # "default"  "air", "aqua", "contrast", "dark", 
 plugins:
   - jekyll-include-cache
   - jekyll-paginate
-  - jekyll-sitemap
+    #  - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
   - jemoji
@@ -39,7 +39,7 @@ words_per_minute: 110
 # mimic GitHub Pages with --safe
 whitelist:
   - jekyll-paginate
-  - jekyll-sitemap
+    #  - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
   - jemoji
