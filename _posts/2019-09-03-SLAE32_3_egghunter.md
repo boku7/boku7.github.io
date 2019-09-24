@@ -16,11 +16,18 @@ tags:
   - Shellcode
 ---
 ![](/assets/images/SLAE32.png)
-
+```console
+This blog post has been created for completing the requirements
+ of the SecurityTube Linux Assembly Expert certification:
+http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+	- Now at: https://www.pentesteracademy.com/course?id=3
+SLAE/Student ID: PA-10913
+```
 ## Overview
-For our fourth assignment in the SLAE32 course we were tasked with creating an egghunter.  
+For our third assignment in the SLAE32 course we were tasked with creating an `egghunter`.  
 What is an Egg Hunter?   
-An Egghunter is a piece of injectable shellcode that will search the memory of the running program for the a specific, larger payload. Once the Egghunter finds the larger payload, it will pass program control to it by executing it.  
++ An Egghunter is a piece of injectable shellcode that will search the memory of the running program for the a specific, larger payload. 
++ Once the Egghunter finds the larger payload, it will pass program control to it by executing it.  
 
 The larger payload that our Egghunter will search for and execute will be the `execve-stack` shellcode provided in the SLAE32 course.  
 

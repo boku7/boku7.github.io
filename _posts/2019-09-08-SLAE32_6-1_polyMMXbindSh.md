@@ -16,7 +16,13 @@ tags:
   - Shellcode
 --- 
 ![](/assets/images/SLAE32.png)
-
+```console
+This blog post has been created for completing the requirements
+ of the SecurityTube Linux Assembly Expert certification:
+http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+	- Now at: https://www.pentesteracademy.com/course?id=3
+SLAE/Student ID: PA-10913
+```
 ## Overview
 For the sixth assignment in the SLAE32 Exam, we needed to create 3 polymorphic shellcodes; from existing shellcodes at shell-storm.org.   
 _What is Polymorphic Shellcode?_   

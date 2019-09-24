@@ -1,5 +1,5 @@
 ---
-title: SLAE32 Assignment 7 -- Add + Rotate Cryptor 
+title: SLAE32 Assignment 7 - Add-Rotate Cryptor 
 date: 2019-9-22
 layout: single
 classes: wide
@@ -18,29 +18,55 @@ tags:
   - x86
 --- 
 ![](/assets/images/SLAE32.png)
+```console
+This blog post has been created for completing the requirements
+ of the SecurityTube Linux Assembly Expert certification:
+http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+	- Now at: https://www.pentesteracademy.com/course?id=3
+SLAE/Student ID: PA-10913
+```
 ## Overview
 For the seventh assignment of the SLAE32 course we were required to create a custom cryptor and decryptor. 
 
 Online I found many examples for RC4, AES, DES and other common encryptors, so I decided to do something different.  
 ### Creating a Custom Cryptor
-For my cryptor I decided to create somewhat of a Cesaer Chipher. The cryptor takes a key, and for every byte of the shellcode adds to it the corresponding byte of the key. 
+For my cryptor I decided to create somewhat of a Cesaer Chipher. 
++ The cryptor takes a key, and for every byte of the shellcode adds to it the corresponding byte of the key. 
 + When the key length is exceeded, the key repeats itself.  
 + the example key is `key = "HelloFriend"`
++ Instead of `XOR`'ing I chose to use the bitwise `AND` operation
+  - Since I have used `XOR` quite a bit in the SLAE32 course.  
 
-In the example, the strength of this cryptor is quite terrible. Although it can be used in a way that makes it good. If the key is the same length of the shellcode, then this works as a One-Time Pad (OTP). 
 ### Using the Cryptor Smartly
+In the example, the strength of this cryptor is quite terrible. Although it can be used in a way that makes it good.   
+If the key is the same length of the shellcode, then this works as a One-Time Pad (OTP). 
 + The key or "pad" should not be words, or even letters, of the english language. 
 + Each byte of the key should be a randomly generated hex value, ranging from `\x00` to `\xff`.   
 
-This encryption method is not typically seen in production because the key lengths are huge, non-memerable strings, and the key is needed both at the cryptor and decryptor sides.   
+_This encryption method is not typically seen in production because the key lengths are huge, non-memerable strings, and the key is needed both at the cryptor and decryptor sides._   
 
-+ Instead of XOR'ing I chose to use the bitwise AND operation, since I have used XOR quite a bit in the SLAE32 course.  
 
-Obviously adding a byte from the shellcode and the key together is likely to exceed the maximum value of the result space. If this happens, the cryptor will subtract 256 (one byte) from the result, and store the remainder in the encrypted byte.  
+Obviously adding a byte from the shellcode and the key together is likely to exceed the maximum value of the result space. 
++ If this happens, the cryptor will subtract `256` (`1 byte`) from the result, and store the remainder in the encrypted byte.  
+#### Example Overflow while Encrypting
+```python
+if decrypted_byte + key_byte > 255
+	encrypted_byte = decrypted_byte + key_byte - 256
+else 
+	encrypted_byte = decrypted_byte + key_byte
+```
 
 When decrypting, it will simply check to see if a byte was subtracted, and add a byte back.  
+#### Example Underflow while Decrypting
+```python
+if encrypted_byte - key_byte < 0
+	decrypted_byte = encrypted_byte - key_byte + 256
+else
+	decrypted_byte = encrypted_byte - key_byte
+```
 
-Since my example uses a small, repeated key, I added that the byte be rotated to the left once when encrypting. Then rotate the byte to the right once when decrypting.  
+
+_Since my example uses a small, repeated key, I added that the byte be rotated to the left once when encrypting. Then rotate the byte to the right once when decrypting._  
 
 ## ADD Rotate-Left Cryptor
 ```python
@@ -104,15 +130,5 @@ for x in bytearray(encrypted) :
 	count += 1
 
 print decrypted
-
-#if decrypted + key > 255
-#	encrypted = decrypted + key - 256
-#else 
-#	encrypted = decrypted + key
-
-#if encrypted - key < 0
-#	decrypted = encrypted - key + 256
-#else
-#	decrypted = encrypted - key
 ```
 

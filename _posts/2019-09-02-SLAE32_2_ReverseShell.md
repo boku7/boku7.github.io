@@ -13,6 +13,13 @@ tags:
   - Shellcode
 --- 
 ![](/assets/images/SLAE32.png)
+```console
+This blog post has been created for completing the requirements
+ of the SecurityTube Linux Assembly Expert certification:
+http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+	- Now at: https://www.pentesteracademy.com/course?id=3
+SLAE/Student ID: PA-10913
+```
 ## Overview
 For our second assignment in the SLAE32 course we were tasks with creating reverse shell, shellcode.  
 _What is a reverse shell?_  
