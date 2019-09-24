@@ -1,6 +1,6 @@
 ---
 title: SLAE32 Assignment 5.2 - Analyzing msf `chmod`
-date: 2019-9-15
+date: 2019-8-29
 layout: single
 classes: wide
 tags:

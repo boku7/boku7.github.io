@@ -1,6 +1,6 @@
 ---
-title: SLAE32 Assignment 4 -- Rotation Encoder
-date: 2019-9-15
+title: SLAE32 Assignment 4 - Rotation Encoder
+date: 2019-8-24
 layout: single
 classes: wide
 header:

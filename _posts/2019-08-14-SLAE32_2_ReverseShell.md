@@ -1,6 +1,6 @@
 ---
-title: SLAE32 Assignment 2 -- TCP Reverse Shellcode
-date: 2019-9-15
+title: SLAE32 Assignment 2 - TCP Reverse-Shell Shellcode
+date: 2019-8-14
 layout: single
 classes: wide
 tags:
