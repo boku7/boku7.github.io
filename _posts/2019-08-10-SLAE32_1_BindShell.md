@@ -21,17 +21,36 @@ http://securitytube-training.com/online-courses/securitytube-linux-assembly-expe
 	- Now at: https://www.pentesteracademy.com/course?id=3
 SLAE/Student ID: PA-10913
 ```
-
 ## Overview
-For the first Assigment of the SLAE32 course, we were tasked with creating shellcode for a TCP bind shell.  
+For the first Assigment of the SLAE32 course, we were tasked with creating shellcode for a TCP `bind-shell`.  
 
-What is shellcode?   
-Shellcode is executable code that can be injected into any program, that will preform a task.  
+_What is shellcode?_   
+Shellcode is machine code that is digestable by the processor it is executing on. 
++ No extra compiling or linking is required for the code to execute.
++ This makes `shellcode` perfect for `malware` and `exploits`. 
 
-Since we need to create executable code that can be injected into a program, we will need to write this code in Assembly Language.
+### Assembly
+Processors only understand `Machine Code`. The closest thing to writing in `Binary` is to write `Assembly` code.
++ Compiled Assembly code has a 1:1 correlation with Machine code.
+#### For Example:
+```console
+beta@zed$ msf-nasm_shell 
+# Put the hex value 0x2 into the al register
+nasm > mov al, 0x2
+00000000  B002              mov al,0x2
+  - Here we see the Machine Code equivalent for `mov al, 0x2` is 0xB0, 0x02
+  - This Assembly instruction is always this hex/machine code for any intel-32 bit processor.
+# Put the hex value 0x1 into the bl register
+nasm > mov bl, 0x1
+00000000  B301              mov bl,0x1
+# Add the bl register to the al register, and save the result in register al
+nasm > add al, bl
+00000000  00D8              add al,bl
+```
 + Assembly Language is dependant on the processor it is executing on, and the operating system.
 + For this course all Assembly will be written for Intel 32-bit Architecture, and the Linux Operating System.
 
+# Mapping C Code to Assembly
 To map out how I was going to write Assembly Code for this assgnment, I first created a tcp bind shell using C.  
 + C is the closest programming language to Assembly.
 
