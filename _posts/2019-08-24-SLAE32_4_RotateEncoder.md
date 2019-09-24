@@ -3,8 +3,6 @@ title: SLAE32 Assignment 4 - Rotation Encoder
 date: 2019-8-24
 layout: single
 classes: wide
-header:
-  teaser: /assets/images/SLAE32.jpg
 tags:
   - rotate
   - Encoder

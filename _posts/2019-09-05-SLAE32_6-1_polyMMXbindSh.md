@@ -3,8 +3,6 @@ title: SLAE32 Assignment 6.1 - Polymorphic MMX Bind Shell
 date: 2019-9-5
 layout: single
 classes: wide
-header:
-  teaser: /assets/images/SLAE32.jpg
 tags:
   - Bind
   - Shell

@@ -3,8 +3,6 @@ title: SLAE32 Assignment 7 - Add-Rotate Cryptor
 date: 2019-9-23
 layout: single
 classes: wide
-header:
-  teaser: /assets/images/SLAE32.jpg
 tags:
   - Cryptor
   - Crypto
