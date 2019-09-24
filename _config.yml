@@ -8,7 +8,8 @@ plugins:
   - jekyll-feed
   - jemoji
   - jekyll-seo-tag
-logo: "/assests/images/boku7.png"
+logo: "/assests/images/masthead.png"
+masthead_title: "Ninja Code"
 search: true
 # Site Author
 author:
@@ -20,6 +21,7 @@ author:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/boku7"
+teaser: assets/images/slae32-teaser.png
 
 #Site Settings
 locale: "en-US"
@@ -32,6 +34,7 @@ baseurl: # the subpath of your site, e.g. "/blog"
 repository: "boku7/boku7.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 breadcrumbs: true # true, false (default)
 words_per_minute: 110
+
 
 # mimic GitHub Pages with --safe
 whitelist:
