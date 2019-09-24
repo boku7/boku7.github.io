@@ -22,11 +22,13 @@ http://securitytube-training.com/online-courses/securitytube-linux-assembly-expe
 SLAE/Student ID: PA-10913
 ```
 ## Overview
-For the first Assigment of the SLAE32 course, we were tasked with creating shellcode for a TCP `bind-shell`.  
+For the first Assigment of the SLAE32 course we were tasked with creating shellcode for a TCP `bind-shell`.  
 
 _What is shellcode?_   
 Shellcode is machine code that is digestable by the processor it is executing on. 
 + No extra compiling or linking is required for the code to execute.
++ It has a target objective.
++ It is typically small in size.
 + This makes `shellcode` perfect for `malware` and `exploits`. 
 
 ### Assembly
@@ -40,7 +42,7 @@ beta@zed$ msf-nasm_shell
 nasm > mov al, 0x2
 00000000  B002              mov al,0x2
   - Here we see the Machine Code equivalent for `mov al, 0x2` is 0xB0, 0x02
-  - This Assembly instruction is always this hex/machine code for any intel-32 bit processor.
+  - This Assembly instruction is always this machiner- code for an intel-32 bit processor.
 # Put the hex value 0x1 into the bl register
 nasm > mov bl, 0x1
 00000000  B301              mov bl,0x1
@@ -53,10 +55,10 @@ nasm > add al, bl
 + For this course all Assembly will be written for Intel 32-bit Architecture, and the Linux Operating System.
 
 # Mapping C Code to Assembly
-To map out how I was going to write Assembly Code for this assgnment, I first created a tcp bind shell using C.  
+To map out how I to write Assembly Code for a tcp bind-shell, first we will walk through creating a tcp `bind-shell` in C.  
 + C is the closest programming language to Assembly.
 
-Once I figured out which C functions I needed, I then had to figure out how to replace them with Linux System-Calls.  
+Once we figure out the required C functions, we then need to figure out how we can replace them with Linux `System-Calls`.  
 
 ## Required C Funtions & Execution Flow
 1. Create a new Socket.  
