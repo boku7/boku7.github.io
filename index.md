@@ -20,4 +20,5 @@
 + [7 - Add-Rotate Shellcode Cryptor](/_posts/2019-09-23-SLAE32_7_AddRotateCryptor.md)
 
 # Win32 Exploit Dev
-+ [Windows 32-bit Shellcoding](/_posts/2019-10-20-Win32.md)
++ [Windows 32-bit Shellcoding - Enviornment Setup](/_posts/2019-10-20-Win32-Env.md)
++ [Windows 32-bit Shellcoding - WinExec calc.exe](/_posts/2019-10-20-Win32.md)
