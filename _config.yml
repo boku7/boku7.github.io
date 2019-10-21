@@ -15,9 +15,11 @@ search: true
 author:
   name: "Boku"
   avatar: "/assets/images/boku7.png"
-  bio: "OSCP SLAE32 OSWP\n CCNA LPIC"
+  bio: "OSCP SLAE32 OSWP CCNA LPIC"
   location: "West Coast"
   links:
+    - label: "HomePage"
+      url: "https://boku7.github.com"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/boku7"
