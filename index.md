@@ -6,6 +6,10 @@
 
 --- 
 
+# Win32 Exploit Dev
++ [Windows 32-bit Shellcoding - Enviornment Setup](/_posts/2019-10-20-Win32-Env.md)
++ [Windows 32-bit Shellcoding - WinExec calc.exe](/_posts/2019-10-20-Win32.md)
+
 # SLAE32 Assignments
 + [1 - TCP Bind-Shell Shellcode](/_posts/2019-08-10-SLAE32_1_BindShell.md)
 + [2 - Reverse-Shell Shellcode](/_posts/2019-08-14-SLAE32_2_ReverseShell.md)
@@ -19,6 +23,3 @@
 + [6.3 - Polymorphic Add Root-User Shellcode](/_posts/2019-09-22-SLAE32_6-3_addAcct.md)
 + [7 - Add-Rotate Shellcode Cryptor](/_posts/2019-09-23-SLAE32_7_AddRotateCryptor.md)
 
-# Win32 Exploit Dev
-+ [Windows 32-bit Shellcoding - Enviornment Setup](/_posts/2019-10-20-Win32-Env.md)
-+ [Windows 32-bit Shellcoding - WinExec calc.exe](/_posts/2019-10-20-Win32.md)

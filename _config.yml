@@ -9,13 +9,13 @@ plugins:
   - jemoji
   - jekyll-seo-tag
 logo: "/assets/images/masthead.png"
-masthead_title: "kamehameha!!"
+masthead_title: "HomePage"
 search: true
 # Site Author
 author:
   name: "Boku"
   avatar: "/assets/images/boku7.png"
-  bio: "OSCP|SLAE32|OSWP|CCNA|LPIC"
+  bio: "OSCP SLAE32 OSWP\n CCNA LPIC"
   location: "West Coast"
   links:
     - label: "GitHub"
