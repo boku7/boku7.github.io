@@ -19,7 +19,7 @@ author:
   location: "West Coast"
   links:
     - label: "HomePage"
-      url: "https://boku7.github.com"
+      url: "https://boku7.github.io"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/boku7"
