@@ -1,6 +1,6 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSCP|OSWP|CCNA|LPIC  
+### OSCP|SLAE32|OSWP|CCNA|LPIC  
   
 <script src="https://www.hackthebox.eu/badge/151672"></script>
 
