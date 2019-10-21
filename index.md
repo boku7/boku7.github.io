@@ -19,3 +19,5 @@
 + [6.3 - Polymorphic Add Root-User Shellcode](/_posts/2019-09-22-SLAE32_6-3_addAcct.md)
 + [7 - Add-Rotate Shellcode Cryptor](/_posts/2019-09-23-SLAE32_7_AddRotateCryptor.md)
 
+# Win32 Exploit Dev
++ [Windows 32-bit Shellcoding](/_posts/2019-10-20-Win32.md)
