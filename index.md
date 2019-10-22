@@ -9,6 +9,7 @@
 # Win32 Exploit Dev
 + [Windows 32-bit Shellcoding - Enviornment Setup](/_posts/2019-10-20-Win32-Env.md)
 + [Windows 32-bit Shellcoding - WinExec calc.exe](/_posts/2019-10-20-Win32.md)
++ [Windows 32-bit Shellcoding - Dynamic Shellcode](/_posts/2019-10-22-Win32-dynamic-shellcode.md)
 
 # SLAE32 Assignments
 + [1 - TCP Bind-Shell Shellcode](/_posts/2019-08-10-SLAE32_1_BindShell.md)
