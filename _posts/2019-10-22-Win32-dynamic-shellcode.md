@@ -61,27 +61,20 @@ int main(int argc, char **argv)
 ```
 + Added '\xcc' to start of `code[]` array to set a software breakpoint.
 + The breakpoint allows us to step through our test code as it executes; using a debugger like Immunity.
-+ Compiled on Windows XP SP3 Pro x86 (32-bit), wil lcc-win32 program.
++ Compiled on Windows XP SP3 Pro x86 (32-bit), with lcc-win32 program.
 ![](/assets/images/kernel32winCompile.png)
 
 ### Testing the Shellcode Execution
 + Open the compiled program with Immunity Debugger.
 + When pressing the play button, the code should break at our software breakpoint.
 
-![](/assets/images/foundKernel32.png)
-+ We see that we successfully found our `kernel32.dll` base address within the host process's memory.
-![](/assets/images/kernel32eax.png)
-+ Our shellcode successfully stores the base address of `kernel32.dll` in the `eax` register.
-![](/assets/images/kernel32altM.png)
-+ In Immunity we verify kernel32's base address by pressing `Alt+M` to go to view the memory map, and then find our `kernel32.dll` base address.
-
-
-
-; successfully loaded kernel32.7C800000 into the eax register
-; used Immunity to check. Break point stopped the program at the start of the SC execution.
-; used <alt+M> to check that kernel32.dll was at 0x7c800000. Great success
-
-
+![](/assets/images/foundKernel32.png)  
++ We see that we successfully found our `kernel32.dll` base address within the host process's memory.  
+![](/assets/images/kernel32eax.png)  
++ Our shellcode successfully stores the base address of `kernel32.dll` in the `eax` register.  
+![](/assets/images/kernel32altM.png)  
++ In Immunity we verify kernel32's base address by pressing `Alt+M` to go to view the memory map, and then find our `kernel32.dll` base address.  
++ we found `kernel32.dll` at `0x7c800000`. Great success!  
 
 
 ### LoadLibraryA() -- within kernel32.dll
