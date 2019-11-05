@@ -85,7 +85,6 @@ HMODULE LoadLibraryA(LPCSTR lpLibFileName);
 ```
 lpLibFileName
 : The name of the module/DLL to load.
-### 
 
 
 
