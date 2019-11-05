@@ -12,6 +12,8 @@ tags:
   - x86
   - Shellcode
 ---
+## Overview
+
 ### Goal
 Find the address for the symbol(function) `GetProcAddress`, within `kernel32.dll`.
   - `GetProcAddress` can then be used to retrieve the adress of other symbols within Dynamically Linked Libraries (DLL's).
