@@ -1,4 +1,21 @@
-# Find GetProcAddress
+---
+title: Win32 Dynamic Shellcode
+date: 2019-10-22
+layout: single
+classes: wide
+header:
+  teaser: /assets/images/winXP.png
+tags:
+  - Shell
+  - Assembly
+  - Code
+  - win32
+  - windows
+  - x86
+  - Shellcode
+---
+![](/assets/images/winXP.png)
+## Find GetProcAddress
 #### Goal
 Find the address for the symbol(function) `GetProcAddress`, within `kernel32.dll`.
   - `GetProcAddress` can then be used to retrieve the adress of other symbols within Dynamically Linked Libraries (DLL's).
@@ -82,7 +99,7 @@ Export Directory Table
 
 
 
-# References
+## References
 + `http://sh3llc0d3r.com/windows-reverse-shell-shellcode-i/`
 + `https://0xdarkvortex.dev/index.php/2019/04/01/windows-shellcoding-x86-calling-functions-in-kernel32-dll-part-2/`
 + `https://idafchev.github.io/exploit/2017/09/26/writing_windows_shellcode.html`
