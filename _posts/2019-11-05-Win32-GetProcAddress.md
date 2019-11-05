@@ -12,27 +12,26 @@ tags:
   - x86
   - Shellcode
 ---
-## Find GetProcAddress
-
-#### Goal
+### Goal
 Find the address for the symbol(function) `GetProcAddress`, within `kernel32.dll`.
   - `GetProcAddress` can then be used to retrieve the adress of other symbols within Dynamically Linked Libraries (DLL's).
 
-#### Requirement to Finding GetProcAddress
+### Requirement to Finding GetProcAddress
 First you must find the base address of `kernel32.dll`. 
   - Reference my previous post to understand this.
 
-#### Technique 
+### Technique 
 Export Directory Table
   - As detailed in [Skapes Windows 32 Shellcoding paper](http://www.hick.org/code/skape/papers/win32-shellcode.pdf)
 
-#### Tools
+### Tools
   - PEview
   - OllyDbg
   - Windows Vista Home SP1 x86
   - nasm (kali)
   - Immunity Debugger
 
+## Steps to Finding GetProcAddress
 1. Get the base address of `kernel32.dll`
 2. Find offset to New EXE Header within the `Image_dos_Header` of `kernel32.dll`
 ```
