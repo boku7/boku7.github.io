@@ -36,7 +36,7 @@ Export Directory Table
 1. Get the base address of `kernel32.dll`
 2. Find offset to New EXE Header within the `Image_dos_Header` of `kernel32.dll`
 ```
-  (BaseAddr of kernel32.dll) + 0x3c = (PTR to New Exe Header)
+(BaseAddr of kernel32.dll) + 0x3c = (PTR to New Exe Header)
 ```
     - This RVA holds a pointer to 0xe0 (RVA of New Exe Header)
     - For windows Vista SP1
@@ -50,10 +50,10 @@ Export Directory Table
   ![](/assets/images/exportTableRVA.png)
 4. Find Offsets for Address Table, Name Pointer Table and Ordinal Table from Export Table
 ```
-  (Addr of Export Table) + 0x14 = Number of Functions/Symbols within the Tables
-  (Addr of Export Table) + 0x1c = (PTR to RVA of Address Table)
-  (Addr of Export Table) + 0x20 = (PTR to RVA of Name Pointer Table)
-  (Addr of Export Table) + 0x24 = (PTR to RVA of Ordinal Table)
+(Addr of Export Table) + 0x14 = Number of Functions/Symbols within the Tables
+(Addr of Export Table) + 0x1c = (PTR to RVA of Address Table)
+(Addr of Export Table) + 0x20 = (PTR to RVA of Name Pointer Table)
+(Addr of Export Table) + 0x24 = (PTR to RVA of Ordinal Table)
 ```
   ![](/assets/images/RVAsTables.png)
 5. Loop through Name Pointer Table comparing each string with "GetProcAddress"
@@ -61,17 +61,17 @@ Export Directory Table
   ![](/assets/images/NamePtrTbl_GetProcAddr.png)
 6. Find GetProcAddress Ordinal number from Ordinal Table
 ```
-  (Addr of Ordinal Table) + (Position of "GetProcAddress") * 2 = GetProcAddress Ordinal Number
+(Addr Ordinal Table) + (Position "GetProcAddress") * 2 = GetProcAddress Ordinal #
 ```
     - Each entry in the Ordinal Table is 2 bytes.
   ![](/assets/images/Ordinal_GetProcAddr.png)
 7. Find GetProcAddress RVA from the Address Table
 ```
-  (Addr of Address Table) + (Ordinal Number) * 4 = RVA GetProcAddress
+Addr of Address Table) + (Ordinal Number) * 4 = RVA GetProcAddress
 ```
 8. Get full address of GetProcAddress
 ```
-  (kernel32.dll base addr) + (GetProcAddress RVA) = Full Address of GetProcAddress
+(kernel32.dll base-addr) + (GetProcAddress RVA) = Full-Address GetProcAddress
 ```
   ![](/assets/images/AddrTble_GetProcAddr.png)
 
