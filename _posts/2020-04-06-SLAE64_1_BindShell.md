@@ -74,17 +74,16 @@ root
 int socket(int domain, int type, int protocol); 
 ```  
   <dl>
-  <dt>`int domain = AF_INET`</dt>
+  <dt>int domain = AF_INET</dt>
   <dd>IPv4 Internet protocols.</dd>
 
-  <dt>`int type = SOCK_STREAM`</dt>
+  <dt>int type = SOCK_STREAM</dt>
   <dd>Provides sequenced, reliable, two-way, connection-based byte streams (TCP).</dd>
-  <dt>`int protocol = IPPROTO_IP`</dt>
+  <dt>int protocol = IPPROTO_IP</dt>
   <dd>The protocol to be used with the socket.</dd>
-  <dd>When there is only one protocol option within the address family (like in this case), the value `0` is used.</dd>
+  <dd>When there is only one protocol option within the address family (like in this case), the value 0 is used.</dd>
   </dl>  
-+ For complete details see: `man socket`  
-
+  + For complete details see: `man socket`
 2. Create an IP Socket Address structure.
 ```c
 struct sockaddr_in {
@@ -163,7 +162,7 @@ execve("/bin/sh", NULL, NULL);
 root# strace ./bindshell
 socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3
 ```  
-+ We see that the `Socket File-Descriptor` for our socket   
++ We see that the `Socket File-Descriptor` for our socket.
 ```bash
 bind(3, {sa_family=AF_INET, sin_port=htons(4444), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
 listen(3, 0)                            = 0
