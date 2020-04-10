@@ -72,17 +72,17 @@ root
 1. Create a new Socket.
 ```c 
 int socket(int domain, int type, int protocol); 
-```
-dl>
-  <dt>int domain = AF\_INET</dt>
+```  
+  <dl>
+  <dt>`int domain = AF_INET`</dt>
   <dd>IPv4 Internet protocols.</dd>
 
-  <dt>int type = SOCK\_STREAM</dt>
+  <dt>`int type = SOCK_STREAM`</dt>
   <dd>Provides sequenced, reliable, two-way, connection-based byte streams (TCP).</dd>
-  <dt>int protocol = IPPROTO\_IP</dt>
+  <dt>`int protocol = IPPROTO_IP`</dt>
   <dd>The protocol to be used with the socket.</dd>
   <dd>When there is only one protocol option within the address family (like in this case), the value `0` is used.</dd>
-</dl>  
+  </dl>  
 + For complete details see: `man socket`  
 
 2. Create an IP Socket Address structure.
