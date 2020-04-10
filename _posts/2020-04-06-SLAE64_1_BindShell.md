@@ -84,6 +84,7 @@ int socket(int domain, int type, int protocol);
   <dd>When there is only one protocol option within the address family (like in this case), the value 0 is used.</dd>
   </dl>  
   + For complete details see: `man socket`
+
 2. Create an IP Socket Address structure.
 ```c
 struct sockaddr_in {
@@ -104,7 +105,7 @@ struct in_addr {
   - All interfaces.  
   - The `htonl()` function converts our decimal integer to 32-byte little-endian hex.    
 + For complete details see: `man ip.7`  
-```
+
 3. Bind the IP Socket Address to Socket. 
 ```c
 int bind(int sockfd, const struct sockaddr \*addr, socklen\_t addrlen);`
@@ -117,6 +118,7 @@ int bind(int sockfd, const struct sockaddr \*addr, socklen\_t addrlen);`
     - The byte length of our `ipSocketAddr` structure.  
     - `sizeof()` returns the length in bytes of the variable.  
   + For complete details see: `man bind`  
+
 4. Listen for connections to the TCP Socket at the IP Socket Address.  
 ```c
 int listen(int sockfd, int backlog);
@@ -126,6 +128,7 @@ int listen(int sockfd, int backlog);
     - This is for handling multiple connections.   
     - We only need to handle one connection at a time, therefor we will set this value to `0`.   
   + For complete details see: `man listen`  
+
 5. Accept connections to the TCP-IP Socket and create a Client Socket.  
 ```c
 int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
@@ -138,6 +141,7 @@ int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
   + `int flags  = NULL`  
   + The function will return the new Socket File-Descriptor. Save as `clientSocket`  
   + For complete details see: `man accept`  
+
 6. Transfer Standard-Input, Standard-Output, and Standard-Error to the client socket.  
 ```c
 int dup2(int oldfd, int newfd);
@@ -146,6 +150,7 @@ dup2(clientSocket, 1); // STDOUT
 dup2(clientSocket, 2); // STDERR
 ```   
   + For complete details see: `man dup2`  
+
 7. Spawn a `/bin/sh` shell for the client, in the connected session.  
 ```c
 int execve(const char *pathname, char *const argv[], char *const envp[]);
