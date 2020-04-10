@@ -73,17 +73,21 @@ root
 ```c 
 int socket(int domain, int type, int protocol); 
 ```  
-  <dl>
-  <dt>int domain = AF_INET</dt>
-  <dd>IPv4 Internet protocols.</dd>
-
-  <dt>int type = SOCK_STREAM</dt>
-  <dd>Provides sequenced, reliable, two-way, connection-based byte streams (TCP).</dd>
-  <dt>int protocol = IPPROTO_IP</dt>
-  <dd>The protocol to be used with the socket.</dd>
-  <dd>When there is only one protocol option within the address family (like in this case), the value 0 is used.</dd>
-  </dl>  
   + For complete details see: `man socket`
+```c
+int domain = AF_INET
+```
++ IPv4 Internet protocols.
+
+```c
+int type = SOCK_STREAM
+```
++ Provides sequenced, reliable, two-way, connection-based byte streams (TCP).
+```c
+int protocol = IPPROTO_IP
+```
++ The protocol to be used with the socket.
++ With only one protocol option in the address family, the value `0x0` is used.
 
 2. Create an IP Socket Address structure.
 ```c
