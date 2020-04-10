@@ -1,4 +1,4 @@
-remote_theme: "mmistakes/minimal-mistakes@4.16.6"
+remote_theme: "mmistakes/minimal-mistakes@4.19.1"
 minimal_mistakes_skin: "dark"   # "default"  "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum" "sunrise"
 plugins:
   - jekyll-include-cache
@@ -15,7 +15,7 @@ search: true
 author:
   name: "Boku"
   avatar: "/assets/images/boku7.png"
-  bio: "OSCP SLAE32 OSWP CCNA LPIC"
+  bio: "OSCE OSCP SLAE32 OSWP CCNA LPIC"
   location: "West Coast"
   links:
     - label: "HomePage"

@@ -1,10 +1,13 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSCP|SLAE32|OSWP|CCNA|LPIC  
+### OSCE|OSCP|SLAE32|OSWP|CCNA|LPIC  
   
 <script src="https://www.hackthebox.eu/badge/151672"></script>
 
 --- 
+# SLAE64 Assignments
++ [Linux/x64 Password-Protected Bindshell](/_posts/2020-04-06-SLAE64_1_BindShell.md)
+
 
 # Win32 Exploit Dev
 + [Enviornment Setup](/_posts/2019-10-20-Win32-Env.md)
