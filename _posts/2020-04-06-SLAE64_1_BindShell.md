@@ -19,10 +19,9 @@ tags:
 
 
 # Bindshell Analysis
-## Bindshell.c
-+ To better understand x64 shellcode, I first created a working bindshell in C.
+To better understand x64 shellcode, I first created a working bindshell in C.
 
-### shellcode.c
+## Bindshell.c
 ```c
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -71,10 +70,12 @@ root
 ### Function Analysis
 
 #### 1. Create a new Socket.
-+ For complete details see: `man socket`
+
 ```c 
 int socket(int domain, int type, int protocol); 
 ```  
++ For complete details see: `man socket`
+
 ```c
 int domain = AF_INET
 ```
@@ -84,6 +85,7 @@ int domain = AF_INET
 int type = SOCK_STREAM
 ```
 + Provides sequenced, reliable, two-way, connection-based byte streams (TCP).
+
 ```c
 int protocol = IPPROTO_IP
 ```
