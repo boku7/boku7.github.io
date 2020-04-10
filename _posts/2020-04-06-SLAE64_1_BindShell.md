@@ -3,6 +3,8 @@ title: SLAE64 Assignment 1 - TCP Bind-Shell Shellcode
 date: 2020-4-06
 layout: single
 classes: wide
+header:
+  teaser: /assets/images/SLAE64.png
 tags:
   - Bind
   - Shell

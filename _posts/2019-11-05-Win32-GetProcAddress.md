@@ -76,31 +76,6 @@ Addr of Address Table) + (Ordinal Number) * 4 = RVA GetProcAddress
 ```
   ![](/assets/images/AddrTble_GetProcAddr.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## References
 + `http://sh3llc0d3r.com/windows-reverse-shell-shellcode-i/`
 + `https://0xdarkvortex.dev/index.php/2019/04/01/windows-shellcoding-x86-calling-functions-in-kernel32-dll-part-2/`
