@@ -280,6 +280,7 @@ execve("/bin/bash", NULL, NULL)         = 0
 ### Trace Library Calls  
 Use `ltrace` to see library calls as the program executes.  
 + _I removed all of the library calls that were irrelevant from the library trace output._
+
 ```bash
 socket(2, 1, 0)                                      = 3
 htons(4444, 1, 0, 0x7f05dfff78d7)                    = 0x5c11
