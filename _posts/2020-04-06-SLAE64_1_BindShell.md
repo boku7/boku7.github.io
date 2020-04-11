@@ -246,6 +246,7 @@ char *const envp[] = NULL
 
 ### Trace System-Calls  
 Use `strace` to see system calls as the `shellcode` executes.  
++ `strace` will show us all of the system calls that occur within the program.
 + _I removed all of the system-calls that were irrelevant from the system trace output._
 
 ```bash 
@@ -274,3 +275,21 @@ execve("/bin/bash", NULL, NULL)         = 0
 + The accept function takes in the socket handle returned from `socket()`, and returns a new socket handle `4` that will be used for the client connection.
 + We take the client socket handle `4` and use it as an arugment for our `dup2()` functions.
 + The `0`,`1`, and `2` are the handles for input, output and error.
+
+
+### Trace Library Calls  
+Use `ltrace` to see library calls as the program executes.  
++ _I removed all of the library calls that were irrelevant from the library trace output._
+```bash
+socket(2, 1, 0)                                      = 3
+htons(4444, 1, 0, 0x7f05dfff78d7)                    = 0x5c11
+htonl(0, 1, 0, 0x7f05dfff78d7)                       = 0
+bind(3, 0x7ffe5256d920, 16, 0x7ffe5256d920)          = 0
+listen(3, 0, 16, 0x7f05dfff72a7)                     = 0
+accept(3, 0, 0, 0x7f05dfff7407)                      = 4
+dup2(4, 0)                                           = 0
+dup2(4, 1)                                           = 1
+dup2(4, 2)                                           = 2
+execve(0x5597bd4ce004, 0, 0, 0x7f05dffe8027 <no return ...>
+
+```
