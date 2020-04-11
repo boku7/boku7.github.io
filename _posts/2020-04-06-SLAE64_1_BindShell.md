@@ -271,3 +271,6 @@ dup2(4, 2)                              = 2
 execve("/bin/bash", NULL, NULL)         = 0
 
 ```
++ The accept function takes in the socket handle returned from `socket()`, and returns a new socket handle `4` that will be used for the client connection.
++ We take the client socket handle `4` and use it as an arugment for our `dup2()` functions.
++ The `0`,`1`, and `2` are the handles for input, output and error.
