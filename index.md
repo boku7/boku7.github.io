@@ -6,7 +6,8 @@
 
 --- 
 # SLAE64 Assignments
-+ [Linux/x64 Password-Protected Bindshell](/_posts/2020-04-06-SLAE64_1_BindShell.md)
++ [Linux/x64 Password-Protected Bind Shell](/_posts/2020-04-06-SLAE64_1_BindShell.md)
++ [Linux/x64 Password-Protected Reverse Shell](_posts/2020-04-14-SLAE64_2_RevShell.md)
 
 
 # Win32 Exploit Dev
