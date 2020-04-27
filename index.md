@@ -12,6 +12,7 @@
 + [Linux/x64 Rotate Left Encoder](_posts/2020-04-26-SLAE64_4_ROLEncoder.md)
 + [Linux/x64 MSF Venom Execve Analysis](_posts/2020-04-26-SLAE64_5-execveAnalysis.md)
 + [Linux/x64 MSF Venom Reverse Shell Analysis](_posts/2020-04-26-SLAE64_5-reverseShellAnalysis.md)
++ [Linux/x64 MSF Venom Bind Shell Analysis](_posts/2020-04-26-SLAE64_5-bindShellAnalysis.md)
 
 
 # Win32 Exploit Dev
