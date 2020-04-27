@@ -16,9 +16,11 @@ tags:
 ![](/assets/images/SLAE64.png)
 
 # Overview
-For the fourth assignment of the SLAE64 I created a Rotate Left (ROL) Encoder and a Rotate Right (ROR) decoder. The ROL encoder is a python program that rotates every byte of the payload to the left by 1 bit. The companion ROR decoder rotates every byte of the payload to the right by 1 bit, and then passes execution to the decoded payload. The example payload is an execve shellcode that spawns a bash shell.
+For the fourth assignment of the SLAE64 I created a Rotate Left (ROL) Encoder and a Rotate Right (ROR) decoder.   
+The ROL encoder is a python program that rotates every byte of the payload to the left by 1 bit. The companion ROR decoder rotates every byte of the payload to the right by 1 bit, and then passes execution to the decoded payload. The example payload is an execve shellcode that spawns a bash shell.
 
 # The Python Rotate Left (ROL) Encoder 
+
 ```python
 #!/usr/bin/python
 shellcode  = "\x48\x31\xf6"     # xor rsi, rsi

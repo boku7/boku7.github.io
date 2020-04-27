@@ -16,24 +16,29 @@ tags:
 ![](/assets/images/SLAE64.png)
 
 # Overview
-For the third assignment of the SLAE64 course I created a 64 bit egghunter. To check if the memory is readable, the egghunter uses the `link()` system call. The egghunter scans the hosts process memory, byte by byte, in search for the egg. Once the egghunter finds the egg, it will check to see if there is 2 eggs or only one instance of the egg. If there is only 1 instance of the egg, then the egg hunter is probably reading the egg from itself. To overcome this issue, the egg hunter must find the egg twice.
+For the third assignment of the SLAE64 course I created a 64 bit egghunter. To check if the memory is readable, the egghunter uses the `link()` system call.   
+The egghunter scans the hosts process memory, byte by byte, in search for the egg. Once the egghunter finds the egg, it will check to see if there is 2 eggs or only one instance of the egg. If there is only 1 instance of the egg, then the egg hunter is probably reading the egg from itself. To overcome this issue, the egg hunter must find the egg twice.
 
 # Creating the EggHunter
+
 ## The Link System Call
 To find detailed information about the link system call, the first thing we do is consult the man(uel) pages.  
+
 ```bash
 user$ man link.2
 int link(const char *oldpath, const char *newpath);
 rax=0x56     rdi=Address         rsi=0x0
 ```  
+
 For the purpose of the egghunter, we do not care about what the function/system call really does. All we care about is that it will return an error if the memory address we feed it is not readable.   
-You may be thinking 
+You may be thinking: 
 + "Why do I need to know if the address is readable or not?"
 + "Why not just read/scan each byte of the memory space, regardless if it's readable or not?"  
 
 Well, if you try that, you will quickly discover that your egghunter crash the host program. To avoid crashing, we will discover readability by passing the memory address to link as the first argument `*oldpath`. For the second argument `*newpath` we will set that to 0.  
 
 #### Assembly for our Link Function
+
 ```asm
  lea rdi, [rdx+0x8]  ; ARG1=*oldpath
  xor rsi, rsi        ; ARG2=*newpath
