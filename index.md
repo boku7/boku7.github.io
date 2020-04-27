@@ -10,7 +10,8 @@
 + [Linux/x64 Password-Protected Reverse Shell](_posts/2020-04-14-SLAE64_2_RevShell.md)
 + [Linux/x64 EggHunter](_posts/2020-04-26-SLAE64_3_EggHunter.md)
 + [Linux/x64 Rotate Left Encoder](_posts/2020-04-26-SLAE64_4_ROLEncoder.md)
-+ [Linux/x64 MSFVenom Execve Analysis](_posts/2020-04-26-SLAE64_5-execveAnalysis.md)
++ [Linux/x64 MSF Venom Execve Analysis](_posts/2020-04-26-SLAE64_5-execveAnalysis.md)
++ [Linux/x64 MSF Venom Reverse Shell Analysis](_posts/2020-04-26-SLAE64_5-reverseShellAnalysis.md)
 
 
 # Win32 Exploit Dev
