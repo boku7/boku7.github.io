@@ -419,7 +419,7 @@ gdb-peda$ r
   - `IPPROTO_IP`
 
 ### Socket Assembly
-```asm
+```nasm
 ; int ipv4Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 ; rax = 0x29
 ; rdi = 0x2  = AF_INET
@@ -458,7 +458,7 @@ Address-Family| PORT| IP Address| 8 bytes of zeros
   - `socklen_t addrlen`
 
 ### Bind Assembly
-```asm 
+```nasm 
 ; bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
 ; rax = 0x31
 ; rdi = 0x3  =  ipv4Socket
@@ -515,7 +515,7 @@ gdb-peda$ hexdump $rsp 16
   - backlog
 
 #### Listen Assembly
-```asm
+```nasm
 ; int listen(int sockfd, int backlog);
 ; rax = 0x32    = listen syscall
 ; rdi = sockfd  = 0x3 = ipv4Socket
@@ -546,7 +546,7 @@ syscall
   - `socklen_t *addrlen`
 
 ##### Accept Assembly
-```asm
+```nasm
 ;accept
 ; rax = 0x2b
 ; rdi = sockfd  = 0x3 = ipv4Socket
@@ -595,7 +595,7 @@ syscall       ; accept returns client socket file-descriptor in RAX
 
 ##### dup2 Assembly
 
-```asm
+```nasm
 ; dup2
 xchg rdi, rax    ; RDI = sockfd / ClientSocketFD
 xor rsi, rsi
@@ -638,7 +638,7 @@ gdb-peda$ x/s 0x555555556004
 
 #### Execve Assembly
 
-```asm
+```nasm
 i;execve
 ; rax = 0x3b
 ; rdi = Pointer -> "/bin/bash"0x00
@@ -663,10 +663,9 @@ mov al, 0x3b
 syscall  ; call execve("/bin/bash", NULL, NULL)
 ```
 
-
 # Bindshell Assembly with Password
 
-```asm
+```nasm
 global _start
 
 section .text

@@ -64,7 +64,7 @@ Len: 36
 
 # The Rotate Right (ROR) Decoder
 
-```c
+```nasm
 ; Filename: rotateRightDecoder.nasm
 ; Author:   boku
 global _start

