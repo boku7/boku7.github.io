@@ -16,7 +16,7 @@ tags:
 ![](/assets/images/SLAE64.png)
 
 # Overview
-For the fifth assignment of the SLAE64 analized 3 payloads from msfvenom. This is the first payload, execve.
+For the fifth assignment of the SLAE64, I analyzed three payloads from msfvenom. This is the first payload, `linux/x64/exec`.
 
 # Execve Anaylsis
 We will be analyzing the msfvenom execve payload. This payload has a customizable command that execve will execute. To simplify the analysis, the command 'whoami' was chosen.
