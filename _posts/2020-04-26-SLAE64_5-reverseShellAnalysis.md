@@ -1,5 +1,5 @@
 ---
-title: SLAE64 Assignment 5 - MSFVenom Execve Analysis
+title: SLAE64 Assignment 5 - MSFVenom Reverse Shell Analysis
 date: 2020-4-26
 layout: single
 classes: wide
@@ -18,7 +18,7 @@ tags:
 # Overview
 For the fifth assignment of the SLAE64, I analyzed three payloads from msfvenom. This is the second payload, `linux/x64/shell_reverse_tcp`.
 
-# Execve Anaylsis
+# Reverse Shell Anaylsis
 We will be analyzing the msfvenom non-staged reverse shell payload. 
 
 ## Setting the Payload Options
@@ -49,7 +49,7 @@ unsigned char shellcode[] =
 + Right off the bat we can see that `\x7f\x01\x01\x01' is clearly our IP address `127.1.1.1`.
 
 ## Shellcode.c Host Program
-Here we add our shellcode to our C host program. We will compile our host program, and then use GDB for analysis of the execve payload.
+Here we add our shellcode to our C host program. We will compile our host program, and then use GDB for analysis of the non-staged reverse shell payload.
 
 ```c
 #include<stdio.h>
@@ -97,14 +97,14 @@ gdb-peda$ r
 ```
 
 ### Finding shellcode[]
-We will use the GDB step-into (`s`) command to move through our program until we reach the point where execution is passed to the shellcode[] array (our execve shellcode from msfvenom).
+We will use the GDB step-into (`s`) command to move through our program until we reach the point where execution is passed to the shellcode[] array (our non-staged reverse shell shellcode from msfvenom).
 ```bash
 => 0x555555555141 <main+28>:    call   rdx
 gdb-peda$ s
 ```
 + Step into rdx (shellcode[]).
 
-## Dumping MSFVenom Execve Assembly Instructions
+## Dumping MSFVenom Reverse Shell Assembly Instructions
 With the instruction pointer (RIP) on the first instruction of `shellcode`, dump the instructions of the entire payload.
 ```bash
 => 0x555555558040 <shellcode>:  push   0x29
