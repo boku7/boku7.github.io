@@ -1,5 +1,5 @@
 ---
-title: SLAE64 Assignment 6 - Polymorphic Read /etc/passwd
+title: SLAE64 Assignment 6 - Polymorphic Copy `/etc/passwd` to `/tmp/`
 date: 2020-4-26
 layout: single
 classes: wide
