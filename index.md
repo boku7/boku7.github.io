@@ -15,6 +15,7 @@
 + [Linux/x64 MSF Venom Bind Shell Analysis](_posts/2020-04-26-SLAE64_5-bindShellAnalysis.md)
 + [Linux/x64 Polymorphic Execve Shellcode](_posts/2020-04-26-SLAE64_6-poylmorphExecve.md)
 + [Linux/x64 Polymorphic SetUID 0 + Add Root User Shellcode](_posts/2020-04-27-SLAE64_6-polySetuid0+AddRootUser.md)
++ [Linux/x64 Polymorphic Polymorphic Read /etc/passwd](_posts/2020-04-27-SLAE64_6-polyReadEtcPasswd.md)
 + [Linux/x64 Cryptor & Decryptor Shellcode](_posts/2020-04-27-SLAE64_7-cryptor.md)
 
 

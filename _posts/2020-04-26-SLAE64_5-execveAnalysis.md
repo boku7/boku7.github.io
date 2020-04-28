@@ -19,7 +19,7 @@ tags:
 For the fifth assignment of the SLAE64, I analyzed three payloads from msfvenom. This is the first payload, `linux/x64/exec`.
 
 # Execve Anaylsis
-We will be analyzing the msfvenom execve payload. This payload has a customizable command that execve will execute. To simplify the analysis, the command 'whoami' was chosen.
+We will be analyzing the msfvenom execve payload. This payload has a customizable command that execve will execute. To simplify the analysis, the command `whoami` was chosen.
 ## Generating the MSFVenom Payload
 Here we generate the payload on Kali Linux and output it to the C format. This allows us to easy add it to our host shellcode.c program.
 ```bash
@@ -35,7 +35,6 @@ unsigned char shellcode[] =
 ## Shellcode.c Host Program
 Here we add our shellcode to our C host program. We will compile our host program, and then use GDB for analysis of the execve payload.
 ```c
-// Shellcode Title:  Linux/x64 - ROL Encoded Execve Shellcode (57 bytes)
 // Shellcode Author: Bobby Cooke
 // Date:             2020-04-26
 #include<stdio.h>
@@ -70,8 +69,8 @@ Breakpoint 1 at 0x1129
 gdb-peda$ r
 ```
 
-### Finding shellcode[]
-We will use the GDB step-into (`s`) command to move through our program until we reach the point where execution is passed to the shellcode[] array (our execve shellcode from msfvenom).
+### Finding `shellcode[]`
+We will use the GDB step-into `s` command to move through our program until we reach the point where execution is passed to the `shellcode[]` array (our execve shellcode from msfvenom).
 ```bash
 => 0x555555555141 <main+28>:    call   rdx
 gdb-peda$ s
@@ -150,7 +149,7 @@ RSI: 0x7fffffffe0f8 --> 0x632d ('-c')
 + At first look, GDB did not even show us a system call, but as we step through the shellcode we see that it was being obfuscated by the call instruction.
 
 ## The Command String
-When the shellcode performs the call instruction, this pushes the memory address of the instruction after call onto the top of the stack. In this case the next instruction after the call is actually the string "whoami". 
+When the shellcode performs the call instruction, this pushes the memory address of the instruction after call onto the top of the stack. In this case the next instruction after the call is actually the string `whoami`. 
 ```bash 
 0x55555555805b <shellcode+27>:       call   0x555555558067 <shellcode+39>
 0x555555558060 <shellcode+32>:       ja     0x5555555580ca
