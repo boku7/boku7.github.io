@@ -320,3 +320,10 @@ id
 uid=0(root) gid=0(root) groups=0(root),46(plugdev)
 ```
 
+## SLAE64 Blog Proof
+```bash
+This blog post has been created for completing the requirements of the x86_64 Assembly Language and Shellcoding on Linux (SLAE64):
+    https://www.pentesteracademy.com/course?id=7
+SLAE/Student ID: PA-10913
+```
+

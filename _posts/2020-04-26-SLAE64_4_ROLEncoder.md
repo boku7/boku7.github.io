@@ -153,3 +153,11 @@ root# echo $$ | xargs ps
   PID TTY      STAT   TIME COMMAND
  3501 pts/3    S      0:00 [bash]
 ```
+
+## SLAE64 Blog Proof
+```bash
+This blog post has been created for completing the requirements of the x86_64 Assembly Language and Shellcoding on Linux (SLAE64):
+    https://www.pentesteracademy.com/course?id=7
+SLAE/Student ID: PA-10913
+```
+

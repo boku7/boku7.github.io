@@ -315,3 +315,11 @@ root# echo "passwd md5sum:  $(md5sum /etc/passwd)" && echo "outfile md5sum: $(md
 passwd md5sum:  754db0c3ea50e6072bb3585354d31a98  /etc/passwd
 outfile md5sum: 754db0c3ea50e6072bb3585354d31a98  /tmp/outfile
 ```
+
+## SLAE64 Blog Proof
+```bash
+This blog post has been created for completing the requirements of the x86_64 Assembly Language and Shellcoding on Linux (SLAE64):
+    https://www.pentesteracademy.com/course?id=7
+SLAE/Student ID: PA-10913
+```
+

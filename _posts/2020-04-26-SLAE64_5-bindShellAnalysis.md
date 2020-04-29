@@ -252,3 +252,10 @@ RSI: 0x7fffffffe0d8 --> 0x7fffffffe0e8 --> 0x68732f6e69622f ('/bin/sh')
 ```
 + And finally, this is our bind shell spawning the `/bin/sh` for the connection.
 
+
+## SLAE64 Blog Proof
+```bash
+This blog post has been created for completing the requirements of the x86_64 Assembly Language and Shellcoding on Linux (SLAE64):
+    https://www.pentesteracademy.com/course?id=7
+SLAE/Student ID: PA-10913
+```
