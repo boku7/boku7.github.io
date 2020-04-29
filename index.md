@@ -7,7 +7,9 @@
 --- 
 # SLAE64 Assignments
 + [Linux/x64 Password-Protected Bind Shell](/_posts/2020-04-06-SLAE64_1_BindShell.md)
++ [Linux/x64 No-Null Bind Shell](/_posts/2020-04-28-SLAE64_1_RemoveNullBsh.md)
 + [Linux/x64 Password-Protected Reverse Shell](_posts/2020-04-14-SLAE64_2_RevShell.md)
++ [Linux/x64 No-Null Reverse Shell](/_posts/2020-04-28-SLAE64_2_RemoveNullRsh.md)
 + [Linux/x64 EggHunter](_posts/2020-04-26-SLAE64_3_EggHunter.md)
 + [Linux/x64 Rotate Left Encoder](_posts/2020-04-26-SLAE64_4_ROLEncoder.md)
 + [Linux/x64 MSF Venom Execve Analysis](_posts/2020-04-26-SLAE64_5-execveAnalysis.md)
