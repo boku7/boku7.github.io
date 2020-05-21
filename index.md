@@ -1,8 +1,6 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSCE|OSCP||OSWP
-### SLAE64|SLAE32|JFP
-### CCNA|LPIC-1
+### OSCE|OSCP||OSWP|SLAE64|SLAE32|JFP|CCNA|LPIC-1
   
 <script src="https://www.hackthebox.eu/badge/151672"></script>
 
