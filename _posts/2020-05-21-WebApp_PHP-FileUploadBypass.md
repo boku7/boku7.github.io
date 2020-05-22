@@ -16,29 +16,27 @@ Techniques gathered to bypass PHP file upload filters.
 
 ### PHP Null Byte
 
-+ Only usable with older PHP versions ~<5.4
-
 ```
 photo.php%00.jpg
 ```
++ Only usable with older PHP versions ~<5.4
 
 ### Apache Dual Extentions
-
-+ Apache has a setting were a file can have 2 extensions
-+ Apache will process the file as either type based on the extensions
 
 ```
 photo.php.png
 ```
++ Apache has a setting were a file can have 2 extensions
++ Apache will process the file as either type based on the extensions
+
 
 ### Alternate PHP Extentions
-
-+ There are many different file extensions for PHP.
-+ Developers may blacklist `*.php` but forget `*.php3`
 
 ```
 .phtml  .php3   .php4   .php5   .phps
 ```
++ There are many different file extensions for PHP.
++ Developers may blacklist `*.php` but forget `*.php3`
 
 ### Case Sensitive Bypass
 
