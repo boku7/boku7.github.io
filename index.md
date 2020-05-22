@@ -1,10 +1,16 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSCE|OSCP||OSWP|SLAE64|SLAE32|JFP|CCNA|LPIC-1
+### OSCE|OSCP|OSWP|SLAE64|SLAE32|JFP|CCNA|LPIC-1
   
 <script src="https://www.hackthebox.eu/badge/151672"></script>
 
 --- 
+# Published
++ [Exploits](/Exploits.md)
+
+# Web Application Pentesting
++ [PHP - File Upload Bypass](/_posts/2020-05-21-WebApp_PHP-FileUploadBypass.md)
+
 # SLAE64 Assignments
 + [Linux/x64 Password-Protected Bind Shell](/_posts/2020-04-06-SLAE64_1_BindShell.md)
 + [Linux/x64 No-Null Bind Shell](/_posts/2020-04-28-SLAE64_1_RemoveNullBsh.md)
