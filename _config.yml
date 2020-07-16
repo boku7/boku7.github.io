@@ -15,7 +15,7 @@ search: true
 author:
   name: "Boku"
   avatar: "/assets/images/boku7.png"
-  bio: "OSCE OSCP SLAE32 OSWP CCNA LPIC"
+  bio: "OSCE eCXD OSCP SLAE64|32 OSWP"
   location: "West Coast"
   links:
     - label: "HomePage"

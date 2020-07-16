@@ -1,17 +1,25 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSCE|OSCP|OSWP|SLAE64|SLAE32|JFP|CCNA|LPIC-1
+### OSCE|eCXD|OSCP|OSWP|SLAE32|64
   
 <script src="https://www.hackthebox.eu/badge/151672"></script>
 
 --- 
 # Published
-+ [Exploits](/Exploits.md)
++ [CVE-2020-14972](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-14972)
++ [CVE-2020-14973](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-14973)
++ [CVE-2017-1000475(PoC)](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1000475)
++ [Exploit Proof of Concepts](/Exploits.md)
++ [Online Course Registration 1.0 Remote Code Execution (WebApp) - PacketStormSecurity](https://packetstormsecurity.com/files/158439/Online-Course-Registration-1.0-Remote-Code-Execution.html)
 
 # Web Application Pentesting
 + [PHP - File Upload Bypass](/_posts/2020-05-21-WebApp_PHP-FileUploadBypass.md)
 
-# SLAE64 Assignments
+# macOS Shellcoding
++ [macOS/x64 zsh RickRolling Shellcode - PacketStormSecurity](https://packetstormsecurity.com/files/157884/macOS-x64-zsh-RickRolling-Shellcode.html)
+
+# Linux/x64 Shellcoding
++ [Linux/x64 - Password (P3WP3Wl4ZerZ) + Bind (0.0.0.0:4444/TCP) Shell (/bin/bash) + Null-free Shellcode (272 Bytes) - Exploit-DB](https://www.exploit-db.com/shellcodes/48379)
 + [Linux/x64 Password-Protected Bind Shell](/_posts/2020-04-06-SLAE64_1_BindShell.md)
 + [Linux/x64 No-Null Bind Shell](/_posts/2020-04-28-SLAE64_1_RemoveNullBsh.md)
 + [Linux/x64 Password-Protected Reverse Shell](_posts/2020-04-14-SLAE64_2_RevShell.md)
@@ -27,13 +35,19 @@
 + [Linux/x64 Cryptor & Decryptor Shellcode](_posts/2020-04-27-SLAE64_7-cryptor.md)
 
 
-# Win32 Exploit Dev
-+ [Enviornment Setup](/_posts/2019-10-20-Win32-Env.md)
-+ [WinExec(calc.exe) Shellcode](/_posts/2019-10-20-Win32.md)
-+ [Find kernel32.dll within a host process](/_posts/2019-10-22-Win32-dynamic-shellcode.md)
-+ [Find GetProcAddress() within kernel32.dll](/_posts/2019-11-05-Win32-GetProcAddress.md)
+# Windows Shellcoding
++ [ Windows/x86 - MSVCRT System + Dynamic Null-free + Add RDP Admin + Disable Firewall + Enable RDP Shellcode (644 Bytes)](https://www.exploit-db.com/shellcodes/48355)
++ [Windows/x64 - WinExec Add-Admin (ROOT/I@mR00T$) Dynamic Null-Free Shellcode (210 Bytes)](https://www.exploit-db.com/shellcodes/48252)
++ [Windows/x64 - Dynamic MessageBoxA or MessageBoxW PEB & Import Table Method Shellcode (232 bytes)](https://www.exploit-db.com/shellcodes/48229)
++ [Windows\x86 - Null-Free WinExec Calc.exe Shellcode (195 bytes)](https://www.exploit-db.com/shellcodes/48116)
++ [Windows/x86 - Dynamic Bind Shell + Null-Free Shellcode (571 Bytes)](https://www.exploit-db.com/shellcodes/47980)
++ [Enviornment Setup (old)](/_posts/2019-10-20-Win32-Env.md)
++ [WinExec(calc.exe) Shellcode (old)](/_posts/2019-10-20-Win32.md)
++ [Find kernel32.dll within a host process (old)](/_posts/2019-10-22-Win32-dynamic-shellcode.md)
++ [Find GetProcAddress() within kernel32.dll (old)](/_posts/2019-11-05-Win32-GetProcAddress.md)
 
-# SLAE32 Assignments
+# Linux/x86 Shellcoding
++ [Linux/x86 - Bind Shell Generator Shellcode (114 bytes)](https://www.exploit-db.com/shellcodes/48032)
 + [1 - TCP Bind-Shell Shellcode](/_posts/2019-08-10-SLAE32_1_BindShell.md)
 + [2 - Reverse-Shell Shellcode](/_posts/2019-08-14-SLAE32_2_ReverseShell.md)
 + [3 - Egghunter Shellcode](/_posts/2019-08-18-SLAE32_3_egghunter.md)
