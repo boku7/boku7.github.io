@@ -17,7 +17,7 @@
 
 # Web Application Pentesting
 + [PHP - File Upload Bypass](/_posts/2020-05-21-WebApp_PHP-FileUploadBypass.md)
-+ [Cross-Site Scripting (XSS) Payloaads](https://github.com/boku7/XSS-Clientside-Attacks)
++ [Cross-Site Scripting (XSS) Payloads](https://github.com/boku7/XSS-Clientside-Attacks)
 
 # macOS Shellcoding
 + [macOS/x64 zsh RickRolling Shellcode - PacketStormSecurity](https://packetstormsecurity.com/files/157884/macOS-x64-zsh-RickRolling-Shellcode.html)
