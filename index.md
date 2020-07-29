@@ -1,22 +1,23 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSCE | eCXD | OSCP | SLAE32|64 | OSWP 
+### OSCE | eCXD | OSCP | SLAE32|64 | eWPT | OSWP 
   
 <script src="https://www.hackthebox.eu/badge/151672"></script>
 
 --- 
 # Published
-+ [Libre Health EHR - Remote Code Execution 0-day](https://packetstormsecurity.com/files/158471/LibreHealth-2.0.0-Remote-Code-Execution.html)
++ [Libre Health EHR - Remote Code Execution 0-day (Exploit-DB)](https://www.exploit-db.com/exploits/48702)
     - [xDev Files](https://github.com/boku7/LibreHealth-authRCE)
 + [CVE-2020-14972](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-14972)
 + [CVE-2020-14973](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-14973)
-+ [CVE-2017-1000475(PoC)](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1000475)
++ [CVE-2017-1000475 (PoC)](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1000475)
 + [Exploit Proof of Concepts](/Exploits.md)
-+ [Online Course Registration 1.0 Remote Code Execution (WebApp) - PacketStormSecurity](https://packetstormsecurity.com/files/158439/Online-Course-Registration-1.0-Remote-Code-Execution.html)
++ [Online Course Registration 1.0 Remote Code Execution (Exploit-DB)](https://www.exploit-db.com/exploits/48704)
     - [xDev Files](https://github.com/boku7/onlineCourseReg-RCE)
 
 # Web Application Pentesting
 + [PHP - File Upload Bypass](/_posts/2020-05-21-WebApp_PHP-FileUploadBypass.md)
++ [Cross-Site Scripting (XSS) Payloaads](https://github.com/boku7/XSS-Clientside-Attacks)
 
 # macOS Shellcoding
 + [macOS/x64 zsh RickRolling Shellcode - PacketStormSecurity](https://packetstormsecurity.com/files/157884/macOS-x64-zsh-RickRolling-Shellcode.html)
