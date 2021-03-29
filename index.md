@@ -1,8 +1,6 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSWE | eWPTXv2 | eMAPT | CRTP | OSCE | eCXD | OSCP | SLAE32|64 | eWPT | OSWP 
-  
-<script src="https://www.hackthebox.eu/badge/151672"></script>
+### OSWE|eWPTXv2|eMAPT|CRTP|OSCE|eCXD|OSCP|SLAE32|64|eWPT|OSWP 
 
 --- 
 # Published
