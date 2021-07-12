@@ -10,10 +10,13 @@ tags:
   - DeviceCode
   - RedTeam
 --- 
+# Co-Author & Co-Developer: Stephan Borosh
 
 ## Overview
-Walkthrough of setting up infrastructure on Azure and how to perform "the device code" phishing attack during red team engagements.
-Techniques and methodologies Stephan Borosh shared with me.
+Infrastructure setup & tips for catching a "Device Code Phish" during red team engagements.
+
+I recommend reading Dr Nestori Syynimaa's blog post on this technique to get an understanding on how this attack works. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
+- https://o365blog.com/post/phishing/
 
 ### Recon - Does the target use Azure Active Directory?
 - Install and import AADInternals into powershell
@@ -34,7 +37,6 @@ Tenant brand:       The Harvester
 Tenant name:        theharvester
 Tenant id:          1d5551a0-f4f2-4101-9c3b-394247ec7e08
 DesktopSSO enabled: False
-
 Name                          DNS   MX  SPF DMARC Type    STS
 ----                          ---   --  --- ----- ----    ---
 theharvester.onmicrosoft.com True True True False Managed
@@ -50,9 +52,31 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 - We observe that the target domain theharvester.world is registered to Azure Active Directory, and their email services are True. This means that the target uses Exchange Online for their email.
   - We can confirm this by using the linux dig tool:
   ```bash
-bobby.cooke$ dig -t MX +short theHarvester.World
+dig -t MX +short theHarvester.World
 0 theharvester-world.mail.protection.outlook.com.
   ```
+
+### Infrastruture - Setting up for the Azure Device Code Phish
+
+#### Create an Azure Account
++ Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/) & login to [portal.azure.com](https://portal.azure.com/)
+- You will need "verify" with an email, phone number, and credit card
+
+#### Create an Azure Active Directory Tenant
++ Go to the Azure Active Directory service from within your Azure portal
+![](/assets/images/gotoAAD.png)
++ Create a new Azure Active Directory Tenant (Azure AD > Overview > Manage Tenant > +Create)
+![](/assets/images/createTenant.png)
++ Switch to the newly created Azure AD Tenant (Azure AD > Overview > Manage Tenant > Select Tenant > Switch)
++ Create an admin user within the your tenants Azure AD (AAD > Users > New User)
+  - Assign them the role Global Administrator
+  ![](/assets/images/newAdminUser.png)
+
+#### Office 365 Licenses & Phish Puppets
++ Signin to portal.office.com with your new admin user
++ Go to the admin console and get a 25 user subscription for Office Business Premium
++ Create a user that will be used for phishing and assign them a license
+
 
 ## External References 
 [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
