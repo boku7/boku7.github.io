@@ -26,6 +26,9 @@ tags:
 ## Overview
 Infrastructure setup & tips for catching a "Device Code Phish" during red team engagements.
 
+The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organzations spam filters and email protection appliances.   
+When an Azure user registers a tenant in Azure Active Directory, they are provided with an .onmicrosoft.com domain. This tenant can be used not only to deliver your phishes to some organizations inboxes, but also confuse targeted users who are unfimiliar with how Azure services work.
+
 First read Dr Nestori Syynimaa's blog post. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 
@@ -99,6 +102,7 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 + I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
   - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
 
-## External References 
+## References 
+[TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)
 [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 [o365blog.com - AAD Internals](https://o365blog.com/aadinternals/)
