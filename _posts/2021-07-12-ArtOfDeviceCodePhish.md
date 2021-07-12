@@ -10,16 +10,16 @@ tags:
   - DeviceCode
   - RedTeam
 --- 
-# Co-Author & Co-Developer: Stephan Borosh
+## Co-Author & Co-Developer: Stephan Borosh
 
 ## Overview
 Infrastructure setup & tips for catching a "Device Code Phish" during red team engagements.
 
-I recommend reading Dr Nestori Syynimaa's blog post on this technique to get an understanding on how this attack works. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
-- https://o365blog.com/post/phishing/
+First read Dr Nestori Syynimaa's blog post. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
++ [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 
-### Recon - Does the target use Azure Active Directory?
-- Install and import AADInternals into powershell
+## Recon - Does the target use Azure Active Directory?
+#### Install and import AADInternals into powershell
 ```powershell
 # Install the module
 Install-Module AADInternals
@@ -28,7 +28,7 @@ Import-Module AADInternals
 ```
   - https://o365blog.com/aadinternals/#installation
 
-- Check if the target domain uses Azure Active Directory
+#### Check if the target domain uses Azure Active Directory
 
 ##### Target is registered to Azure Active Directory
 ```powershell
@@ -42,13 +42,6 @@ Name                          DNS   MX  SPF DMARC Type    STS
 theharvester.onmicrosoft.com True True True False Managed
 theharvester.world           True True True False Managed
 ```
-
-##### Target is *NOT* registered to Azure Active Directory
-```powershell
-Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
-Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
-```
-
 - We observe that the target domain theharvester.world is registered to Azure Active Directory, and their email services are True. This means that the target uses Exchange Online for their email.
   - We can confirm this by using the linux dig tool:
   ```bash
@@ -56,20 +49,26 @@ dig -t MX +short theHarvester.World
 0 theharvester-world.mail.protection.outlook.com.
   ```
 
-### Infrastruture - Setting up for the Azure Device Code Phish
+##### Target is *NOT* registered to Azure Active Directory
+```powershell
+Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
+Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
+```
+
+## Infrastruture - Setting up for the Azure Device Code Phish
 
 #### Create an Azure Account
 + Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/) & login to [portal.azure.com](https://portal.azure.com/)
 - You will need "verify" with an email, phone number, and credit card
 
 #### Create an Azure Active Directory Tenant
-+ Go to the Azure Active Directory service from within your Azure portal
++ Go to the Azure Active Directory service from within your Azure portal  
 ![](/assets/images/gotoAAD.png)
-+ Create a new Azure Active Directory Tenant (Azure AD > Overview > Manage Tenant > +Create)
++ Create a new Azure Active Directory Tenant (Azure AD > Overview > Manage Tenant > +Create)  
 ![](/assets/images/createTenant.png)
 + Switch to the newly created Azure AD Tenant (Azure AD > Overview > Manage Tenant > Select Tenant > Switch)
 + Create an admin user within the your tenants Azure AD (AAD > Users > New User)
-  - Assign them the role Global Administrator
+  - Assign them the role Global Administrator  
   ![](/assets/images/newAdminUser.png)
 
 #### Office 365 Licenses & Phish Puppets

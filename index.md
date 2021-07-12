@@ -1,6 +1,5 @@
-
-[LinkedIn](https://www.linkedin.com/in/bobby-cooke/) • [Twitter](https://twitter.com/0xboku) • [GitHub](github.com/boku7)  
-[Exploit-DB](exploit-db.com/?author=10275) • [PacketStormSecurity](https://packetstormsecurity.com/users/boku)  
+Boku / Bobby Cooke
+[LinkedIn](https://www.linkedin.com/in/bobby-cooke/) • [Twitter](https://twitter.com/0xboku) • [GitHub](github.com/boku7) • [Exploit-DB](exploit-db.com/?author=10275) • [PacketStormSecurity](https://packetstormsecurity.com/users/boku)  
 OSCE|OSWE|WPTX|CRTP|OSCP|SLAE  
 
 --- 
