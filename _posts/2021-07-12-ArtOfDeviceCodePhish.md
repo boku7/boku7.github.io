@@ -33,9 +33,9 @@ tags:
 
 
 ## Overview
-Infrastructure setup & tips for catching & exploiting a Device Code Phish during engagements.
+Guide for Azure Device Code phishing - infrastructure setup to exploitation.
 
-The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organzations spam filters and email protection appliances.   
+The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organzations spam filters & email protection services.   
 When an Azure user registers a tenant in Azure Active Directory, they are provided with an .onmicrosoft.com domain. This tenant can be used not only to deliver your phishes to some organizations inboxes, but also confuse targeted users who are unfimiliar with how Azure services work.
 
 First read Dr Nestori Syynimaa's blog post. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
@@ -94,8 +94,8 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
   - Assign them the role Global Administrator  
   ![](/assets/images/newAdminUser.png)
 
-#### Office 365 Licenses & Phish Puppets
-+ Signin to portal.office.com with your new admin user
+#### Assign Office 365 Licenses & Phish Puppets
++ Sign-in to portal.office.com with your new admin user
 + Go to the admin console and get a 25 user subscription for Office Business Premium
 + Create a user that will be used for phishing and assign them a license
 
@@ -111,6 +111,19 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 + I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
   - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
 
+##### Enable DKIM for your Domain
++ From your windows VM, open a powershell window and install the ExchangeOnlineManagement module
+```powershell
+Install-Module -Name ExchangeOnlineManagement
+Import-Module ExchangeOnlineManagement
+```
++ Connect to the EXO module with your admin user you created for your phishing domain and enable DKIM for your tenant
+```powershell
+Connect-ExchangeOnline -UserPrincipalName admin@msftauth.onmicrosoft.com
+# Login to prompt
+New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
+```
+
 ## Phishing
 
 #### Creating a Phishing Email Template
@@ -121,7 +134,7 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 
 #### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
 
-#### RefreshTo-AllTheThings
+#### RefreshTo-Outlook
 
 #### Dumping Emails with TokenTactics
 
