@@ -1,8 +1,12 @@
 
 ![](/pics/BOKU7.PNG)  
-### OSWE|eWPTXv2|eMAPT|CRTP|OSCE|eCXD|OSCP|SLAE32|64|eWPT|OSWP 
+### OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
 
 --- 
+# Red Team
+## Azure Cloud
++ [The Art of the Device Code Phish](_posts/2021-07-12-ArtOfDeviceCodePhish.md)
+
 # Published
 + [Libre Health EHR - Remote Code Execution 0-day (Exploit-DB)](https://www.exploit-db.com/exploits/48702)
     - [xDev Files](https://github.com/boku7/LibreHealth-authRCE)
