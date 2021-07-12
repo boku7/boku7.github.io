@@ -4,7 +4,7 @@
 
 --- 
 # Red Team
-## Azure Cloud
+*Azure Cloud*
 + [The Art of the Device Code Phish](_posts/2021-07-12-ArtOfDeviceCodePhish.md)
 
 # Published
