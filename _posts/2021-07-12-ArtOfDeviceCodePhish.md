@@ -22,6 +22,15 @@ tags:
   + [Office 365 Licenses & Phish Puppets](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#office-365-licenses--phish-puppets)
 + [Infrastruture - Windows Phishing VM](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#Setup-a-Windows-VM-for-Phishing)
   + [ Setup Windows 10 Outlook Desktop App]()
++ [Phishing]()
+  + [Creating a Phishing Email Template]()
+  + [Phishing with TokenTactics]()
++ [Hook3d a Phish - Let the Games Begin]()
+  + [AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++]()
+  + [RefreshTo-AllTheThings]()
+  + [Dumping Emails with TokenTactics]()
+  + [Opening Outlook Web App in a Browser with TokenTactics]()
+
 
 ## Overview
 Infrastructure setup & tips for catching a "Device Code Phish" during red team engagements.
@@ -108,13 +117,15 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 
 #### Phishing with TokenTactics
 
-## Hooking a Phish - Let the Games Begin
+## Hook3d a Phish - Let the Games Begin
 
 #### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
 
-#### RefreshTo-\*
+#### RefreshTo-AllTheThings
 
-#### Access Token to OWA
+#### Dumping Emails with TokenTactics
+
+#### Opening Outlook Web App in a Browser with TokenTactics
 
 ## References 
 + [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)  
