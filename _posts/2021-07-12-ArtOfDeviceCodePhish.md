@@ -14,16 +14,14 @@ tags:
 ### Index
 + [Overview](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#overview)
 + [Recon - Does the target use Azure Active Directory?](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#recon---does-the-target-use-azure-active-directory)
-  + [Install and import AADInternals into powershellPermalink](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#install-and-import-aadinternals-into-powershell)
+  + [Install and import AADInternals into powershell](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#install-and-import-aadinternals-into-powershell)
   + [Check if the target domain uses Azure Active Directory](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#check-if-the-target-domain-uses-azure-active-directory)
-    + [Target is registered to Azure Active Directory](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#target-is-registered-to-azure-active-directory)
-    + [Target is NOT registered to Azure Active Directory](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#target-is-not-registered-to-azure-active-directory)
-+ [Infrastruture - Setting up for the Azure Device Code Phish](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#infrastruture---setting-up-for-the-azure-device-code-phish)
++ [Infrastruture - Azure Phishing Tenant](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#infrastruture---setting-up-for-the-azure-device-code-phish)
   + [Create an Azure Account](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#create-an-azure-account)
   + [Create an Azure Active Directory Tenant](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#create-an-azure-active-directory-tenant)
   + [Office 365 Licenses & Phish Puppets](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#office-365-licenses--phish-puppets)
-+ [Setup a Windows VM for Phishing](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#Setup-a-Windows-VM-for-Phishing)
-  + [Install Office & Logging into the Outlook Desktop App]()
++ [Infrastruture - Windows Phishing VM](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#Setup-a-Windows-VM-for-Phishing)
+  + [ Setup Windows 10 Outlook Desktop App]()
 
 ## Overview
 Infrastructure setup & tips for catching a "Device Code Phish" during red team engagements.
@@ -68,7 +66,7 @@ Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
 Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ```
 
-## Infrastruture - Setting up for the Azure Device Code Phish
+## Infrastruture - Azure Phishing Tenant
 
 #### Create an Azure Account
 + Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/) & login to [portal.azure.com](https://portal.azure.com/)
@@ -89,14 +87,14 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 + Go to the admin console and get a 25 user subscription for Office Business Premium
 + Create a user that will be used for phishing and assign them a license
 
-#### Setup a Windows VM for Phishing
+## Infrastruture - Windows Phishing VM
 + Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
 + Create a windows VM using a prebuilt VM package or an ISO.
   - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
     - Use a mac or linux box for the ISO download
   - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
 
-##### Install Office & Logging into the Outlook Desktop App
+##### Setup Windows 10 Outlook Desktop App 
 + On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
 + I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
   - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
