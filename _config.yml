@@ -13,9 +13,9 @@ masthead_title: "HomePage"
 search: true
 # Site Author
 author:
-  name: "Boku"
+  name: "Bobby Cooke"
   avatar: "/assets/images/boku7.png"
-  bio: "OSWE eWPTX eMAPT CRTP OSCE eCXD OSCP SLAE64|32 OSWP"
+  bio: "xDev|malDev|AppSec|RedTeam"
   location: "West Coast"
   links:
     - label: "HomePage"

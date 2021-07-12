@@ -1,6 +1,13 @@
 
-![](/pics/BOKU7.PNG)  
+![](/pics/BOKU7.PNG) | ![](/assets/images/bc-profile.jpg)
+Boku || Bobby Cooke
 ### OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
++ https://www.linkedin.com/in/bobby-cooke/
++ https://twitter.com/0xboku
++ github.com/boku7
++ exploit-db.com/?author=10275
++ exploit-db.com/shellcodes?author=10275
++ https://packetstormsecurity.com/users/boku
 
 --- 
 # Red Team
