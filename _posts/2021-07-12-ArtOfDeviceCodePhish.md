@@ -103,6 +103,6 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
   - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
 
 ## References 
-[TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)
-[o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
-[o365blog.com - AAD Internals](https://o365blog.com/aadinternals/)
++ [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)  
++ [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)  
++ [o365blog.com - AAD Internals](https://o365blog.com/aadinternals/)
