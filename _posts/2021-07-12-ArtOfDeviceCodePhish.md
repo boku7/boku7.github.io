@@ -102,6 +102,20 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 + I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
   - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
 
+## Phishing
+
+#### Creating a Phishing Email Template
+
+#### Phishing with TokenTactics
+
+## Hooking a Phish - Let the Games Begin
+
+#### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
+
+#### RefreshTo-\*
+
+#### Access Token to OWA
+
 ## References 
 + [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)  
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)  
