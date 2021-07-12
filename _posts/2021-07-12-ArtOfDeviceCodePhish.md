@@ -22,6 +22,8 @@ tags:
   + [Create an Azure Account](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#create-an-azure-account)
   + [Create an Azure Active Directory Tenant](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#create-an-azure-active-directory-tenant)
   + [Office 365 Licenses & Phish Puppets](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#office-365-licenses--phish-puppets)
++ [Setup a Windows VM for Phishing](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#Setup-a-Windows-VM-for-Phishing)
+  + [Install Office & Logging into the Outlook Desktop App]()
 
 ## Overview
 Infrastructure setup & tips for catching a "Device Code Phish" during red team engagements.
@@ -87,6 +89,17 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 + Go to the admin console and get a 25 user subscription for Office Business Premium
 + Create a user that will be used for phishing and assign them a license
 
+#### Setup a Windows VM for Phishing
++ Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
++ Create a windows VM using a prebuilt VM package or an ISO.
+  - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
+    - Use a mac or linux box for the ISO download
+  - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
+
+##### Install Office & Logging into the Outlook Desktop App
++ On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
++ I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
+  - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
 
 ## External References 
 [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
