@@ -14,15 +14,20 @@ search: true
 # Site Author
 author:
   name: "Bobby Cooke"
-  avatar: "/assets/images/boku7.png"
-  bio: "xDev|malDev|AppSec|RedTeam"
+  avatar: "/assets/images/bc-profile.jpg"
+  bio: "xDev•malDev"
   location: "West Coast"
   links:
     - label: "HomePage"
-      url: "https://boku7.github.io"
+      url: "https://0xboku.com"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/boku7"
+    - label: "Twitter"
+      icon: "fab fa-fw fa-twitter-square"
+      url: "https://twitter.com/0xBoku"
+    - label: "LinkedIn"
+      url: "https://www.linkedin.com/in/bobby-cooke/"
 teaser: assets/images/slae32-teaser.png
 
 #Site Settings
