@@ -31,7 +31,7 @@ title: "Boku"
 title_separator: "-"
 name: "Boku"
 description: "Pentesting & Exploit Dev"
-url: "https://boku7.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+url: "https://0xboku.com" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl: # the subpath of your site, e.g. "/blog"
 repository: "boku7/boku7.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 breadcrumbs: false # true, false (default)
