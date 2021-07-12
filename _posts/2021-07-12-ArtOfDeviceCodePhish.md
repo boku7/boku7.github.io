@@ -33,7 +33,7 @@ tags:
 
 
 ## Overview
-Infrastructure setup & tips for catching a "Device Code Phish" during red team engagements.
+Infrastructure setup & tips for catching & exploiting a Device Code Phish during engagements.
 
 The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organzations spam filters and email protection appliances.   
 When an Azure user registers a tenant in Azure Active Directory, they are provided with an .onmicrosoft.com domain. This tenant can be used not only to deliver your phishes to some organizations inboxes, but also confuse targeted users who are unfimiliar with how Azure services work.
