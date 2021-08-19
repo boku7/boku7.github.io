@@ -18,7 +18,7 @@ This post covers a walkthrough of creating the Cobalt Strike Beacon Object File 
 ![](/assets/images/whereAmIBof/bangPeb.png)
 
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
-TEB (GS Register) --> PEB --> PEB.ProcessParamters --> ProcessParamters --> Environment
+TEB (GS Register) --> PEB --> ProcessParameters --> Environment
 
 ```
 # TEB Address
@@ -66,7 +66,7 @@ TEB at 00000000002ae000
     PEB Address:          00000000002ad000
 ```
 + We can see that the PEB Address is `0x2ad000` for our process.
-+ Although we can see the PEB address here, we need to know the offset to the PEB Address pointer within the TEB, so we can do this programatically in our BOF.
++ Although we can see the PEB address here, we need to know the offset to the PEB Address pointer within the TEB, so we can do this programmatically in our BOF.
 
 ### Parsing the TEB Structure in Memory
 Using the TEB address we discovered by using the `!teb` command, we will feed that into the `dt` command and parse the memory at the TEB Address `0x2ae000` so we can discover the offset of the PEB Address.
@@ -85,10 +85,11 @@ ntdll!_TEB
 + We can see that the PEB Address is at an offset of `+0x060` within the TEB.
 
 ### Creating TEB to PEB Shellcode
-Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programatically. We will make sure this is Position Independant Code (PIC) by using the GS register to discover the TEB.  
+Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programmatically . We will make sure this is Position Independent Code (PIC) by using the GS register to discover the TEB.  
 
 + To test that this works, we will open our PE file in x96DBG.
-+ X96DBG has advantages over WinDBG, and WinDBG has advantages over x96DBG. I switch between them allot depending on what i'm trying to do.
+
++ X96DBG has advantages over WinDBG, and WinDBG has advantages over x96DBG. I switch between them allot depending on what I'm trying to do.
 + Set a break point anywhere. Then select the current line that RIP is on.
 + Press the spacebar and edit the assembly.
 
@@ -101,7 +102,7 @@ Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to
   + We are referencing the TEB address using the GS register. This is a Windows internals operating system functionality.
   + We are telling the processor to move the 8 byte value at `TEB+0x60` into the `RBX` register.
   + Our PEB Adress is at `TEB+0x60`.
-+ Now that we have our 2 instruction in, we press `F7` to step forward and execute our instructions.
++ Now that we have our 2 instructions in, we press `F7` to step forward and execute our instructions.
 ![](/assets/images/whereAmIBof/pebAddress.png)     
 + The address of the PEB is in `RBX` and is `0x31E000`.
 
@@ -132,7 +133,7 @@ PEB at 00000000002ad000
   + We can see that `!peb` command parses out the PEB, the Loader (Ldr), the Process Parameters, as well as the Environment information we are targeting.
 
 ### Walk the PEB Struct to find ProcessParameters Struct
-The Process Enviroment Block (PEB) contains allot of information. Right now, we are discovering where the `ProcessParamters` struct exists within the PEB. We will note the offset: `+0x020 ProcessParameters`.
+The Process Environment Block (PEB) contains allot of information. Right now, we are discovering where the `ProcessParameters` struct exists within the PEB. We will note the offset: `+0x020 ProcessParameters`.
 ```
 0:000> dt !_PEB 00000000002ad000
 ntdll!_PEB
@@ -152,7 +153,7 @@ ntdll!_PEB
 ## From ProcessParameters to Environment
 
 ### Walk the ProcessParameters Struct to find our Environment
-From the ProcessParamters Struct we will want to note the pointer to the `Environment` and the `EnvironmentSize`.
+From the ProcessParameters Struct we will want to note the pointer to the `Environment` and the `EnvironmentSize`.
 
 ```
 0:000> dx -r1 ((ntdll!_RTL_USER_PROCESS_PARAMETERS *)0x7423b0)
@@ -199,15 +200,15 @@ Now that we know the address and size of the Environment, we can view the memory
   + Windows Unicode strings are 2 bytes (4 hex characters).
 + We can see that the Unicode strings end with a `00 00` unicode byte.
  
-## Assembly Shellcode to get to Enviroment from Anywhere in Memory
+## Assembly Shellcode to get to Environment from Anywhere in Memory
 
-TEB (GS Register) --> PEB --> PEB.ProcessParamters --> ProcessParamters --> Environment
+TEB (GS Register) --> PEB --> ProcessParameters --> Environment
 ```asm
 xor r10, r10         // R10 = 0x0 - Null out some registers
 mul r10              // RAX&RDX = 0x0
 add al, 0x60         // RAX = 0x60 = Offset of PEB Address within the TEB
 mov rbx, gs:[rax]    // RBX = PEB Address
-mov rax, [rbx+0x20]  // RAX = ProcessParamters Address
+mov rax, [rbx+0x20]  // RAX = ProcessParameters Address
 mov rbx, [rax+0x3f0] // RBX = Environment Address
 mov rax, [rax+0x80]  // RAX = Environment Size
 ```
