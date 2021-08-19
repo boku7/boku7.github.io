@@ -116,7 +116,7 @@ To confirm that our assembly code resolves the correct address of the PEB dynami
 
 ### Our Assembly Code so Far
 
-```asm
+```nasm
 mov rax, 0x60     // RAX = 0x60 = Offset of PEB Address within the TEB
 mov rbx, gs:[rax] // RBX = PEB Address
 ```
@@ -206,7 +206,7 @@ Now that we know the address and size of the Environment, we can view the memory
 ## Assembly Shellcode to get to Environment from Anywhere in Memory
 
 TEB (GS Register) --> PEB --> ProcessParameters --> Environment
-```asm
+```nasm
 xor r10, r10         // R10 = 0x0 - Null out some registers
 mul r10              // RAX&RDX = 0x0
 add al, 0x60         // RAX = 0x60 = Offset of PEB Address within the TEB
