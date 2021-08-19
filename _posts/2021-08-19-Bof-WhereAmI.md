@@ -23,7 +23,7 @@ For the full code to the project see the GitHub repo:
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
 TEB (GS Register) --> PEB --> ProcessParameters --> Environment
 
-```
+```bash
 # TEB Address
 0:000> !teb
 TEB at 00000000002ae000
@@ -52,7 +52,7 @@ The address of the Thread Environment Block (TEB) can be discovered from anywher
 ### Viewing the TEB in WinDBG
 To see the TEB for our current thread in WinDBG, just use the `!teb` command. This displays the TEB for us nicely.
 
-```
+```c
 0:000> !teb
 TEB at 00000000002ae000
     ExceptionList:        0000000000000000
@@ -68,13 +68,14 @@ TEB at 00000000002ae000
     Tls Storage:          0000000000743340
     PEB Address:          00000000002ad000
 ```
+
 + We can see that the PEB Address is `0x2ad000` for our process.
 + Although we can see the PEB address here, we need to know the offset to the PEB Address pointer within the TEB, so we can do this programmatically in our BOF.
 
 ### Parsing the TEB Structure in Memory
 Using the TEB address we discovered by using the `!teb` command, we will feed that into the `dt` command and parse the memory at the TEB Address `0x2ae000` so we can discover the offset of the PEB Address.
 
-```
+```c
 0:000> dt !_TEB 2ae000
 ntdll!_TEB
    +0x000 NtTib            : _NT_TIB
@@ -126,7 +127,7 @@ mov rbx, gs:[rax] // RBX = PEB Address
 ### Get the Address of the Process Environment Block (PEB)
 + in WinDBG enter the `!peb` command in the console to get the address of the PEB in memory
 
-```
+```c
 0:000> !peb
 PEB at 00000000002ad000
 ```
@@ -137,20 +138,16 @@ PEB at 00000000002ad000
 
 ### Walk the PEB Struct to find ProcessParameters Struct
 The Process Environment Block (PEB) contains allot of information. Right now, we are discovering where the `ProcessParameters` struct exists within the PEB. We will note the offset: `+0x020 ProcessParameters`.
-```
+
+```c
 0:000> dt !_PEB 00000000002ad000
 ntdll!_PEB
-   +0x000 InheritedAddressSpace : 0 ''
 ...
    +0x010 ImageBaseAddress : 0x00000000`00400000 Void
    +0x018 Ldr              : 0x00007ffb`01f9a4c0 _PEB_LDR_DATA
    +0x020 ProcessParameters : 0x00000000`007423b0 _RTL_USER_PROCESS_PARAMETERS
-   +0x028 SubSystemData    : (null) 
-   +0x030 ProcessHeap      : 0x00000000`00740000 Void
-   +0x038 FastPebLock      : 0x00007ffb`01f9a0e0 _RTL_CRITICAL_SECTION
 ...
-   +0x7c0 Reserved         : 0y0000000000000000000000000000000 (0)
-   +0x7c4 NtGlobalFlag2    : 0
+
 ```
 
 ## From ProcessParameters to Environment
@@ -158,22 +155,10 @@ ntdll!_PEB
 ### Walk the ProcessParameters Struct to find our Environment
 From the ProcessParameters Struct we will want to note the pointer to the `Environment` and the `EnvironmentSize`.
 
-```
+```c
 0:000> dx -r1 ((ntdll!_RTL_USER_PROCESS_PARAMETERS *)0x7423b0)
 ((ntdll!_RTL_USER_PROCESS_PARAMETERS *)0x7423b0)                 : 0x7423b0 [Type: _RTL_USER_PROCESS_PARAMETERS *]
-    [+0x000] MaximumLength    : 0x748 [Type: unsigned long]
-    [+0x004] Length           : 0x748 [Type: unsigned long]
-    [+0x008] Flags            : 0x1 [Type: unsigned long]
-    [+0x00c] DebugFlags       : 0x0 [Type: unsigned long]
-    [+0x010] ConsoleHandle    : 0x0 [Type: void *]
-    [+0x018] ConsoleFlags     : 0x0 [Type: unsigned long]
-    [+0x020] StandardInput    : 0x0 [Type: void *]
-    [+0x028] StandardOutput   : 0x0 [Type: void *]
-    [+0x030] StandardError    : 0x0 [Type: void *]
-    [+0x038] CurrentDirectory [Type: _CURDIR]
-    [+0x050] DllPath          [Type: _UNICODE_STRING]
-    [+0x060] ImagePathName    [Type: _UNICODE_STRING]
-    [+0x070] CommandLine      [Type: _UNICODE_STRING]
+...
     [+0x080] Environment      : 0x741130 [Type: void *]
 ...
     [+0x3f0] EnvironmentSize  : 0x124e [Type: unsigned __int64]
@@ -185,7 +170,7 @@ From the ProcessParameters Struct we will want to note the pointer to the `Envir
 ### Viewing the Environment Unicode Strings
 Now that we know the address and size of the Environment, we can view the memory at that address to confirm
 
-```
+```bash
 0:000> db 0x741130 0x741130+0x124e
 00000000`00741130  3d 00 3a 00 3a 00 3d 00-3a 00 3a 00 5c 00 00 00  =.:.:.=.:.:.\...
 00000000`00741140  41 00 4c 00 4c 00 55 00-53 00 45 00 52 00 53 00  A.L.L.U.S.E.R.S.
@@ -206,6 +191,7 @@ Now that we know the address and size of the Environment, we can view the memory
 ## Assembly Shellcode to get to Environment from Anywhere in Memory
 
 TEB (GS Register) --> PEB --> ProcessParameters --> Environment
+
 ```nasm
 xor r10, r10         // R10 = 0x0 - Null out some registers
 mul r10              // RAX&RDX = 0x0
@@ -236,10 +222,10 @@ Now that we know how to dynamically get to the Unicode Environment strings, we w
 + From a macOS or Linux x64 intel device, install GCC & Ming
 + Make a folder and change directory into it: `mkdir WhereAmI && cd WhereAmI'
 + Create a C file named `whereami.x64.c` with these contents:
+  
 ```c
 #include <windows.h>
 #include "beacon.h"
-
 void go(char * args, int len) {
     BeaconPrintf(CALLBACK_OUTPUT, "[+] Our 'Where am I?' BOF prototype works!"); 
 }
@@ -257,7 +243,7 @@ x86_64-w64-mingw32-gcc -c whereami.x64.c -o whereami.x64.o
 + Right click your beacon and click 'Interact' to pull up the beacon CLI
 + Use `inline-execute` from your Cobalt Strike CLI and supply the path to your `whereami.x64.o` BOF
 
-```
+```c 
 beacon> inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
 [*] Tasked beacon to inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
 [+] host called home, sent: 169 bytes
@@ -270,7 +256,7 @@ beacon> inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
 In our `/WhereAmI/` directory, create a file named `whereami.cna`. This will be the Aggressor script responsible for adding our `whereami` command to the Cobalt Strike beacon console.
 
 ### whereami.cna
-```
+```bash
 beacon_command_register(
     "whereami", 
     "Displays the beacon process environment without any DLL usage.", 
@@ -297,23 +283,18 @@ alias whereami {
   
 ### Testing our BOF & Aggressor Script
 Now the `whereami` command is accessible from the interactive beacon console.
-```
+
+```bash
 beacon> help
-
-Beacon Commands
-===============
-
-    Command                   Description
-    -------                   -----------
 ...
     whereami                  Displays the beacon process environment without any DLL usage.
-
 beacon> whereami
 [*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
 [+] host called home, sent: 164 bytes
 [+] received output:
 [+] Our 'Where am I?' BOF prototype works!
 ```
+
 + Everything works! Now time to make it do the thing.
 
 ### Resolving Environment Address & Size with our BOF
@@ -324,7 +305,6 @@ beacon> whereami
 ```c
 #include <windows.h>
 #include "beacon.h"
-
 void go(char * args, int len) {
     PVOID envAddr = NULL;
     PVOID envSize = NULL;
@@ -359,7 +339,7 @@ bash compile.cmds
 ### Testing our Inline Assembly BOF
 We do not need to reload our `whereami.cna` Agressor script because our script will use the contents of the `whereami.x64.o` object file that we just compiled with our bash script.
 
-```bash
+```c
 beacon> whereami
 [*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
 [+] host called home, sent: 300 bytes
@@ -375,7 +355,6 @@ Since we do not know how much we will want to expand or reuse this code in the f
 ```c
 #include <windows.h>
 #include "beacon.h"
-
 PVOID getProcessParamsAddr()
 {
     PVOID procParamAddr = NULL;
@@ -390,7 +369,6 @@ PVOID getProcessParamsAddr()
 	);
     return procParamAddr;
 }
-
 PVOID getEnvironmentAddr(PVOID procParamAddr)
 {
     PVOID environmentAddr = NULL;
@@ -403,7 +381,6 @@ PVOID getEnvironmentAddr(PVOID procParamAddr)
 	);
     return environmentAddr;
 }
-
 PVOID getEnvironmentSize(PVOID procParamAddr)
 {
     PVOID environmentSize = NULL;
@@ -416,7 +393,6 @@ PVOID getEnvironmentSize(PVOID procParamAddr)
 	);
     return environmentSize;
 }
-
 void go(char * args, int len) {
     PVOID procParamAddr = NULL;
     PVOID environmentAddr = NULL;
@@ -473,7 +449,6 @@ PVOID getEnvironmentAddr(PVOID procParamAddr)
 	);
     return environmentAddr;
 }
-
 PVOID getEnvironmentSize(PVOID procParamAddr)
 {
     PVOID environmentSize = NULL;
@@ -568,7 +543,6 @@ Now we add some code to loop through all the environment Unicode strings and out
 ### Our Looper Code
 
 ```c
-
 void printLoopAllTheStrings(PVOID nextEnvStringAddr, unsigned __int64 environmentSize)
 {
     PVOID unicodeStrSize = NULL;
@@ -583,7 +557,6 @@ void printLoopAllTheStrings(PVOID nextEnvStringAddr, unsigned __int64 environmen
         nextEnvStringAddr += (unsigned __int64)unicodeStrSize;
     }
 }
-
 void go(char *args, int len)
 {
     PVOID procParamAddr = NULL;
