@@ -4,9 +4,9 @@ OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
 
 --- 
 # Red Team
-*Cobalt Strike*
+*Cobalt Strike*     
 + [Creating the "Where Am I" Cobalt Strike BOF](_posts/2021-08-19-Bof-WhereAmI.md)
-*Azure Cloud*
+*Azure Cloud*      
 + [The Art of the Device Code Phish](_posts/2021-07-12-ArtOfDeviceCodePhish.md)
 
 # Published
