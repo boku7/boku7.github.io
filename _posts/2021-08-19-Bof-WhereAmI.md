@@ -15,7 +15,7 @@ tags:
 ## Overview
 This post covers a walkthrough of creating the Cobalt Strike Beacon Object File (BOF), "Where Am I?".
 
-## Our BOF Flow to get the Environment Variables Dynamically in Memory
+### Our BOF Flow to get the Environment Variables Dynamically in Memory
 TEB (GS Register) --> PEB --> PEB.ProcessParamters --> ProcessParamters --> Environment
 ```
 # TEB Address
@@ -78,13 +78,14 @@ ntdll!_TEB
 ```
 + We can see that the PEB Address is at an offset of `+0x060` within the TEB.
 
-### Assembly Code to get the PEB from TEB
+### Creating TEB to PEB Shellcode
 Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programatically. We will make sure this is Position Independant Code (PIC) by using the GS register to discover the TEB.  
 + To test that this works, we will open our PE file in x96DBG.
 + X96DBG has advantages over WinDBG, and WinDBG has advantages over x96DBG. I switch between them allot depending on what i'm trying to do.
 + Set a break point anywhere. Then select the current line that RIP is on.
 + Press the spacebar and edit the assembly.
-#### Editing Opcodes in memory with x64dbg
+
+### Editing Opcodes in memory with x64dbg
 ![](assets/images/whereAmIBof/x64EditAssembly.png)   
 + We will put 0x60 into the RAX register, because we know that the PEB Address is at `TEB+0x60`.
 + For the next instruction put in `mov rbx, gs:[rax]`.
@@ -94,18 +95,23 @@ Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to
 + Now that we have our 2 instruction in, we press `F7` to step forward and execute our instructions.
 ![](assets/images/whereAmIBof/pebAddress.png)     
 + The address of the PEB is in `RBX` and is `0x31E000`.
-#### Confirming PEB Address
+
+### Confirming PEB Address
 To confirm that our assembly code resolves the correct address of the PEB dynamically in memory we can confirm using the Memory Map tab.
 ![](assets/images/whereAmIBof/memMapPEB.png)  
 
-#### Our Assembly Code so Far
+### Our Assembly Code so Far
+
 ```asm
 mov rax, 0x60     // RAX = 0x60 = Offset of PEB Address within the TEB
 mov rbx, gs:[rax] // RBX = PEB Address
 ```
 
+## From PEB to ProcessParameters
+
 ### Get the Address of the Process Environment Block (PEB)
 + in WinDBG enter the `!peb` command in the console to get the address of the PEB in memory
+
 ```
 0:000> !peb
 PEB at 00000000002ad000
@@ -130,6 +136,8 @@ ntdll!_PEB
    +0x7c0 Reserved         : 0y0000000000000000000000000000000 (0)
    +0x7c4 NtGlobalFlag2    : 0
 ```
+
+## From ProcessParameters to Environment
 
 ### Walk the ProcessParameters Struct to find our Environment
 From the ProcessParamters Struct we will want to note the pointer to the `Environment` and the `EnvironmentSize`.
@@ -179,7 +187,8 @@ Now that we know the address and size of the Environment, we can view the memory
   + Windows Unicode strings are 2 bytes (4 hex characters).
 + We can see that the Unicode strings end with a `00 00` unicode byte.
  
-### Assembly Shellcode to get to Enviroment from Anywhere in Memory
+## Assembly Shellcode to get to Enviroment from Anywhere in Memory
+
 TEB (GS Register) --> PEB --> PEB.ProcessParamters --> ProcessParamters --> Environment
 ```asm
 xor r10, r10         // R10 = 0x0 - Null out some registers
@@ -190,13 +199,17 @@ mov rax, [rbx+0x20]  // RAX = ProcessParamters Address
 mov rbx, [rax+0x3f0] // RBX = Environment Address
 mov rax, [rax+0x80]  // RAX = Environment Size
 ```
+
 #### Testing That our Code Works
 We enter in the above Assembly code into a process using x64dbg to test it out. We step through it and see that it resolves the Environment Address & Environment Size.
+
 ![](assets/images/whereAmIBof/testingASM.png)
 + We see that the Environment Address is in the `RAX` register.
 + The Environment Size is in the `RBX` register.
 
 ##### Confirming the Evironment Address
 Just to make sure, we right-click the RAX value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
+
 ![](assets/images/whereAmIBof/confirmEnvAddr.png)
+
 
