@@ -15,6 +15,8 @@ tags:
 ## Overview
 This post covers a walkthrough of creating the Cobalt Strike Beacon Object File (BOF), "Where Am I?".
 
+![](/assets/images/whereAmIBof/bangPeb.png)
+
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
 TEB (GS Register) --> PEB --> PEB.ProcessParamters --> ProcessParamters --> Environment
 
