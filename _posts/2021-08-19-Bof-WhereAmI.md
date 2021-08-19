@@ -86,19 +86,19 @@ Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to
 + Press the spacebar and edit the assembly.
 
 ### Editing Opcodes in memory with x64dbg
-![](assets/images/whereAmIBof/x64EditAssembly.png)   
+![](/assets/images/whereAmIBof/x64EditAssembly.png)   
 + We will put 0x60 into the RAX register, because we know that the PEB Address is at `TEB+0x60`.
 + For the next instruction put in `mov rbx, gs:[rax]`.
   + We are referencing the TEB address using the GS register. This is a Windows internals operating system functionality.
   + We are telling the processor to move the 8 byte value at `TEB+0x60` into the `RBX` register.
   + Our PEB Adress is at `TEB+0x60`.
 + Now that we have our 2 instruction in, we press `F7` to step forward and execute our instructions.
-![](assets/images/whereAmIBof/pebAddress.png)     
+![](/assets/images/whereAmIBof/pebAddress.png)     
 + The address of the PEB is in `RBX` and is `0x31E000`.
 
 ### Confirming PEB Address
 To confirm that our assembly code resolves the correct address of the PEB dynamically in memory we can confirm using the Memory Map tab.
-![](assets/images/whereAmIBof/memMapPEB.png)  
+![](/assets/images/whereAmIBof/memMapPEB.png)  
 
 ### Our Assembly Code so Far
 
@@ -203,13 +203,13 @@ mov rax, [rax+0x80]  // RAX = Environment Size
 #### Testing That our Code Works
 We enter in the above Assembly code into a process using x64dbg to test it out. We step through it and see that it resolves the Environment Address & Environment Size.
 
-![](assets/images/whereAmIBof/testingASM.png)
+![](/assets/images/whereAmIBof/testingASM.png)
 + We see that the Environment Address is in the `RAX` register.
 + The Environment Size is in the `RBX` register.
 
 ##### Confirming the Evironment Address
 Just to make sure, we right-click the RAX value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
 
-![](assets/images/whereAmIBof/confirmEnvAddr.png)
+![](/assets/images/whereAmIBof/confirmEnvAddr.png)
 
 
