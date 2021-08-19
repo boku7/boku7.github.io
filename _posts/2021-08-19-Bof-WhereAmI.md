@@ -209,8 +209,8 @@ mul r10              // RAX&RDX = 0x0
 add al, 0x60         // RAX = 0x60 = Offset of PEB Address within the TEB
 mov rbx, gs:[rax]    // RBX = PEB Address
 mov rax, [rbx+0x20]  // RAX = ProcessParameters Address
-mov rbx, [rax+0x3f0] // RBX = Environment Address
-mov rax, [rax+0x80]  // RAX = Environment Size
+mov rax, [rax+0x80]  // RAX = Environment Address
+mov rbx, [rax+0x3f0] // RBX = Environment Size
 ```
 
 #### Testing That our Code Works
@@ -225,3 +225,145 @@ We enter in the above Assembly code into a process using x64dbg to test it out. 
 Just to make sure, we right-click the RAX value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
 
 ![](/assets/images/whereAmIBof/confirmEnvAddr.png)
+
+## Create a BOF Prototype
+Now that we know how to dynamically get to the Unicode Environment strings, we will create a simple Cobalt Strike Beacon Object File (BOF) & an Agressor CNA script (for UI/UX).
+
+### Creating the our BOF Prototype
++ From a mac or linux x64 intel device, install gcc & ming
++ Make a folder and change directory into it: `mkdir WhereAmI && cd WhereAmI'
++ Create a C file named `whereami.x64.c` with these contents:
+```c
+#include <windows.h>
+#include "beacon.h"
+
+void go(char * args, int len) {
+    BeaconPrintf(CALLBACK_OUTPUT, "[+] Our 'Where am I?' BOF prototype works!"); 
+}
+```
+
+### Compile the BOF Prototype
+```bash
+x86_64-w64-mingw32-gcc -c whereami.x64.c -o whereami.x64.o
+```
+
+### Executing our BOF from Cobalt Strike
++ Now get a Windows VM and boot it up
++ Start up your Cobalt Strike Team Server
++ Make a beacon in Cobalt Strike and execute it on the windows VM
++ Right click your beacon and click 'Interact' to pull up the beacon CLI
++ Use `inline-execute` from your Cobalt Strike CLI and supply the path to your `whereami.x64.o` BOF
+
+```
+beacon> inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
+[*] Tasked beacon to inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
+[+] host called home, sent: 169 bytes
+[+] received output:
+[+] Our 'Where am I?' BOF prototype works!
+```
++ We can see that our prototype works and prints the string to the console after running!
+
+## Create an Agressor Script Prototype for UI/UX
+In our `/WhereAmI/` directory, create a file named `whereami.cna`. This will be the Aggressor script responsible for adding our `whereami` command to the Cobalt Strike beacon console.
+
+### whereami.cna
+```
+beacon_command_register(
+    "whereami", 
+    "Displays the beacon process environment without any DLL usage.", 
+    "Synopsis: whereami"
+);
+
+alias whereami {
+    local('$handle $data');
+    $handle = openf(script_resource("whereami.x64.o"));
+    $data = readb($handle, -1);
+    closef($handle);
+
+    btask($1, "Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)");
+    beacon_inline_execute($1, $data, "go");
+}
+```
+
+### Load our Agressor Script into Cobalt Strike
+
+![](/assets/images/cnaScript.png)
+
++ Go to 'Cobalt Strike' --> 'Script Manager' from the menu bar of Cobalt Strike
++ Click the 'Load' button and select our `whereami.cna` script
+  
+### Testing our BOF & Agressor Script
+Now the `whereami` command is accessible from the interactive beacon console.
+```
+beacon> help
+
+Beacon Commands
+===============
+
+    Command                   Description
+    -------                   -----------
+...
+    whereami                  Displays the beacon process environment without any DLL usage.
+
+beacon> whereami
+[*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
+[+] host called home, sent: 164 bytes
+[+] received output:
+[+] Our 'Where am I?' BOF prototype works!
+```
++ Everything works! Now time to make it do the thing.
+
+### Resolving Evironment Address & Size with our BOF
++ We will now adjust our code to resolve the Environment Address and Size with our C BOF code.
++ We will use inline assembly code to do this by using the `__asm__()` GCC function.
++ When we compile the code with ming, we will add the `-masm=intel` flag to tell ming that we want to compile with the GCC C inline assembly functionality.
+```
+#include <windows.h>
+#include "beacon.h"
+
+void go(char * args, int len) {
+    PVOID envAddr = NULL;
+    PVOID envSize = NULL;
+    __asm__(
+        //"int3 \n"
+        "xor r10, r10 \n"         // R10 = 0x0 - Null out some registers
+        "mul r10 \n"              // RAX&RDX = 0x0
+        "add al, 0x60 \n"         // RAX = 0x60 = Offset of PEB Address within the TEB
+        "mov rbx, gs:[rax] \n"    // RBX = PEB Address
+        "mov rax, [rbx+0x20] \n"  // RAX = ProcessParameters Address
+        "mov rbx, [rax+0x80] \n"  // RAX = Environment Address
+        "mov rax, [rax+0x3f0] \n" // RBX = Environment Size
+        "mov %[envAddr], rbx \n"
+        "mov %[envSize], rax \n"
+		:[envAddr] "=r" (envAddr),
+		 [envSize] "=r" (envSize)
+	);
+    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Address: %p",envAddr); 
+    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Size:    %d",envSize);
+}
+```
+
+### Compiling our BOF with Inline Assembly
+We add the flag to our compile command, and for ease of use we make it into a bash script.
+
+```bash
+cat compile.cmds
+x86_64-w64-mingw32-gcc -c whereami.x64.c -o whereami.x64.o -masm=intel
+bash compile.cmds
+```
+
+### Testing our Inline Assembly BOF
+We do not need to reload our `whereami.cna` Agressor script because our script will use the contents of the `whereami.x64.o` object file that we just compiled with our bash script.
+
+```
+beacon> whereami
+[*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
+[+] host called home, sent: 300 bytes
+[+] received output:
+[+] Evironment Address: 0000000000071130
+[+] received output:
+[+] Evironment Size:    4242
+```
+
+## References
++ https://www.cobaltstrike.com/help-beacon-object-files
