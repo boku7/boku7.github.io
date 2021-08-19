@@ -207,7 +207,7 @@ We enter in the above Assembly code into a process using x64dbg to test it out. 
 + We see that the Environment Address is in the `RAX` register.
 + The Environment Size is in the `RBX` register.
 
-##### Confirming the Evironment Address
+### Confirming the Evironment Address
 Just to make sure, we right-click the RAX value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
 
 ![](/assets/images/whereAmIBof/confirmEnvAddr.png)
