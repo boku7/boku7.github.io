@@ -17,6 +17,7 @@ This post covers a walkthrough of creating the Cobalt Strike Beacon Object File 
 
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
 TEB (GS Register) --> PEB --> PEB.ProcessParamters --> ProcessParamters --> Environment
+
 ```
 # TEB Address
 0:000> !teb
@@ -42,8 +43,10 @@ TEB at 00000000002ae000
 
 ## From TEB to PEB
 The address of the Thread Environment Block (TEB) can be discovered from anywhere in memory by referencing the GS register for 64 bit, and the FS register for 32 bit. The TEB includes within it the address of the Process Environment Block (PEB). Therefor once we get the TEB using the FS register, we can find the PEB.
+
 ### Viewing the TEB in WinDBG
 To see the TEB for our current thread in WinDBG, just use the `!teb` command. This displays the TEB for us nicely.
+
 ```
 0:000> !teb
 TEB at 00000000002ae000
@@ -65,6 +68,7 @@ TEB at 00000000002ae000
 
 ### Parsing the TEB Structure in Memory
 Using the TEB address we discovered by using the `!teb` command, we will feed that into the `dt` command and parse the memory at the TEB Address `0x2ae000` so we can discover the offset of the PEB Address.
+
 ```
 0:000> dt !_TEB 2ae000
 ntdll!_TEB
@@ -80,13 +84,16 @@ ntdll!_TEB
 
 ### Creating TEB to PEB Shellcode
 Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programatically. We will make sure this is Position Independant Code (PIC) by using the GS register to discover the TEB.  
+
 + To test that this works, we will open our PE file in x96DBG.
 + X96DBG has advantages over WinDBG, and WinDBG has advantages over x96DBG. I switch between them allot depending on what i'm trying to do.
 + Set a break point anywhere. Then select the current line that RIP is on.
 + Press the spacebar and edit the assembly.
 
 ### Editing Opcodes in memory with x64dbg
+
 ![](/assets/images/whereAmIBof/x64EditAssembly.png)   
+
 + We will put 0x60 into the RAX register, because we know that the PEB Address is at `TEB+0x60`.
 + For the next instruction put in `mov rbx, gs:[rax]`.
   + We are referencing the TEB address using the GS register. This is a Windows internals operating system functionality.
@@ -98,6 +105,7 @@ Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to
 
 ### Confirming PEB Address
 To confirm that our assembly code resolves the correct address of the PEB dynamically in memory we can confirm using the Memory Map tab.
+
 ![](/assets/images/whereAmIBof/memMapPEB.png)  
 
 ### Our Assembly Code so Far
@@ -116,7 +124,9 @@ mov rbx, gs:[rax] // RBX = PEB Address
 0:000> !peb
 PEB at 00000000002ad000
 ```
+
 ![](/assets/images/whereAmIBof/bangPeb.png)
+
   + We can see that `!peb` command parses out the PEB, the Loader (Ldr), the Process Parameters, as well as the Environment information we are targeting.
 
 ### Walk the PEB Struct to find ProcessParameters Struct
@@ -204,6 +214,7 @@ mov rax, [rax+0x80]  // RAX = Environment Size
 We enter in the above Assembly code into a process using x64dbg to test it out. We step through it and see that it resolves the Environment Address & Environment Size.
 
 ![](/assets/images/whereAmIBof/testingASM.png)
+
 + We see that the Environment Address is in the `RAX` register.
 + The Environment Size is in the `RBX` register.
 
@@ -211,5 +222,3 @@ We enter in the above Assembly code into a process using x64dbg to test it out. 
 Just to make sure, we right-click the RAX value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
 
 ![](/assets/images/whereAmIBof/confirmEnvAddr.png)
-
-
