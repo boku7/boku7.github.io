@@ -15,8 +15,8 @@ tags:
 ## Overview
 This post covers a walkthrough of creating the Cobalt Strike Beacon Object File (BOF), "Where Am I?".
 
-For the full code to the project see the github repo:
-+ [github - boku7/whereami](https://github.com/boku7/whereami)
+For the full code to the project see the GitHub repo:
++ [GitHub - boku7/whereami](https://github.com/boku7/whereami)
 
 ![](/assets/images/whereAmIBof/bangPeb.png)
 
@@ -41,7 +41,7 @@ TEB at 00000000002ae000
 
 ### Initial Setup
 + Boot up a windows box
-+ Download and Install x96DBG
++ Download and Install x64DBG
 + Download and install WinDBG 
 + Make sure WinDBG symbols are setup
 + Open any executable PE file
@@ -88,7 +88,7 @@ ntdll!_TEB
 + We can see that the PEB Address is at an offset of `+0x060` within the TEB.
 
 ### Creating TEB to PEB Shellcode
-Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programmatically . We will make sure this is Position Independent Code (PIC) by using the GS register to discover the TEB.  
+Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programmatically. We will make sure this is Position Independent Code (PIC) by using the GS register to discover the TEB.  
 
 + To test that this works, we will open our PE file in x96DBG.
 
@@ -100,10 +100,10 @@ Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to
 
 ![](/assets/images/whereAmIBof/x64EditAssembly.png)   
 
-+ We will put 0x60 into the RAX register, because we know that the PEB Address is at `TEB+0x60`.
++ We will put 0x60 into the RAX register because we know that the PEB Address is at `TEB+0x60`.
 + For the next instruction put in `mov rbx, gs:[rax]`.
   + We are referencing the TEB address using the GS register. This is a Windows internals operating system functionality.
-  + We are telling the processor to move the 8 byte value at `TEB+0x60` into the `RBX` register.
+  + We are telling the processor to move the 8-byte value at `TEB+0x60` into the `RBX` register.
   + Our PEB Adress is at `TEB+0x60`.
 + Now that we have our 2 instructions in, we press `F7` to step forward and execute our instructions.
 ![](/assets/images/whereAmIBof/pebAddress.png)     
@@ -114,7 +114,7 @@ To confirm that our assembly code resolves the correct address of the PEB dynami
 
 ![](/assets/images/whereAmIBof/memMapPEB.png)  
 
-### Our Assembly Code so Far
+### Our Assembly Code So Far
 
 ```nasm
 mov rax, 0x60     // RAX = 0x60 = Offset of PEB Address within the TEB
@@ -201,7 +201,7 @@ Now that we know the address and size of the Environment, we can view the memory
 ```
 + We see that the strings are there as Unicode. You can tell because of the `00` after everything.
   + Windows Unicode strings are 2 bytes (4 hex characters).
-+ We can see that the Unicode strings end with a `00 00` unicode byte.
++ We can see that the Unicode strings end with a `00 00` Unicode byte.
  
 ## Assembly Shellcode to get to Environment from Anywhere in Memory
 
@@ -224,16 +224,16 @@ We enter in the above Assembly code into a process using x64dbg to test it out. 
 + We see that the Environment Address is in the `RAX` register.
 + The Environment Size is in the `RBX` register.
 
-### Confirming the Evironment Address
+### Confirming the Environment Address
 Just to make sure, we right-click the RAX value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
 
 ![](/assets/images/whereAmIBof/confirmEnvAddr.png)
 
 ## Create a BOF Prototype
-Now that we know how to dynamically get to the Unicode Environment strings, we will create a simple Cobalt Strike Beacon Object File (BOF) & an Agressor CNA script (for UI/UX).
+Now that we know how to dynamically get to the Unicode Environment strings, we will create a simple Cobalt Strike Beacon Object File (BOF) & an Aggressor CNA script (for UI/UX).
 
 ### Creating the our BOF Prototype
-+ From a mac or linux x64 intel device, install gcc & ming
++ From a macOS or Linux x64 intel device, install GCC & Ming
 + Make a folder and change directory into it: `mkdir WhereAmI && cd WhereAmI'
 + Create a C file named `whereami.x64.c` with these contents:
 ```c
@@ -266,7 +266,7 @@ beacon> inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
 ```
 + We can see that our prototype works and prints the string to the console after running!
 
-## Create an Agressor Script Prototype for UI/UX
+## Create an Aggressor Script Prototype for UI/UX
 In our `/WhereAmI/` directory, create a file named `whereami.cna`. This will be the Aggressor script responsible for adding our `whereami` command to the Cobalt Strike beacon console.
 
 ### whereami.cna
@@ -288,14 +288,14 @@ alias whereami {
 }
 ```
 
-### Load our Agressor Script into Cobalt Strike
+### Load our Aggressor Script into Cobalt Strike
 
 ![](/assets/images/cnaScript.png)
 
 + Go to 'Cobalt Strike' --> 'Script Manager' from the menu bar of Cobalt Strike
 + Click the 'Load' button and select our `whereami.cna` script
   
-### Testing our BOF & Agressor Script
+### Testing our BOF & Aggressor Script
 Now the `whereami` command is accessible from the interactive beacon console.
 ```
 beacon> help
@@ -316,10 +316,11 @@ beacon> whereami
 ```
 + Everything works! Now time to make it do the thing.
 
-### Resolving Evironment Address & Size with our BOF
+### Resolving Environment Address & Size with our BOF
 + We will now adjust our code to resolve the Environment Address and Size with our C BOF code.
 + We will use inline assembly code to do this by using the `__asm__()` GCC function.
 + When we compile the code with ming, we will add the `-masm=intel` flag to tell ming that we want to compile with the GCC C inline assembly functionality.
+
 ```c
 #include <windows.h>
 #include "beacon.h"
@@ -358,7 +359,7 @@ bash compile.cmds
 ### Testing our Inline Assembly BOF
 We do not need to reload our `whereami.cna` Agressor script because our script will use the contents of the `whereami.x64.o` object file that we just compiled with our bash script.
 
-```
+```bash
 beacon> whereami
 [*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
 [+] host called home, sent: 300 bytes
@@ -436,46 +437,29 @@ x86_64-w64-mingw32-gcc -c whereami.x64.c -o whereami.x64.o -masm=intel
 bobby.cooke$ bash compile.cmds 
 ```
 
-```
+```bash
 beacon> whereami
 [*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
 [+] host called home, sent: 460 bytes
 [+] received output:
-[+] Evironment Address: 0000000000071130
+[+] Environment Address: 0000000000071130
 [+] received output:
-[+] Evironment Size:    4242
+[+] Environment Size:    4242
 ```
 
 + Looking good! Now we need to figure out how to parse out all those Unicode strings.
 
 ## Resolving the Unicode Strings in the Enviroment Block
-So far our BOF can get the size and address of the Environment block. We also saw earlier that the strings are just all mashed in there together, seperated by a 2 byte `0x0000` delimiter. We will want to scan the Environment block, extract the strings, and output them to the Cobalt Strike interactive beacon console.
+So far our BOF can get the size and address of the Environment block. We also saw earlier that the strings are just all mashed in there together, separated by a 2 byte `0x0000` delimiter. We will want to scan the Environment block, extract the strings, and output them to the Cobalt Strike interactive beacon console.
 
-To make our shellcode that grabs the strings, we will fireup another `bobbyCooke.exe` beacon in x64dbg. We'll write and test our code right there in the x64dbg dissassembly window.
+To make our shellcode that grabs the strings, we will fire up another `bobbyCooke.exe` beacon in x64dbg. We'll write and test our code right there in the x64dbg disassembly window.
 
-### Breakin' on that BOF 
+### Breaking' on that BOF 
 Since we don't want to rewrite our entire program into the x64dbg window, we'll recompile our code with a breakpoint in it. After compilation, we'll attach to our beacon process. Then we'll run our BOF again from the interactive beacon console to trigger our breakpoint and work from there.
 
 This is the BOF code with the breakpoints:
+
 ```c 
-#include <windows.h>
-#include "beacon.h"
-
-PVOID getProcessParamsAddr()
-{
-    PVOID procParamAddr = NULL;
-    __asm__(
-        "xor r10, r10 \n"         // R10 = 0x0 - Null out some registers
-        "mul r10 \n"              // RAX&RDX = 0x0
-        "add al, 0x60 \n"         // RAX = 0x60 = Offset of PEB Address within the TEB
-        "mov rbx, gs:[rax] \n"    // RBX = PEB Address
-        "mov rax, [rbx+0x20] \n"  // RAX = ProcessParameters Address
-        "mov %[procParamAddr], rax \n"
-		:[procParamAddr] "=r" (procParamAddr)
-	);
-    return procParamAddr;
-}
-
 PVOID getEnvironmentAddr(PVOID procParamAddr)
 {
     PVOID environmentAddr = NULL;
@@ -503,17 +487,6 @@ PVOID getEnvironmentSize(PVOID procParamAddr)
 	);
     return environmentSize;
 }
-
-void go(char * args, int len) {
-    PVOID procParamAddr = NULL;
-    PVOID environmentAddr = NULL;
-    PVOID environmentSize = NULL;
-    procParamAddr = getProcessParamsAddr();
-    environmentAddr = getEnvironmentAddr(procParamAddr);
-    environmentSize = getEnvironmentSize(procParamAddr);
-    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Address: %p",environmentAddr); 
-    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Size:    %d",environmentSize);
-}
 ```
 
 ![](/assets/images/whereAmIBof/bofBreak.png)
@@ -529,10 +502,11 @@ We'll want some room to work, and less confusing is better. Since we see that th
 
 ![](/assets/images/whereAmIBof/nopSpace.png)
 
-### Resolving Unicode Delimeters via String Size
-To list out all of the unicode strings, we first need to find where they end. Once we know where the first string ends, we can print it out, and then move to the next. We'll continue to do this for all the unicode strings until we exhaust the size of the environment.
+### Resolving Unicode Delimiters via String Size
+To list out all the Unicode strings, we first need to find where they end. Once we know where the first-string ends, we can print it out, and then move to the next. We'll continue to do this for all the Unicode strings until we exhaust the size of the environment.
 
-After tinkering around in x64dbg, the getUnicodeStrLen() function has been added to the code. This will return the length of our unicode string. For our test we will then print the unicode string using BeaconPrintf with `%ls`.
+After tinkering around in x64dbg, the getUnicodeStrLen() function has been added to the code. This will return the length of our Unicode string. For our test we will then print the Unicode string using `BeaconPrintf()` with `%ls`.
+
 ```c
 PVOID getUnicodeStrLen(PVOID envStrAddr)
 {
@@ -564,33 +538,35 @@ void go(char *args, int len)
     environmentAddr = getEnvironmentAddr(procParamAddr);
     environmentSize = getEnvironmentSize(procParamAddr);
     unicodeStrSize = getUnicodeStrLen(environmentAddr);
-    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Address: %p",environmentAddr); 
-    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Size:    %d",environmentSize);
+    BeaconPrintf(CALLBACK_OUTPUT, "[+] Environment Address: %p",environmentAddr); 
+    BeaconPrintf(CALLBACK_OUTPUT, "[+] Environment Size:    %d",environmentSize);
     BeaconPrintf(CALLBACK_OUTPUT, "[+] 1st String Size:    %d",unicodeStrSize);
     BeaconPrintf(CALLBACK_OUTPUT, "[+] 1st String Value:   %ls",environmentAddr);
 }
 ```
 
 We test our BOF again and confirm it is working correctly.
-```
+
+```bash
 beacon> whereami
 [*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
 [+] host called home, sent: 716 bytes
 [+] received output:
-[+] Evironment Address: 0000000000751130
+[+] Environment Address: 0000000000751130
 [+] received output:
-[+] Evironment Size:    4242
+[+] Environment Size:    4242
 [+] received output:
 [+] 1st String Size:    14
 [+] received output:
 [+] 1st String Value:   =::=::\
 ```
-+ We can see that we are successfully printing the first unicode string from our Environment block into the interactive beacon console.
++ We can see that we are successfully printing the first Unicode string from our Environment block into the interactive beacon console.
 
 ## Looping through all the Unicode Environment Strings
-Now we add some code to loop through all the environment unicode strings and output them to the Cobalt Strike interactive beacon console.
+Now we add some code to loop through all the environment Unicode strings and output them to the Cobalt Strike interactive beacon console.
 
 ### Our Looper Code
+
 ```c
 
 void printLoopAllTheStrings(PVOID nextEnvStringAddr, unsigned __int64 environmentSize)
@@ -616,29 +592,30 @@ void go(char *args, int len)
     procParamAddr = getProcessParamsAddr();
     environmentAddr = getEnvironmentAddr(procParamAddr);
     environmentSize = getEnvironmentSize(procParamAddr);
-    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Address: %p",environmentAddr); 
-    BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Size:    %d",environmentSize);
+    BeaconPrintf(CALLBACK_OUTPUT, "[+] Environment Address: %p",environmentAddr); 
+    BeaconPrintf(CALLBACK_OUTPUT, "[+] Environment Size:    %d",environmentSize);
     printLoopAllTheStrings(environmentAddr, (unsigned __int64)environmentSize);
 }
 ```
-+ This code adds the `printLoopAllTheStrings()` function which loops through all the unicode strings in the Environment block and then prints them to the beacons console using `BeaconPrintf()`.
+
++ This code adds the `printLoopAllTheStrings()` function which loops through all the Unicode strings in the Environment block and then prints them to the beacons console using `BeaconPrintf()`.
 + The loop uses the `getUnicodeStrLen()` function we created to find the offset of the next environment string.
-+ After adding our current environment address with the unicode string length for our current string, we add 2 bytes to compensate for the `0x0000` delimiter. Now we will be at the start of the next Unicode string.
++ After adding our current environment address with the Unicode string length for our current string, we add 2 bytes to compensate for the `0x0000` delimiter. Now we will be at the start of the next Unicode string.
 
 ![](/assets/images/whereAmIBof/debuggingLoop.png)
 + We set the breakpoint so we could tinker with our code and ensure it works.
-+ We see that the loop is working and loading the next unicode string address into `RAX`!
++ We see that the loop is working and loading the next Unicode string address into `RAX`!
 
 ![](/assets/images/whereAmIBof/beaconLoop.png)
 + As we step through the loops, we can see the environment strings outputting to our beacons console!
 
 ### Great Success!
-Our "Where Am I?" BOF code is working! Also we can see by resuming the code in the debugger, that we successfully output all the environment strings and do not crash the beacon process!
+Our "Where Am I?" BOF code is working! Also, we can see by resuming the code in the debugger, that we successfully output all the environment strings and do not crash the beacon process!
 
 ![](/assets/images/whereAmIBof/greatSuccess.png)
 
-For the full code to the project see the github repo:
-+ [github - boku7/whereami](https://github.com/boku7/whereami)
+For the full code to the project see the GitHub repo:
++ [GitHub - boku7/whereami](https://github.com/boku7/whereami)
 
 ## References
 + https://www.cobaltstrike.com/help-beacon-object-files
