@@ -287,7 +287,7 @@ Now the `whereami` command is accessible from the interactive beacon console.
 ```bash
 beacon> help
 ...
-    whereami                  Displays the beacon process environment without any DLL usage.
+    whereami    Displays the beacon process environment without any DLL usage.
 beacon> whereami
 [*] Where Am I? BOF (Bobby Cooke//SpiderLabs|@0xBoku|github.com/boku7)
 [+] host called home, sent: 164 bytes
@@ -319,9 +319,9 @@ void go(char * args, int len) {
         "mov rax, [rax+0x3f0] \n" // RBX = Environment Size
         "mov %[envAddr], rbx \n"
         "mov %[envSize], rax \n"
-		:[envAddr] "=r" (envAddr),
-		 [envSize] "=r" (envSize)
-	);
+	:[envAddr] "=r" (envAddr),
+	 [envSize] "=r" (envSize)
+    );
     BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Address: %p",envAddr); 
     BeaconPrintf(CALLBACK_OUTPUT, "[+] Evironment Size:    %d",envSize);
 }
@@ -365,8 +365,8 @@ PVOID getProcessParamsAddr()
         "mov rbx, gs:[rax] \n"    // RBX = PEB Address
         "mov rax, [rbx+0x20] \n"  // RAX = ProcessParameters Address
         "mov %[procParamAddr], rax \n"
-		:[procParamAddr] "=r" (procParamAddr)
-	);
+	:[procParamAddr] "=r" (procParamAddr)
+    );
     return procParamAddr;
 }
 PVOID getEnvironmentAddr(PVOID procParamAddr)
@@ -376,9 +376,9 @@ PVOID getEnvironmentAddr(PVOID procParamAddr)
         "mov rax, %[procParamAddr] \n"
         "mov rbx, [rax+0x80] \n"  // RBX = Environment Address
         "mov %[environmentAddr], rbx \n"
-		:[environmentAddr] "=r" (environmentAddr)
-		:[procParamAddr] "r" (procParamAddr)
-	);
+	:[environmentAddr] "=r" (environmentAddr)
+	:[procParamAddr] "r" (procParamAddr)
+    );
     return environmentAddr;
 }
 PVOID getEnvironmentSize(PVOID procParamAddr)
@@ -388,9 +388,9 @@ PVOID getEnvironmentSize(PVOID procParamAddr)
         "mov rax, %[procParamAddr] \n"
         "mov rax, [rax+0x3f0] \n" // RAX = Environment Siz
         "mov %[environmentSize], rax \n"
-		:[environmentSize] "=r" (environmentSize)
-		:[procParamAddr] "r" (procParamAddr)
-	);
+	:[environmentSize] "=r" (environmentSize)
+	:[procParamAddr] "r" (procParamAddr)
+    );
     return environmentSize;
 }
 void go(char * args, int len) {
@@ -444,9 +444,9 @@ PVOID getEnvironmentAddr(PVOID procParamAddr)
         "mov rbx, [rax+0x80] \n"  // RBX = Environment Address
         "mov %[environmentAddr], rbx \n"
         "int3 \n" // <------------ Our BOF Breakpoints for debugging in x64dbg 
-		:[environmentAddr] "=r" (environmentAddr)
-		:[procParamAddr] "r" (procParamAddr)
-	);
+	:[environmentAddr] "=r" (environmentAddr)
+	:[procParamAddr] "r" (procParamAddr)
+    );
     return environmentAddr;
 }
 PVOID getEnvironmentSize(PVOID procParamAddr)
@@ -457,9 +457,9 @@ PVOID getEnvironmentSize(PVOID procParamAddr)
         "mov rax, [rax+0x3f0] \n" // RAX = Environment Siz
         "mov %[environmentSize], rax \n"
         "int3 \n" // <------------ Our BOF Breakpoints for debugging in x64dbg 
-		:[environmentSize] "=r" (environmentSize)
-		:[procParamAddr] "r" (procParamAddr)
-	);
+	:[environmentSize] "=r" (environmentSize)
+	:[procParamAddr] "r" (procParamAddr)
+    );
     return environmentSize;
 }
 ```
@@ -498,9 +498,9 @@ PVOID getUnicodeStrLen(PVOID envStrAddr)
         "cmp bl, [rax + rcx] \n"
         "jne check \n"
         "mov %[unicodeStrLen], rcx \n"
-		:[unicodeStrLen] "=r" (unicodeStrLen)
-		:[envStrAddr] "r" (envStrAddr)
-	);
+	:[unicodeStrLen] "=r" (unicodeStrLen)
+	:[envStrAddr] "r" (envStrAddr)
+    );
     return unicodeStrLen;
 }
 void go(char *args, int len)
