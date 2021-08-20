@@ -32,6 +32,8 @@ Since the goal was to make it ninja/OPSEC safe, I figured why not just do it dyn
 For the full code to the project see the GitHub repo:
 + [GitHub - boku7/whereami](https://github.com/boku7/whereami)
 
+I discovered that TrustedSec had already created a BOF for this, and of course they did because they are awesome! If you'd like to view their original work you can find it here: [trustedsec/CS-Situational-Awareness-BOF/env](https://github.com/trustedsec/CS-Situational-Awareness-BOF/blob/master/src/SA/env/entry.c)
+
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
 Below is the high-level flow & WinDBG commands to map our path from the Thread Environment Block (TEB) to the Environment strings we will ultimately display in our Cobalt Strike interactive beacon console. 
 + WinDBG has an awesome feature that allows you to supply it a structure & a memory address while debugging a process, and it will format the values there into the struct you supply. 
