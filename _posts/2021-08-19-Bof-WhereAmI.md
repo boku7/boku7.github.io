@@ -246,6 +246,15 @@ Now that we know how to dynamically get to the Unicode Environment strings, we w
 
 ### Creating the our BOF Prototype
 + From a macOS or Linux x64 intel device, install GCC & Ming
+
+#### How to install Ming on macOS:
+```
+# Install brew on macOS if you need it (https://brew.sh/)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Install Ming using Brew
+brew install mingw-w64
+```
+
 + Make a folder and change directory into it: `mkdir WhereAmI && cd WhereAmI'
 + Create a C file named `whereami.x64.c` with these contents:
   
