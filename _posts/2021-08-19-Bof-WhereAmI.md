@@ -611,5 +611,18 @@ Our "Where Am I?" BOF code is working! Also, we can see by resuming the code in 
 For the full code to the project see the GitHub repo:
 + [GitHub - boku7/whereami](https://github.com/boku7/whereami)
 
-## References
+## References/Resources
++ Matt Eidelberg's DEF CON 29 talk [Operation Bypass Catch My Payload If You Can](https://youtu.be/JXKNdWUs77w)
+##### Sektor7 Courses
++ https://institute.sektor7.net/
+##### Raphael Mudge - Beacon Object Files - Luser Demo
++ https://www.youtube.com/watch?v=gfYswA_Ronw
+##### Cobalt Strike - Beacon Object Files
 + https://www.cobaltstrike.com/help-beacon-object-files
+##### BOF Code References
+###### trustedsec/CS-Situational-Awareness-BOF
++ https://github.com/trustedsec/CS-Situational-Awareness-BOF
+###### anthemtotheego/InlineExecute-Assembly
++ https://github.com/anthemtotheego/InlineExecute-Assembly/blob/main/inlineExecuteAssembly/inlineExecute-Assembly.cna
+###### ajpc500/BOFs
++ https://github.com/ajpc500/BOFs/
