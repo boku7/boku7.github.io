@@ -28,7 +28,9 @@ For the full code to the project see the GitHub repo:
 + [GitHub - boku7/whereami](https://github.com/boku7/whereami)
 
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
-This is the high-level WinDBG commands to map our path from the Thread Environment Block (TEB) to the Environment strings we will ultimately display in our Cobalt Strike interactive beacon console. WinDBG has an awesome feature that allows you to supply it a structure & a memory address while debugging a process, and it will format the values there into the struct you supply. To make our BOF work from anywhere in memory, we will use windows operation system functionality to get the TEB address, from the TEB we will get the Process Environment Block (PEB) address, from the PEB we will get the ProcessParameters struct address, and from the ProcessParameters struct we will get the address of the Environment string block & the size of the Environment string block.
+Below is the high-level flow & WinDBG commands to map our path from the Thread Environment Block (TEB) to the Environment strings we will ultimately display in our Cobalt Strike interactive beacon console. 
++ WinDBG has an awesome feature that allows you to supply it a structure & a memory address while debugging a process, and it will format the values there into the struct you supply. 
++ To make our BOF work from anywhere in memory, we will use windows operation system functionality to get the TEB address, from the TEB we will get the Process Environment Block (PEB) address, from the PEB we will get the ProcessParameters struct address, and from the ProcessParameters struct we will get the address of the Environment string block & the size of the Environment string block.
 
 TEB (GS Register) --> PEB --> ProcessParameters --> Environment
 
@@ -47,6 +49,8 @@ TEB at 00000000002ae000
    +0x080 Environment      : 0x00000000`00741130 Void
    +0x3f0 EnvironmentSize  : 0x124e
 ```
+
++ Note that even with ASLR off on your windows device, the TEB & PEB address will change pretty much everytime you create a new process.
 
 ### Previewing Our Target Environment Strings with WinDBG
 
@@ -141,7 +145,8 @@ mov rbx, gs:[rax] // RBX = PEB Address
 
 ## From PEB to ProcessParameters
 
-### Get the Address of the Process Environment Block (PEB)
+### Get the Address of the PEB Again
+Since we are launching a new process, the address of the PEB has changed. We will get this new PEB address to continue our path discovery. This time we will just use the `!peb` command and skip the TEB stuff as we've already figured that out.
 + in WinDBG enter the `!peb` command in the console to get the address of the PEB in memory
 
 ```c
