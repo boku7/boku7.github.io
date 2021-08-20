@@ -64,11 +64,16 @@ WinDBG has a built in feature `!peb` which will beautifully parse out the PEB st
 + We can see that `!peb` command parses out the PEB structure and displays to us the Loader (Ldr) information, the address & resolved strings of the ProcessParameters struct, as well as the Environment information we are targeting.
 
 ### Initial Setup
-+ Boot up a windows box
-+ Download and Install x64DBG
-+ Download and install WinDBG 
++ [Boot up a windows box](https://www.microsoft.com/en-us/software-download/windows10ISO)
++ [Download and Install x64DBG](https://x64dbg.com/#start)
++ [Download and install WinDBG](https://www.microsoft.com/en-us/p/windbg-preview/9pgjgd53tn86?activetab=pivot:overviewtab)
 + Make sure WinDBG symbols are setup
 + Open any executable PE file
+
+If you need a walkthrough for any of the initial WinDBG / Windows VM / or x64dbg setup, I highly recommend working through these epics courses first:
+
++ Pavel Yosifovich (@zodiacon) - [WinDbg Fundamentals: User Mode](https://www.pentesteracademy.com/course?id=52)
++ Sektor7 (@SEKTOR7net) - [RED TEAM Operator: Malware Development Essentials & Intermediate Courses](https://institute.sektor7.net/)
 
 ## From TEB to PEB
 The address of the Thread Environment Block (TEB) can be discovered from anywhere in memory by referencing the `GS` register for 64 bit, and the `FS` register for 32 bit. The TEB includes within it the address of the Process Environment Block (PEB). Therefor once we get the TEB using the `GS`/`FS` register, we can find the PEB. This walkthrough is for a x64 BOF, so we will be using the `GS` register.
