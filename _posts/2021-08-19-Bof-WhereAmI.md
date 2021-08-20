@@ -35,7 +35,7 @@ Below is the high-level flow & WinDBG commands to map our path from the Thread E
 + WinDBG has an awesome feature that allows you to supply it a structure & a memory address while debugging a process, and it will format the values there into the struct you supply. 
 + To make our BOF work from anywhere in memory, we will use windows operation system functionality to get the TEB address, from the TEB we will get the Process Environment Block (PEB) address, from the PEB we will get the ProcessParameters struct address, and from the ProcessParameters struct we will get the address of the Environment string block & the size of the Environment string block.
 
-TEB (GS Register) --> PEB --> ProcessParameters --> Environment
+`TEB (GS Register)` --> `PEB` --> `ProcessParameters` --> `Environment Block Address` & `Environment Size`
 
 ```bash
 # TEB Address
@@ -71,7 +71,7 @@ WinDBG has a built in feature `!peb` which will beautifully parse out the PEB st
 + Open any executable PE file
 
 ## From TEB to PEB
-The address of the Thread Environment Block (TEB) can be discovered from anywhere in memory by referencing the GS register for 64 bit, and the FS register for 32 bit. The TEB includes within it the address of the Process Environment Block (PEB). Therefor once we get the TEB using the GS/FS register, we can find the PEB. This walkthrough is for a x64 BOF, so we will be using the GS register.
+The address of the Thread Environment Block (TEB) can be discovered from anywhere in memory by referencing the `GS` register for 64 bit, and the `FS` register for 32 bit. The TEB includes within it the address of the Process Environment Block (PEB). Therefor once we get the TEB using the `GS`/`FS` register, we can find the PEB. This walkthrough is for a x64 BOF, so we will be using the `GS` register.
 
 ### Viewing the TEB in WinDBG
 To see the TEB for our current thread in WinDBG, just use the `!teb` command. This displays the TEB for us nicely.
@@ -113,7 +113,7 @@ ntdll!_TEB
 + We can see that the PEB Address is at an offset of `+0x060` within the TEB.
 
 ### Creating TEB to PEB Shellcode
-Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programmatically. We will make sure this is Position Independent Code (PIC) by using the GS register to discover the TEB.  
+Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programmatically. We will make sure this is Position Independent Code (PIC) by using the `GS` register to discover the TEB.  
 
 + To test that this works, we will open our PE file in x64dbg.
 
@@ -125,9 +125,9 @@ Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to
 
 ![](/assets/images/whereAmIBof/x64EditAssembly.png)   
 
-+ We will put 0x60 into the RAX register because we know that the PEB Address is at `TEB+0x60`.
++ We will put `0x60` into the `RAX` register because we know that the PEB Address is at `TEB+0x60`.
 + For the next instruction put in `mov rbx, gs:[rax]`.
-  + We are referencing the TEB address using the GS register. This is a Windows internals operating system functionality.
+  + We are referencing the TEB address using the `GS` register. This is a Windows internals operating system functionality.
   + We are telling the processor to move the 8-byte value at `TEB+0x60` into the `RBX` register.
   + Our PEB Adress is at `TEB+0x60`.
 + Now that we have our 2 instructions in, we press `F7` to step forward and execute our instructions.
@@ -207,7 +207,7 @@ Now that we know the address and size of the Environment, we can view the memory
 ```
 + We see that the strings are there as Unicode. You can tell because of the `00` after everything.
   + Windows Unicode strings are 2 bytes (4 hex characters).
-+ We can see that the Unicode strings end with a `00 00` Unicode byte.
++ We can see that the Unicode strings end with a `00 00` where normally its a hex ASCII value followed by a `00`.
  
 ## Assembly Shellcode to get to Environment from Anywhere in Memory
 
@@ -232,7 +232,7 @@ We enter in the above Assembly code into a process using x64dbg to test it out. 
 + The Environment Size is in the `RBX` register.
 
 ### Confirming the Environment Address
-Just to make sure, we right-click the RAX value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
+Just to make sure, we right-click the `RAX` value in x64dbg and click 'View in Dump'. We can confirm that our Environment Unicode strings are at that address.
 
 ![](/assets/images/whereAmIBof/confirmEnvAddr.png)
 
@@ -426,7 +426,7 @@ void go(char * args, int len) {
 }
 ```
 
-### Compile & Test
+### Compile & Test our Inline Assembly BOF
 
 ```bash
 bobby.cooke$ cat compile.cmds 
