@@ -1,8 +1,10 @@
 ---
-title: Creating the "Where Am I" Cobalt Strike BOF
+title: Creating the WhereAmI Cobalt Strike BOF
 date: 2021-8-19
 layout: single
 classes: wide
+header:
+  teaser: /assets/images/cs.png
 tags:
   - CobaltStrike
   - BeaconObjectFile
@@ -11,6 +13,7 @@ tags:
   - Internals
   - RedTeam
 --- 
+![](/assets/images/cs.png)
 
 ## Overview
 This is a walkthrough of creating the Cobalt Strike Beacon Object File (BOF) "Where Am I?"
