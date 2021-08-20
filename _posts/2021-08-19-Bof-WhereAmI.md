@@ -284,6 +284,10 @@ x86_64-w64-mingw32-gcc -c whereami.x64.c -o whereami.x64.o
 + Right click your beacon and click 'Interact' to pull up the beacon CLI
 + Use `inline-execute` from your Cobalt Strike CLI and supply the path to your `whereami.x64.o` BOF
 
+If you need help setting up a Cobalt Strike Team Server, navigating the UI/setup, and just general knowledge on how to operate Cobalt Strike, then 100% check out these AWESOME Cobalt Strike videos created by Raphael Mudge!
++ https://www.cobaltstrike.com/training
+
+
 ```c 
 beacon> inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
 [*] Tasked beacon to inline-execute /Users/bobby.cooke/git/boku7/WhereAmI/whereami.x64.o
