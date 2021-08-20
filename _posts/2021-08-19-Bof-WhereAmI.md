@@ -198,8 +198,8 @@ mul r10              // RAX&RDX = 0x0
 add al, 0x60         // RAX = 0x60 = Offset of PEB Address within the TEB
 mov rbx, gs:[rax]    // RBX = PEB Address
 mov rax, [rbx+0x20]  // RAX = ProcessParameters Address
-mov rax, [rax+0x80]  // RAX = Environment Address
 mov rbx, [rax+0x3f0] // RBX = Environment Size
+mov rax, [rax+0x80]  // RAX = Environment Address
 ```
 
 #### Testing That our Code Works
