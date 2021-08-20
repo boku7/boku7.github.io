@@ -21,11 +21,13 @@ This is a walkthrough of creating the Cobalt Strike Beacon Object File (BOF) "Wh
 This idea was inspired by Matt Eidelberg's DEF CON 29 talk [Operation Bypass Catch My Payload If You Can](https://youtu.be/JXKNdWUs77w).
 + In this talk, Matt shows how EDR heuristics can detect Cobalt Strike beacons based on their behavior. 
 + Matt uses an example where after the beacon compromises the endpoint, the first thing it does is run the `whoami.exe` local binary.
-+ This behavior of the host beacon process spawning a new `whoami.exe` process triggers the EDR and the beacon is burned!
++ This behavior of the host beacon process spawning a new `whoami.exe` process, triggers the EDR and the beacon is burned!
 + I've been doing allot of Windows Internals studying, and this video made a lightbulb go off. 
 + I thought "Why not just get the `whoami.exe` info from the process? It's already right there in the beacon processes memory!" 
 
-So that's what I did! I created a Beacon Object File that grabs the information we'd want, right there form the beacon process memory! Since the goal was to make it ninja/OPSEC safe, I figured why not just do it dynamically with Assembly? About halfway through creation, I bit the bullet and burned the extra time to make it into a blog post as well, so here it is!
+So that's what I did! I created a Beacon Object File that grabs the information we'd want, right there from the beacon process memory! 
+
+Since the goal was to make it ninja/OPSEC safe, I figured why not just do it dynamically with Assembly? About halfway through creation, I bit the bullet and burned the extra time to make it into a blog post as well, so here it is!
 
 For the full code to the project see the GitHub repo:
 + [GitHub - boku7/whereami](https://github.com/boku7/whereami)
