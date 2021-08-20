@@ -248,7 +248,7 @@ Now that we know how to dynamically get to the Unicode Environment strings, we w
 + From a macOS or Linux x64 intel device, install GCC & Ming
 
 #### How to install Ming on macOS:
-```
+```bash
 # Install brew on macOS if you need it (https://brew.sh/)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 # Install Ming using Brew
