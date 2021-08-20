@@ -47,7 +47,7 @@ TEB at 00000000002ae000
 + Open any executable PE file
 
 ## From TEB to PEB
-The address of the Thread Environment Block (TEB) can be discovered from anywhere in memory by referencing the GS register for 64 bit, and the FS register for 32 bit. The TEB includes within it the address of the Process Environment Block (PEB). Therefor once we get the TEB using the FS register, we can find the PEB.
+The address of the Thread Environment Block (TEB) can be discovered from anywhere in memory by referencing the GS register for 64 bit, and the FS register for 32 bit. The TEB includes within it the address of the Process Environment Block (PEB). Therefor once we get the TEB using the GS/FS register, we can find the PEB. This walkthrough is for a x64 BOF, so we will be using the GS register.
 
 ### Viewing the TEB in WinDBG
 To see the TEB for our current thread in WinDBG, just use the `!teb` command. This displays the TEB for us nicely.
