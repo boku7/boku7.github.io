@@ -115,9 +115,9 @@ ntdll!_TEB
 ### Creating TEB to PEB Shellcode
 Our goal is to do this in a Cobalt Strike Beacon Object File, so we will need to create the Assembly code to discover the PEB from the TEB programmatically. We will make sure this is Position Independent Code (PIC) by using the GS register to discover the TEB.  
 
-+ To test that this works, we will open our PE file in x96DBG.
++ To test that this works, we will open our PE file in x64dbg.
 
-+ X96DBG has advantages over WinDBG, and WinDBG has advantages over x96DBG. I switch between them allot depending on what I'm trying to do.
++ x64dbg has advantages over WinDBG, and WinDBG has advantages over x64dbg. I switch between them allot depending on what I'm trying to do.
 + Set a break point anywhere. Then select the current line that RIP is on.
 + Press the spacebar and edit the assembly.
 
