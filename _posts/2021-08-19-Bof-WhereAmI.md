@@ -13,14 +13,23 @@ tags:
 --- 
 
 ## Overview
-This post covers a walkthrough of creating the Cobalt Strike Beacon Object File (BOF), "Where Am I?".
+This is a walkthrough of creating the Cobalt Strike Beacon Object File (BOF) "Where Am I?"
+
+This idea was inspired by Matt Eidelberg's DEF CON 29 talk [Operation Bypass Catch My Payload If You Can](https://youtu.be/JXKNdWUs77w).
++ In this talk, Matt shows how EDR heuristics can detect Cobalt Strike beacons based on their behavior. 
++ Matt uses an example where after the beacon compromises the endpoint, the first thing it does is run the `whoami.exe` local binary.
++ This behavior of the host beacon process spawning a new `whoami.exe` process triggers the EDR and the beacon is burned!
++ I've been doing allot of Windows Internals studying, and this video made a lightbulb go off. 
++ I thought "Why not just get the `whoami.exe` info from the process? It's already right there in the beacon processes memory!" 
+
+So that's what I did! I created a Beacon Object File that grabs the information we'd want, right there form the beacon process memory! Since the goal was to make it ninja/OPSEC safe, I figured why not just do it dynamically with Assembly? About halfway through creation, I bit the bullet and burned the extra time to make it into a blog post as well, so here it is!
 
 For the full code to the project see the GitHub repo:
 + [GitHub - boku7/whereami](https://github.com/boku7/whereami)
 
-![](/assets/images/whereAmIBof/bangPeb.png)
-
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
+This is the high-level WinDBG commands to map our path from the Thread Environment Block (TEB) to the Environment strings we will ultimately display in our Cobalt Strike interactive beacon console. WinDBG has an awesome feature that allows you to supply it a structure & a memory address while debugging a process, and it will format the values there into the struct you supply. To make our BOF work from anywhere in memory, we will use windows operation system functionality to get the TEB address, from the TEB we will get the Process Environment Block (PEB) address, from the PEB we will get the ProcessParameters struct address, and from the ProcessParameters struct we will get the address of the Environment string block & the size of the Environment string block.
+
 TEB (GS Register) --> PEB --> ProcessParameters --> Environment
 
 ```bash
@@ -38,6 +47,14 @@ TEB at 00000000002ae000
    +0x080 Environment      : 0x00000000`00741130 Void
    +0x3f0 EnvironmentSize  : 0x124e
 ```
+
+### Previewing Our Target Environment Strings with WinDBG
+
+WinDBG has a built in feature `!peb` which will beautifully parse out the PEB structure as it exists in memory for us! By using this command we can neatly see all the Environment strings we will be hunting for when creating this BOF!
+
+![](/assets/images/whereAmIBof/bangPeb.png)
+
++ We can see that `!peb` command parses out the PEB structure and displays to us the Loader (Ldr) information, the address & resolved strings of the ProcessParameters struct, as well as the Environment information we are targeting.
 
 ### Initial Setup
 + Boot up a windows box
@@ -131,10 +148,6 @@ mov rbx, gs:[rax] // RBX = PEB Address
 0:000> !peb
 PEB at 00000000002ad000
 ```
-
-![](/assets/images/whereAmIBof/bangPeb.png)
-
-  + We can see that `!peb` command parses out the PEB, the Loader (Ldr), the Process Parameters, as well as the Environment information we are targeting.
 
 ### Walk the PEB Struct to find ProcessParameters Struct
 The Process Environment Block (PEB) contains allot of information. Right now, we are discovering where the `ProcessParameters` struct exists within the PEB. We will note the offset: `+0x020 ProcessParameters`.
