@@ -158,6 +158,8 @@ mov rbx, gs:[rax] // RBX = PEB Address
 ## From PEB to ProcessParameters
 
 ### Get the Address of the PEB Again
+Now that we have successfully discovered the path to get from any place in process memory to the PEB, we will work on the next goal. Which is getting from the PEB to the ProcessParameters struct. Saving our above PIC shellcode for later, we'll close down x64dbg for now, and open a PE file in WinDBG. We'll use WinDBG to walk the PEB struct for the ProcessParameters struct address.   
+
 Since we are launching a new process, the address of the PEB has changed. We will get this new PEB address to continue our path discovery. This time we will just use the `!peb` command and skip the TEB stuff as we've already figured that out.
 + in WinDBG enter the `!peb` command in the console to get the address of the PEB in memory
 
