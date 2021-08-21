@@ -74,10 +74,11 @@ WinDBG has a built in feature `!peb` which will beautifully parse out the PEB st
 + Make sure WinDBG symbols are setup
 + Open any executable PE file
 
-If you need a walkthrough for any of the initial WinDBG / Windows VM / or x64dbg setup, I highly recommend working through these epics courses first:
-
-+ Pavel Yosifovich (@zodiacon) - [WinDbg Fundamentals: User Mode](https://www.pentesteracademy.com/course?id=52)
+If you're wanting to conquer malware development and learn how to use x64dbg, then work through these epic courses first:
 + Sektor7 (@SEKTOR7net) - [RED TEAM Operator: Malware Development Essentials & Intermediate Courses](https://institute.sektor7.net/)
+
+If you are new to WinDBG check out this awesome course:
++ Pavel Yosifovich (@zodiacon) - [WinDbg Fundamentals: User Mode](https://www.pentesteracademy.com/course?id=52)
 
 If you want to conquer Intel Assembly check out these great courses:
 + Pentester Academy - [x86_64 Assembly Language and Shellcoding on Linux](https://www.pentesteracademy.com/course?id=7)
