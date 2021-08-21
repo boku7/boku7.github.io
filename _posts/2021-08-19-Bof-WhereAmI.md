@@ -37,7 +37,7 @@ I discovered that TrustedSec had already created a BOF for this, and of course t
 ### Our BOF Flow to get the Environment Variables Dynamically in Memory
 Below is the high-level flow & WinDBG commands to map our path from the Thread Environment Block (TEB) to the Environment strings we will ultimately display in our Cobalt Strike interactive beacon console. 
 + WinDBG has an awesome feature that allows you to supply it a structure & a memory address while debugging a process, and it will format the values there into the struct you supply. 
-+ To make our BOF work from anywhere in memory, we will use windows operation system functionality to get the TEB address, from the TEB we will get the Process Environment Block (PEB) address, from the PEB we will get the ProcessParameters struct address, and from the ProcessParameters struct we will get the address of the Environment string block & the size of the Environment string block.
++ To make our BOF work from anywhere in memory, we will use windows operating system functionality to get the TEB address, from the TEB we will get the Process Environment Block (PEB) address, from the PEB we will get the ProcessParameters struct address, and from the ProcessParameters struct we will get the address of the Environment string block & the size of the Environment string block.
 
 `TEB (GS Register)` --> `PEB` --> `ProcessParameters` --> `Environment Block Address` & `Environment Size`
 
@@ -78,6 +78,10 @@ If you need a walkthrough for any of the initial WinDBG / Windows VM / or x64dbg
 
 + Pavel Yosifovich (@zodiacon) - [WinDbg Fundamentals: User Mode](https://www.pentesteracademy.com/course?id=52)
 + Sektor7 (@SEKTOR7net) - [RED TEAM Operator: Malware Development Essentials & Intermediate Courses](https://institute.sektor7.net/)
+
+If you want to conquer Intel Assembly check out these great courses:
++ Pentester Academy - [x86_64 Assembly Language and Shellcoding on Linux](https://www.pentesteracademy.com/course?id=7)
++ Offensive Security - [Windows User Mode Exploit Development](https://www.offensive-security.com/exp301-osed/)
 
 ## From TEB to PEB
 The address of the Thread Environment Block (TEB) can be discovered from anywhere in memory by referencing the `GS` register for 64 bit, and the `FS` register for 32 bit. The TEB includes within it the address of the Process Environment Block (PEB). Therefor once we get the TEB using the `GS`/`FS` register, we can find the PEB. This walkthrough is for a x64 BOF, so we will be using the `GS` register.
@@ -643,6 +647,10 @@ For the full code to the project see the GitHub repo:
 + https://www.youtube.com/watch?v=gfYswA_Ronw
 ##### Cobalt Strike - Beacon Object Files
 + https://www.cobaltstrike.com/help-beacon-object-files
+### Implementing ASM in C Code with GCC
++ https://outflank.nl/blog/2020/12/26/direct-syscalls-in-beacon-object-files/
++ https://www.cs.uaf.edu/2011/fall/cs301/lecture/10_12_asm_c.html
++ http://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Extended-Asm.html#Extended-Asm
 ##### BOF Code References
 ###### trustedsec/CS-Situational-Awareness-BOF
 + https://github.com/trustedsec/CS-Situational-Awareness-BOF
