@@ -56,8 +56,13 @@ For your phishing operators you will want to assign them a license that includes
   + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
 + After selecting the license package, click the 'Start free trial' hyperlink.  
-
 ![](/assets/images/devcode/startE5trial.png)  
+
++ Prove you're not a R0b0T with a text message, and 'Start your free trial'.
+  ![](/assets/images/devcode/robotChallenge.png)
+
+
+
 
 
 + Go to the admin console and get a 25 user subscription for Office Business Premium.
