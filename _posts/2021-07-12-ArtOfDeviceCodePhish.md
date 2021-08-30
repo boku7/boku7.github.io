@@ -30,16 +30,22 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 
 ### Azure Active Directory
 + Go to the Azure Active Directory (AAD) service from within your Azure portal.  
+
 ![](/assets/images/devcode/gotoAAD.png)
+
 + Create a new Azure Active Directory Tenant. 
   + Azure AD > Overview > Manage Tenant > +Create
+
 ![](/assets/images/devcode/createTenant.png)
+
 + Switch to the newly created Azure AD Tenant. 
   + Azure AD > Overview > Manage Tenant > Select Tenant > Switch
 + Create an admin user within the your tenants Azure AD. 
   + (AAD > Users > New User)
   + Assign them the role Global Administrator.  
+
   ![](/assets/images/devcode/newAdminUser.png)
+  
 + To disable 2FA prompting go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
 
 ### Office 365
@@ -55,7 +61,8 @@ For your phishing operators you will want to assign them a license that includes
 + Select a license package which inclues both Exchange Online and the Office desktop application suite.
   + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
-+ After selecting the license package, click the 'Start free trial' hyperlink.  
++ After selecting the license package, click the 'Start free trial' hyperlink. 
+ 
 ![](/assets/images/devcode/startE5trial.png)  
 
 + Prove you're not a R0b0T with a text message, and 'Start your free trial'.
