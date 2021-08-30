@@ -96,7 +96,9 @@ New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
 ## Phishing Operator Setup
 
 ### Windows 10 Virtual Machine
-+ Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
++ Download and install your favorite hypervisor. 
+  + VMWare offers free 30 day trials for [VMWare Fusion](https://www.vmware.com/products/fusion/fusion-evaluation.html) for macOS & [VMWare Workstation Pro](https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html) for Linux or Windows.
+  + [VirtualBox](https://www.virtualbox.org/wiki/Downloads) works too.
 + Create a windows VM using a prebuilt VM package or an ISO.
   - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
     - Use a mac or linux box for the ISO download
