@@ -30,52 +30,32 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 
 ### Azure Active Directory
 + Go to the Azure Active Directory (AAD) service from within your Azure portal.  
-
-![](/assets/images/devcode/gotoAAD.png)
-
+![](/assets/images/gotoAAD.png)
 + Create a new Azure Active Directory Tenant. 
-  + Azure AD > Overview > Manage Tenant > +Create   
-
-![](/assets/images/devcode/createTenant.png)
-
+  + Azure AD > Overview > Manage Tenant > +Create
+![](/assets/images/createTenant.png)
 + Switch to the newly created Azure AD Tenant. 
   + Azure AD > Overview > Manage Tenant > Select Tenant > Switch
 + Create an admin user within the your tenants Azure AD. 
   + (AAD > Users > New User)
   + Assign them the role Global Administrator.  
-
-  ![](/assets/images/devcode/newAdminUser.png)
-  
+  ![](/assets/images/newAdminUser.png)
 + To disable 2FA prompting go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
 
 ### Office 365
 For your phishing operators you will want to assign them a license that includes Exchange Online & the Microsoft Office desktop application suite. I have found that for Azure Device Code phishing, sending phish emails from the Windows Outlook Desktop application has the most reliablity. Using OWA, different operating systems, and different email clients returns mixed results. Typically a target organization that utilizes Azure AD for their business needs is likely a Windows shop that uses Outlook. You will want to perform solid recon and adjust as needed.
 
 #### Exchange Online & Office Trial Licenses
-+ Sign-in to [office.com](https://portal.office.com) with your new admin user.  
-
-![](/assets/images/devcode/loginPhishAdmin.png)  
-
++ Sign-in to [office.com](https://portal.office.com) with your new admin user.
 + Go to [admin.microsoft.com](https://admin.microsoft.com/Adminportal/Home).
 + Go to Billing > Purchase Services from the admin panel.
-+ Select a license package with Exchange Online and the Office Application Suite.
++ Select a license package which inclues both Exchange Online and the Office desktop application suite.
   + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
-+ After selecting the license package, click the 'Start free trial' hyperlink.   
- 
-![](/assets/images/devcode/startE5trial.png)  
++ After selecting the license package, click the 'Start free trial' hyperlink.  
 
-+ Prove you're not a R0b0T with a text message, 'Start your free trial', then 'Try now'.  
+![](/assets/images/devcode/startE5trial.png)
 
-![](/assets/images/devcode/robotChallenge.png)
-
-+ Only 2 more prompts to go!  
-
-![](/assets/images/devcode/confirmTrialLic.png)
-
-+ Create a user to send phishing emails from by going to the Users > Active Users tab and clicking 'Add a user' from the Active Users page.  
-
-![](/assets/images/devcode/activeUsersWindow.png)
 
 
 + Go to the admin console and get a 25 user subscription for Office Business Premium.
@@ -159,7 +139,29 @@ The basic template will look like this:
 
 #### Phishing with TokenTactics
 + Download TokenTactics on a Windows Machine: [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)
-+ Import the script into Powershell: Import-Module .\TokenTactics.psd1
++ You'll have to change the Powershell Execution Policy, otherwise you'll be prevented from invoking the script in Windows.
+  - Navigate to Windows Settings, click on "Update & Security"
+  - On the left side towards the bottom, you'll see a "For developers" tab
+  - After clicking that, you should see a PowerShell header towards the bottom, click on the "Apply" button:
+  
+![](/assets/images/devcode/powershell-global-bypass.png)
+
++ You're not done though, local user permissions will still be restricted, to fix this, do the following:
+  - Run Powershell as Administrator
+  - Copy and paste this command in Powershell: Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+  - Navigate to the TokenTactics Directory and run this command to prevent warnings: Unblock-File 'C:\Users\yourusername\Desktop\TokenTactics-main\TokenTactics-main\modules\*.ps1'
+  - You can now import the module and begin.
+  - Run this command: Import-Module .\TokenTactics.psd1
+  - You may see this warning, ignore it:
+
+![](/assets/images/devcode/import-mod-warning.png)
+
++ You can now begin generating a code to phish with, there are two basic commands depending on the organization you're attempting to hack:
+  - Get-AzureToken -Client MSGraph <This command will generate a basic code that you'll use against most standard organizations>
+  - Get-AzureToken -Client DODMSGraph <This command will generate a code that you'll use again Department of Depense / Military Organizations>
++ After picking one of the above commands, run it and you should be able to generate a code with it. This is what you'll use with the email template above.
+
+![](/assets/images/devcode/generating-token.png)
 
 ## Hooking a Phish
 
