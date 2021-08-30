@@ -127,9 +127,17 @@ New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
 ## Phishing
 
 #### Creating a Phishing Email Template
++ You'll want to create a template that makes sense. Obviously, you should adapt if the Azure code template changes but for the time being, you should be able to use a basic template. There's one included in the "TokenTactics" Github repository see: "/resources/example_phish.html"
+
+The basic template will look like this:
+
+![](/assets/images/azure-phish-temp.png)
+
++ You'll notice that the template already has a device code populated. After you generate a code with TokenTactics, you can edit the HTML code that you'll be using for the template and replace the placeholder code "571012" with the code that you have generated. In addition you'll see that the phishing template's title is "Device Code" - feel free to modify this within the template to "Action Required" depending on the nature of your phishing campaign.
 
 #### Phishing with TokenTactics
-
++ Download TokenTactics on a Windows Machine: [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)
++ Import the script into Powershell: Import-Module .\TokenTactics.psd1
 ## Hook3d a Phish - Let the Games Begin
 
 #### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
