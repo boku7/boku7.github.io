@@ -148,9 +148,8 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ## Phishing
 
 #### Creating a Phishing Email Template
-+ You'll want to create a template that makes sense. Obviously, you should adapt if the Azure code template changes but for the time being, you should be able to use a basic template. There's one included in the "TokenTactics" Github repository see: "/resources/example_phish.html"
-
-The basic template will look like this:
++ You'll want to create a template that makes sense. Obviously, you should adapt if the Azure code template changes but for the time being, you should be able to use a basic template. 
++ An [Azure Device Code phishing template is included in TokenTactics Github repository](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/example_phish.html)
 
 ![](/assets/images/azure-phish-temp.png)
 
