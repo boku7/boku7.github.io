@@ -58,17 +58,18 @@ For your phishing operators you will want to assign them a license that includes
 
 + Go to [admin.microsoft.com](https://admin.microsoft.com/Adminportal/Home).
 + Go to Billing > Purchase Services from the admin panel.
-+ Select a license package which inclues both Exchange Online and the Office desktop application suite.
++ Select a license package with Exchange Online and the Office Application Suite.
   + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
 + After selecting the license package, click the 'Start free trial' hyperlink. 
  
 ![](/assets/images/devcode/startE5trial.png)  
 
-+ Prove you're not a R0b0T with a text message, and 'Start your free trial'.
++ Prove you're not a R0b0T with a text message, 'Start your free trial', then 'Try now'.
 
 ![](/assets/images/devcode/robotChallenge.png)
 
+![](/assets/images/devcode/confirmTrialLic.png)
 
 
 
