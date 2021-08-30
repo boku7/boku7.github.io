@@ -29,32 +29,45 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 + Login to your newly created Azure subscription at [portal.azure.com](https://portal.azure.com/).
 
 ### Azure Active Directory
-+ Go to the Azure Active Directory (AAD) service from within your Azure portal  
++ Go to the Azure Active Directory (AAD) service from within your Azure portal.  
 ![](/assets/images/gotoAAD.png)
-+ Create a new Azure Active Directory Tenant 
++ Create a new Azure Active Directory Tenant. 
   + Azure AD > Overview > Manage Tenant > +Create
 ![](/assets/images/createTenant.png)
-+ Switch to the newly created Azure AD Tenant 
++ Switch to the newly created Azure AD Tenant. 
   + Azure AD > Overview > Manage Tenant > Select Tenant > Switch
-+ Create an admin user within the your tenants Azure AD 
++ Create an admin user within the your tenants Azure AD. 
   + (AAD > Users > New User)
-  + Assign them the role Global Administrator  
+  + Assign them the role Global Administrator.  
   ![](/assets/images/newAdminUser.png)
-+ During a Red Team engagement you will likely need to share the phishing accounts. Disable the 2FA requirements for the AAD phishing tenant.
-  + With the AAD phishing tenant selected, go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
++ To disable 2FA prompting go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
 
 ### Office 365
-+ Sign-in to portal.office.com with your new admin user
-+ Go to the admin console and get a 25 user subscription for Office Business Premium
-+ Create a user that will be used for phishing and assign them a license
+For your phishing operators you will want to assign them a license that includes Exchange Online & the Microsoft Office desktop application suite. I have found that for Azure Device Code phishing, sending phish emails from the Windows Outlook Desktop application has the most reliablity. Using OWA, different operating systems, and different email clients returns mixed results. Typically a target organization that utilizes Azure AD for their business needs is likely a Windows shop that uses Outlook. You will want to perform solid recon and adjust as needed.
+
+#### Exchange Online & Office Trial Licenses
++ Sign-in to [office.com](https://portal.office.com) with your new admin user.
++ Go to [admin.microsoft.com](https://admin.microsoft.com/Adminportal/Home).
++ Go to Billing > Purchase Services from the admin panel.
++ Select a license package which inclues both Exchange Online and the Office desktop application suite.
+  + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
+  + There are many different license packages offered by Microsoft which iclude EXO & Office.
++ After selecting the license package, click the 'Start free trial' hyperlink.  
+
+![](/assets/images/devcode/startE5trial.png)
+
+
+
++ Go to the admin console and get a 25 user subscription for Office Business Premium.
++ Create a user that will be used for phishing and assign them a license.
 
 ### Enable DKIM for Phishing AAD
-+ From your windows VM, open a powershell window and install the ExchangeOnlineManagement module
++ Open powershell, then install & import the ExchangeOnlineManagement module.
 ```powershell
 Install-Module -Name ExchangeOnlineManagement
 Import-Module ExchangeOnlineManagement
 ```
-+ Connect to the EXO module with your admin user you created for your phishing domain and enable DKIM for your tenant
++ Connect to Exchange Online (EXO) with your admin user and enable DKIM for your AAD tenant.
 ```powershell
 Connect-ExchangeOnline -UserPrincipalName admin@msftauth.onmicrosoft.com
 # Login to prompt
@@ -71,7 +84,7 @@ New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
   - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
 
 ### Outlook Application
-+ On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
++ On your windows 10 VM, install office by going to [office.com](https://www.office.com), login, and click the "Install Office" button from the splash page.
 + I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
   - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
 
