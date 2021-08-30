@@ -24,42 +24,59 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 ## Azure Phishing Infrastructure Setup
 
 ### Azure Subscription
-+ Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/).
-  +  You will be required to verify with a valid email, phone number, and credit card.
-+ Login to your newly created Azure subscription at [portal.azure.com](https://portal.azure.com/).
-
-### Azure Active Directory
 + Go to the Azure Active Directory (AAD) service from within your Azure portal.  
-![](/assets/images/gotoAAD.png)
+
+![](/assets/images/devcode/gotoAAD.png)
+
 + Create a new Azure Active Directory Tenant. 
-  + Azure AD > Overview > Manage Tenant > +Create
-![](/assets/images/createTenant.png)
+  + Azure AD > Overview > Manage Tenant > +Create   
+
+![](/assets/images/devcode/createTenant.png)
+
 + Switch to the newly created Azure AD Tenant. 
   + Azure AD > Overview > Manage Tenant > Select Tenant > Switch
 + Create an admin user within the your tenants Azure AD. 
   + (AAD > Users > New User)
   + Assign them the role Global Administrator.  
-  ![](/assets/images/newAdminUser.png)
+
+  ![](/assets/images/devcode/newAdminUser.png)
+  
 + To disable 2FA prompting go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
 
 ### Office 365
 For your phishing operators you will want to assign them a license that includes Exchange Online & the Microsoft Office desktop application suite. I have found that for Azure Device Code phishing, sending phish emails from the Windows Outlook Desktop application has the most reliablity. Using OWA, different operating systems, and different email clients returns mixed results. Typically a target organization that utilizes Azure AD for their business needs is likely a Windows shop that uses Outlook. You will want to perform solid recon and adjust as needed.
 
 #### Exchange Online & Office Trial Licenses
-+ Sign-in to [office.com](https://portal.office.com) with your new admin user.
++ Sign-in to [office.com](https://portal.office.com) with your new admin user.  
+
+![](/assets/images/devcode/loginPhishAdmin.png)  
+
 + Go to [admin.microsoft.com](https://admin.microsoft.com/Adminportal/Home).
 + Go to Billing > Purchase Services from the admin panel.
-+ Select a license package which inclues both Exchange Online and the Office desktop application suite.
++ Select a license package with Exchange Online and the Office Application Suite.
   + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
-+ After selecting the license package, click the 'Start free trial' hyperlink.  
++ After selecting the license package, click the 'Start free trial' hyperlink.   
+ 
+![](/assets/images/devcode/startE5trial.png)  
 
-![](/assets/images/devcode/startE5trial.png)
++ Prove you're not a R0b0T with a text message, 'Start your free trial', then 'Try now'.  
 
+![](/assets/images/devcode/robotChallenge.png)
+
++ Only 2 more prompts to go!  
+
+![](/assets/images/devcode/confirmTrialLic.png)
+
++ Create a user to send phishing emails from by going to the Users > Active Users tab and clicking 'Add a user' from the Active Users page.  
+
+![](/assets/images/devcode/activeUsersWindow.png)
 
 
 + Go to the admin console and get a 25 user subscription for Office Business Premium.
 + Create a user that will be used for phishing and assign them a license.
+
+
 
 ### Enable DKIM for Phishing AAD
 + Open powershell, then install & import the ExchangeOnlineManagement module.
