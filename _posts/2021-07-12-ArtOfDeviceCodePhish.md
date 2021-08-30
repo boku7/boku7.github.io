@@ -69,8 +69,10 @@ For your phishing operators you will want to assign them a license that includes
 
 ![](/assets/images/devcode/robotChallenge.png)
 
++ Only 2 more prompts to go!
 ![](/assets/images/devcode/confirmTrialLic.png)
 
++ Create a user to send phishing emails from by going to the Users > Active Users tab and clicking 'Add a user' from the Active Users page.
 
 
 
