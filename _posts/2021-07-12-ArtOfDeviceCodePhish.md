@@ -74,7 +74,7 @@ For your phishing operators you will want to assign them a license that includes
 
 + Give your phishing user a convincing name, as this name will be seen by the target you are attempting to phish.
 
-![](/assets/images/devcode//assets/images/devcode/devopsUser.png)
+![](/assets/images/devcode/devopsUser.png)
 
 + Assign a license to your phishing user.
 
