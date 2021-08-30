@@ -72,11 +72,13 @@ For your phishing operators you will want to assign them a license that includes
 
 ![](/assets/images/devcode/activeUsersWindow.png)
 
++ Give your phishing user a convincing name, as this name will be seen by the target you are attempting to phish.
 
-+ Go to the admin console and get a 25 user subscription for Office Business Premium.
-+ Create a user that will be used for phishing and assign them a license.
+![](/assets/images/devcode//assets/images/devcode/devopsUser.png)
 
++ Assign a license to your phishing user.
 
+![](/assets/images/devcode/assignLicense.png)
 
 ### Enable DKIM for Phishing AAD
 + Open powershell, then install & import the ExchangeOnlineManagement module.
