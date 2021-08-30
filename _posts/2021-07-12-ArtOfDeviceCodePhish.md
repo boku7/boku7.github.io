@@ -11,25 +11,6 @@ tags:
   - RedTeam
 --- 
 ## Co-Author & Co-Developer: Stephan Borosh
-### Index
-+ [Overview](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#overview)
-+ [Recon - Does the target use Azure Active Directory?](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#recon---does-the-target-use-azure-active-directory)
-  + [Install and import AADInternals into powershell](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#install-and-import-aadinternals-into-powershell)
-  + [Check if the target domain uses Azure Active Directory](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#check-if-the-target-domain-uses-azure-active-directory)
-+ [Infrastruture - Azure Phishing Tenant](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#infrastruture---setting-up-for-the-azure-device-code-phish)
-  + [Create an Azure Account](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#create-an-azure-account)
-  + [Create an Azure Active Directory Tenant](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#create-an-azure-active-directory-tenant)
-  + [Office 365 Licenses & Phish Puppets](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#office-365-licenses--phish-puppets)
-+ [Infrastruture - Windows Phishing VM](https://0xboku.com/2021/07/12/ArtOfDeviceCodePhish.html#Setup-a-Windows-VM-for-Phishing)
-  + [ Setup Windows 10 Outlook Desktop App]()
-+ [Phishing]()
-  + [Creating a Phishing Email Template]()
-  + [Phishing with TokenTactics]()
-+ [Hook3d a Phish - Let the Games Begin]()
-  + [AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++]()
-  + [RefreshTo-AllTheThings]()
-  + [Dumping Emails with TokenTactics]()
-  + [Opening Outlook Web App in a Browser with TokenTactics]()
 
 ## Overview
 Guide for Azure Device Code phishing - infrastructure setup to exploitation.
@@ -147,7 +128,7 @@ The basic template will look like this:
 + Download TokenTactics on a Windows Machine: [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)
 + Import the script into Powershell: Import-Module .\TokenTactics.psd1
 
-## Hook3d a Phish - Let the Games Begin
+## Hooking a Phish
 
 #### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
 
