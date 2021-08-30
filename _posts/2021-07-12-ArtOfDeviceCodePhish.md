@@ -74,6 +74,7 @@ For your phishing operators you will want to assign them a license that includes
 
 + Create a user to send phishing emails from by going to the Users > Active Users tab and clicking 'Add a user' from the Active Users page.
 
+![](/assets/images/devcode/activeUsersWindow.png)
 
 
 + Go to the admin console and get a 25 user subscription for Office Business Premium.
