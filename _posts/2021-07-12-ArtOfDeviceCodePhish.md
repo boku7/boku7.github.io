@@ -36,7 +36,7 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 + Switch to the newly created Azure AD Tenant. 
   + Azure AD > Overview > Manage Tenant > Select Tenant > Switch
 + Create an admin user within the your tenants Azure AD. 
-  + (AAD > Users > New User)
+  + AAD > Users > New User
   + Assign them the role Global Administrator.  
 
   ![](/assets/images/devcode/newAdminUser.png)
