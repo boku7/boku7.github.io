@@ -23,12 +23,12 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 
 ## Azure Phishing Infrastructure Setup
 
-### Azure Subscription Setup
+### Azure Subscription
 + Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/).
   +  You will be required to verify with a valid email, phone number, and credit card.
 + Login to your newly created Azure subscription at [portal.azure.com](https://portal.azure.com/).
 
-### Azure Active Directory Setup
+### Azure Active Directory
 + Go to the Azure Active Directory (AAD) service from within your Azure portal  
 ![](/assets/images/gotoAAD.png)
 + Create a new Azure Active Directory Tenant 
@@ -43,7 +43,7 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 + During a Red Team engagement you will likely need to share the phishing accounts. Disable the 2FA requirements for the AAD phishing tenant.
   + With the AAD phishing tenant selected, go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
 
-### Office 365 Setup
+### Office 365
 + Sign-in to portal.office.com with your new admin user
 + Go to the admin console and get a 25 user subscription for Office Business Premium
 + Create a user that will be used for phishing and assign them a license
@@ -63,14 +63,14 @@ New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
 
 ## Phishing Operator Setup
 
-### Operator Windows 10 Virtual Machine Setup
+### Windows 10 Virtual Machine
 + Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
 + Create a windows VM using a prebuilt VM package or an ISO.
   - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
     - Use a mac or linux box for the ISO download
   - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
 
-##### Operator Outlook Application Setup
+### Outlook Application
 + On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
 + I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
   - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
