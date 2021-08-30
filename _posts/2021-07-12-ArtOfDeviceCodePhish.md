@@ -31,7 +31,6 @@ tags:
   + [Dumping Emails with TokenTactics]()
   + [Opening Outlook Web App in a Browser with TokenTactics]()
 
-
 ## Overview
 Guide for Azure Device Code phishing - infrastructure setup to exploitation.
 
@@ -41,15 +40,15 @@ When an Azure user registers a tenant in Azure Active Directory, they are provid
 First read Dr Nestori Syynimaa's blog post. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 
+## Azure Phishing Infrastructure Setup
 
-## Infrastruture - Azure Phishing Tenant
+### Azure Subscription Setup
++ Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/).
+  +  You will be required to verify with a valid email, phone number, and credit card.
++ Login to your newly created Azure subscription at [portal.azure.com](https://portal.azure.com/).
 
-#### Create an Azure Account
-+ Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/) & login to [portal.azure.com](https://portal.azure.com/)
-- You will be required to verify with a valid email, phone number, and credit card.
-
-#### Create an Azure Active Directory Tenant
-+ Go to the Azure Active Directory service from within your Azure portal  
+### Azure Active Directory Setup
++ Go to the Azure Active Directory (AAD) service from within your Azure portal  
 ![](/assets/images/gotoAAD.png)
 + Create a new Azure Active Directory Tenant 
   + Azure AD > Overview > Manage Tenant > +Create
@@ -63,24 +62,12 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 + During a Red Team engagement you will likely need to share the phishing accounts. Disable the 2FA requirements for the AAD phishing tenant.
   + With the AAD phishing tenant selected, go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
 
-#### Assign Office 365 Licenses & Phish Puppets
+### Office 365 Setup
 + Sign-in to portal.office.com with your new admin user
 + Go to the admin console and get a 25 user subscription for Office Business Premium
 + Create a user that will be used for phishing and assign them a license
 
-## Infrastruture - Windows Phishing VM
-+ Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
-+ Create a windows VM using a prebuilt VM package or an ISO.
-  - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
-    - Use a mac or linux box for the ISO download
-  - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
-
-##### Setup Windows 10 Outlook Desktop App 
-+ On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
-+ I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
-  - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
-
-##### Enable DKIM for your Domain
+### Enable DKIM for Phishing AAD
 + From your windows VM, open a powershell window and install the ExchangeOnlineManagement module
 ```powershell
 Install-Module -Name ExchangeOnlineManagement
@@ -93,8 +80,23 @@ Connect-ExchangeOnline -UserPrincipalName admin@msftauth.onmicrosoft.com
 New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
 ```
 
-## Recon - Does the target use Azure Active Directory?
-#### Install and import AADInternals into powershell
+## Phishing Operator Setup
+
+### Operator Windows 10 Virtual Machine Setup
++ Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
++ Create a windows VM using a prebuilt VM package or an ISO.
+  - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
+    - Use a mac or linux box for the ISO download
+  - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
+
+##### Operator Outlook Application Setup
++ On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
++ I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
+  - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
+
+## Azure AD Recon
+The Azure Device Code phishing technique is dependant on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
+### Install and import AADInternals into powershell
 ```powershell
 # Install the module
 Install-Module AADInternals
@@ -103,7 +105,7 @@ Import-Module AADInternals
 ```
   - https://o365blog.com/aadinternals/#installation
 
-#### Check if the target domain uses Azure Active Directory
+### Check if the target domain uses Azure Active Directory
 
 ##### Target is registered to Azure Active Directory
 ```powershell
@@ -119,10 +121,10 @@ theharvester.world           True True True False Managed
 ```
 - We observe that the target domain theharvester.world is registered to Azure Active Directory, and their email services are True. This means that the target uses Exchange Online for their email.
   - We can confirm this by using the linux dig tool:
-  ```bash
+```bash
 dig -t MX +short theHarvester.World
 0 theharvester-world.mail.protection.outlook.com.
-  ```
+```
 
 ##### Target is *NOT* registered to Azure Active Directory
 ```powershell
