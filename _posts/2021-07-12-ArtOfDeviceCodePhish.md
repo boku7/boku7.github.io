@@ -47,7 +47,9 @@ For your phishing operators you will want to assign them a license that includes
 
 #### Exchange Online & Office Trial Licenses
 + Sign-in to [office.com](https://portal.office.com) with your new admin user.  
+
 ![](/assets/images/devcode/loginPhishAdmin.png)  
+
 + Go to [admin.microsoft.com](https://admin.microsoft.com/Adminportal/Home).
 + Go to Billing > Purchase Services from the admin panel.
 + Select a license package which inclues both Exchange Online and the Office desktop application suite.
@@ -55,6 +57,7 @@ For your phishing operators you will want to assign them a license that includes
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
 + After selecting the license package, click the 'Start free trial' hyperlink.  
 
+![](/assets/images/devcode/startE5trial.png)  
 
 
 + Go to the admin console and get a 25 user subscription for Office Business Premium.
