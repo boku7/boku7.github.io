@@ -34,7 +34,7 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 ![](/assets/images/devcode/gotoAAD.png)
 
 + Create a new Azure Active Directory Tenant. 
-  + Azure AD > Overview > Manage Tenant > +Create
+  + Azure AD > Overview > Manage Tenant > +Create   
 
 ![](/assets/images/devcode/createTenant.png)
 
@@ -61,18 +61,19 @@ For your phishing operators you will want to assign them a license that includes
 + Select a license package with Exchange Online and the Office Application Suite.
   + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
-+ After selecting the license package, click the 'Start free trial' hyperlink. 
++ After selecting the license package, click the 'Start free trial' hyperlink.   
  
 ![](/assets/images/devcode/startE5trial.png)  
 
-+ Prove you're not a R0b0T with a text message, 'Start your free trial', then 'Try now'.
++ Prove you're not a R0b0T with a text message, 'Start your free trial', then 'Try now'.  
 
 ![](/assets/images/devcode/robotChallenge.png)
 
-+ Only 2 more prompts to go!
++ Only 2 more prompts to go!  
+
 ![](/assets/images/devcode/confirmTrialLic.png)
 
-+ Create a user to send phishing emails from by going to the Users > Active Users tab and clicking 'Add a user' from the Active Users page.
++ Create a user to send phishing emails from by going to the Users > Active Users tab and clicking 'Add a user' from the Active Users page.  
 
 ![](/assets/images/devcode/activeUsersWindow.png)
 
