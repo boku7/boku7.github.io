@@ -41,6 +41,58 @@ When an Azure user registers a tenant in Azure Active Directory, they are provid
 First read Dr Nestori Syynimaa's blog post. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 
+
+## Infrastruture - Azure Phishing Tenant
+
+#### Create an Azure Account
++ Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/) & login to [portal.azure.com](https://portal.azure.com/)
+- You will be required to verify with a valid email, phone number, and credit card.
+
+#### Create an Azure Active Directory Tenant
++ Go to the Azure Active Directory service from within your Azure portal  
+![](/assets/images/gotoAAD.png)
++ Create a new Azure Active Directory Tenant 
+  + Azure AD > Overview > Manage Tenant > +Create
+![](/assets/images/createTenant.png)
++ Switch to the newly created Azure AD Tenant 
+  + Azure AD > Overview > Manage Tenant > Select Tenant > Switch
++ Create an admin user within the your tenants Azure AD 
+  + (AAD > Users > New User)
+  + Assign them the role Global Administrator  
+  ![](/assets/images/newAdminUser.png)
++ During a Red Team engagement you will likely need to share the phishing accounts. Disable the 2FA requirements for the AAD phishing tenant.
+  + With the AAD phishing tenant selected, go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
+
+#### Assign Office 365 Licenses & Phish Puppets
++ Sign-in to portal.office.com with your new admin user
++ Go to the admin console and get a 25 user subscription for Office Business Premium
++ Create a user that will be used for phishing and assign them a license
+
+## Infrastruture - Windows Phishing VM
++ Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
++ Create a windows VM using a prebuilt VM package or an ISO.
+  - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
+    - Use a mac or linux box for the ISO download
+  - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
+
+##### Setup Windows 10 Outlook Desktop App 
++ On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
++ I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
+  - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
+
+##### Enable DKIM for your Domain
++ From your windows VM, open a powershell window and install the ExchangeOnlineManagement module
+```powershell
+Install-Module -Name ExchangeOnlineManagement
+Import-Module ExchangeOnlineManagement
+```
++ Connect to the EXO module with your admin user you created for your phishing domain and enable DKIM for your tenant
+```powershell
+Connect-ExchangeOnline -UserPrincipalName admin@msftauth.onmicrosoft.com
+# Login to prompt
+New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
+```
+
 ## Recon - Does the target use Azure Active Directory?
 #### Install and import AADInternals into powershell
 ```powershell
@@ -78,52 +130,6 @@ Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
 Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ```
 
-## Infrastruture - Azure Phishing Tenant
-
-#### Create an Azure Account
-+ Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/) & login to [portal.azure.com](https://portal.azure.com/)
-- You will need "verify" with an email, phone number, and credit card
-
-#### Create an Azure Active Directory Tenant
-+ Go to the Azure Active Directory service from within your Azure portal  
-![](/assets/images/gotoAAD.png)
-+ Create a new Azure Active Directory Tenant (Azure AD > Overview > Manage Tenant > +Create)  
-![](/assets/images/createTenant.png)
-+ Switch to the newly created Azure AD Tenant (Azure AD > Overview > Manage Tenant > Select Tenant > Switch)
-+ Create an admin user within the your tenants Azure AD (AAD > Users > New User)
-  - Assign them the role Global Administrator  
-  ![](/assets/images/newAdminUser.png)
-
-#### Assign Office 365 Licenses & Phish Puppets
-+ Sign-in to portal.office.com with your new admin user
-+ Go to the admin console and get a 25 user subscription for Office Business Premium
-+ Create a user that will be used for phishing and assign them a license
-
-## Infrastruture - Windows Phishing VM
-+ Download and install your favorite hypervisor. I use VMWare Fusion / Workstation Pro.
-+ Create a windows VM using a prebuilt VM package or an ISO.
-  - [Windows 10 ISO Download Page](https://www.microsoft.com/en-us/software-download/windows10ISO)
-    - Use a mac or linux box for the ISO download
-  - [Windows 10 VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
-
-##### Setup Windows 10 Outlook Desktop App 
-+ On your windows 10 VM, install office by going to www.office.com, logging in with your licensed phishing user, and clicking the "Install Office" button on the splash page.
-+ I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
-  - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
-
-##### Enable DKIM for your Domain
-+ From your windows VM, open a powershell window and install the ExchangeOnlineManagement module
-```powershell
-Install-Module -Name ExchangeOnlineManagement
-Import-Module ExchangeOnlineManagement
-```
-+ Connect to the EXO module with your admin user you created for your phishing domain and enable DKIM for your tenant
-```powershell
-Connect-ExchangeOnline -UserPrincipalName admin@msftauth.onmicrosoft.com
-# Login to prompt
-New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
-```
-
 ## Phishing
 
 #### Creating a Phishing Email Template
@@ -138,6 +144,7 @@ The basic template will look like this:
 #### Phishing with TokenTactics
 + Download TokenTactics on a Windows Machine: [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)
 + Import the script into Powershell: Import-Module .\TokenTactics.psd1
+
 ## Hook3d a Phish - Let the Games Begin
 
 #### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
