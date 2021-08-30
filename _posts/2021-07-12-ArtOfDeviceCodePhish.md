@@ -149,7 +149,7 @@ The basic template will look like this:
 + You're not done though, local user permissions will still be restricted, to fix this, do the following:
   - Run Powershell as Administrator
   - Copy and paste this command in Powershell: Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
-  - Navigate to the TokenTactics Directory and run this command to prevent warnings: Unblock-File 'C:\Users\yourusername\Desktop\TokenTactics-main\TokenTactics-main\modules\*.ps1'
+  - Navigate to the TokenTactics Directory and run this command to prevent warnings: Unblock-File 'C:\Users\yourusername\Desktop\TokenTactics-main\TokenTactics-main\modules\\*.ps1'
   - You can now import the module and begin.
   - Run this command: Import-Module .\TokenTactics.psd1
   - You may see this warning, ignore it:
