@@ -46,15 +46,14 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 For your phishing operators you will want to assign them a license that includes Exchange Online & the Microsoft Office desktop application suite. I have found that for Azure Device Code phishing, sending phish emails from the Windows Outlook Desktop application has the most reliablity. Using OWA, different operating systems, and different email clients returns mixed results. Typically a target organization that utilizes Azure AD for their business needs is likely a Windows shop that uses Outlook. You will want to perform solid recon and adjust as needed.
 
 #### Exchange Online & Office Trial Licenses
-+ Sign-in to [office.com](https://portal.office.com) with your new admin user.
++ Sign-in to [office.com](https://portal.office.com) with your new admin user.  
+![](/assets/images/devcode/loginPhishAdmin.png)  
 + Go to [admin.microsoft.com](https://admin.microsoft.com/Adminportal/Home).
 + Go to Billing > Purchase Services from the admin panel.
 + Select a license package which inclues both Exchange Online and the Office desktop application suite.
   + Microsoft 365 Business Premium & Microsoft 365 E3 are good options.
   + There are many different license packages offered by Microsoft which iclude EXO & Office.
 + After selecting the license package, click the 'Start free trial' hyperlink.  
-
-![](/assets/images/devcode/startE5trial.png)
 
 
 
