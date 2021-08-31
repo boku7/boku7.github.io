@@ -86,10 +86,6 @@ Assign Red Team Operators a license bundle which includes Exchange Online & the 
 
 ![](/assets/images/devcode/robotChallenge.png)
 
-+ Only 2 more prompts to go!  
-
-![](/assets/images/devcode/confirmTrialLic.png)
-
 + Create a user to send phishing emails from by going to the Users > Active Users tab and clicking 'Add a user' from the Active Users page.  
 
 ![](/assets/images/devcode/activeUsersWindow.png)
@@ -127,6 +123,7 @@ Selector1CNAME : selector1-msftsec-onmicrosoft-com._domainkey.msftsec.onmicrosof
 Selector2CNAME : selector2-msftsec-onmicrosoft-com._domainkey.msftsec.onmicrosoft.com
 ```
 + [Useful blog for Azure DKIM debugging](https://dirteam.com/bas/2020/08/17/field-notes-dkim-and-missing-selector-records/).
++ Note that DKIM changes can take up to a day to complete. 
 
 ## Phishing Operator Setup
 In this section we will setup Windows 10 Virtual Machines (VMs) for Red Team Operators, install the desktop Outlook Client on the Operators VMs using the Office 365 trials, enable PowerShell scripts, install the [AADInternals](https://o365blog.com/aadinternals/) PowerShell module, install the [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) PowerShell module, and install the [AzureAD](https://docs.microsoft.com/en-us/powershell/module/azuread/?view=azureadps-2.0) PowerShell module. 
@@ -233,6 +230,22 @@ dig -t MX +short theHarvester.World
 Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
 Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ```
+
+### Assess Phishing Strength
+To test the spam score of our phishing emails we will use [www.mail-tester.com](https://www.mail-tester.com/).
++ We will copy the email Mail-Tester presents us with.
+
+![](/assets/images/devcode/mailtester.png) 
+
++ Open the phishing template and send the phishing email to the Mail-Tester address.
+
+![](/assets/images/devcode/phishtest.png) 
+
++ On Mail-Tester, click 'Then check your score'.
+
+![](/assets/images/devcode/phishtestResults.png) 
+
+Great success! We have achieved a 10/10 score for Mail-Tester!
 
 ## Phishing
 In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email. We've included a [Device Code phishing Outlook email template in the TokenTactics repo](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/DeviceCodePhishingEmailTemplate.oft) to get you started!
