@@ -3,6 +3,8 @@ title: The Art of the Device Code Phish
 date: 2021-7-12
 layout: single
 classes: wide
+header:
+  teaser: /assets/images/devcode/banner.png
 tags:
   - Azure
   - AAD
@@ -10,6 +12,9 @@ tags:
   - DeviceCode
   - RedTeam
 --- 
+
+![](/assets/images/devcode/banner.png)
+
 Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f), [Octavio Paguaga(@oakTree__)](https://twitter.com/oakTree__), [John Jackson(@johnjhacking)](https://twitter.com/johnjhacking)  
 
 [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
