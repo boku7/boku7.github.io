@@ -135,8 +135,6 @@ VMWare & VirtualBox are great options for type-2 hypervisors:
 + VMWare offers free 30 day trials for [VMWare Fusion](https://www.vmware.com/products/fusion/fusion-evaluation.html) for macOS & [VMWare Workstation Pro](https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html) for Linux or Windows.
 + [VirtualBox](https://www.virtualbox.org/wiki/Downloads) works too.
 
-![image](https://user-images.githubusercontent.com/19784872/131539380-7c990653-2bf0-45b9-830a-2a493f471d8a.png)
-
 - [Windows 10 ISO Download](https://www.microsoft.com/en-us/software-download/windows10ISO)
     - Download the ISO from macOS or Linux.
 - [Windows 10 Developer VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
@@ -150,17 +148,17 @@ VMWare & VirtualBox are great options for type-2 hypervisors:
   + In this blog, our example RTO account is `DevOps@msftsec.onmicrosoft.com`.
 
 ### Changing the VMs PowerShell Execution Policy
-+ You'll have to change the PowerShell Execution Policy, otherwise you'll be prevented from invoking the script in Windows.
-  - Navigate to Windows Settings, click on 'Update & Security'
-  - On the left side towards the bottom, you'll see a 'For developers' tab
-  - After clicking that, you should see a PowerShell header towards the bottom, click on the 'Apply' button.
+To run PowerShell scripts you may need to change the PowerShell Execution Policy on your Windows VM.
+
+To change this:
+- Navigate to Windows Settings, click on 'Update & Security'.
+- On the left side towards the bottom, you'll see a 'For developers' tab.
+- After clicking that, you should see a PowerShell header towards the bottom, click on the 'Apply' button.
   
 ![](/assets/images/devcode/powershell-global-bypass.png)
 
-+ You're not done though, local user permissions will still be restricted, to fix this, do the following:
-  - Run PowerShell as Administrator
-  - Copy and paste this command in PowerShell: 
- 
+- Run PowerShell as Administrator
+- Copy and paste this command into PowerShell: 
  ```powershell
  Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
  ```
