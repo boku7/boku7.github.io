@@ -22,8 +22,9 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 
 ## Azure Phishing Infrastructure Setup
+In this section we will setup an Azure Account Subscription, which will host our malicious Azure Active Directory (AAD) phishing domain 'msftsec.onmicrosoft.com'. We will create an 'Admin' Global Administrator user to acquire 30-day Office 365 trial licenses, setup Exchange Online, enable DKIM, and create phishing accounts for Red Team Operators.
 
-### Azure Subscription
+### Azure Account Subscription Setup
 + Go to the Azure Active Directory (AAD) service from within your Azure portal.  
 
 ![](/assets/images/devcode/gotoAAD.png)
@@ -43,7 +44,7 @@ First read Dr Nestori Syynimaa's blog post. The aim of this post is not to repub
   
 + To disable 2FA prompting go to the Properties blade, click Manage Security defaults, then toggle Enable Security defaults to No. 
 
-### Office 365
+### Office 365 Setup
 For your phishing operators you will want to assign them a license that includes Exchange Online & the Microsoft Office desktop application suite. I have found that for Azure Device Code phishing, sending phish emails from the Windows Outlook Desktop application has the most reliablity. Using OWA, different operating systems, and different email clients returns mixed results. Typically a target organization that utilizes Azure AD for their business needs is likely a Windows shop that uses Outlook. You will want to perform solid recon and adjust as needed.
 
 #### Exchange Online & Office Trial Licenses
@@ -80,7 +81,7 @@ For your phishing operators you will want to assign them a license that includes
 
 ![](/assets/images/devcode/assignLicense.png)
 
-### Enable DKIM for Phishing AAD
+### Enable DKIM for Malicious Azure AD
 + Open powershell, then install & import the ExchangeOnlineManagement module.
 ```powershell
 Install-Module -Name ExchangeOnlineManagement
@@ -94,8 +95,9 @@ New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
 ```
 
 ## Phishing Operator Setup
+In this section we will setup Windows 10 Virtual Machines (VMs) for Red Team Operators, install the desktop Outlook Client on the Operators VMs using the Office 365 trials, enable powershell scripts, install the [AADInternals](https://o365blog.com/aadinternals/) powershell module, and install the [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) powershell module. 
 
-### Windows 10 Virtual Machine
+### Windows 10 Virtual Machine Setup (Optional)
 A windows environment is optional. Personally we have had the best success when sending from the Windows Outlook desktop client when sending convincing phishing emails which incorporate HTML and CSS. We recommend creating a Windows 10 VM with your choice of hypervisor, installing the Outlook application from your Office 365 phishing tenant, and testing before you begin your phishing campaign.
 
 VMWare & VirtualBox are great options for type-2 hypervisors:
