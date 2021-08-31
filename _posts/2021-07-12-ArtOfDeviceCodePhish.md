@@ -11,7 +11,9 @@ tags:
   - RedTeam
 --- 
 Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f), [Octavio Paguaga(@oakTree__)](https://twitter.com/oakTree__), [(John Jackson(@johnjhacking)](https://twitter.com/johnjhacking)  
+
 Azure Methodology & Tool Credits: [Charles Hamilton (@Mr.Un1k0d3r)](https://twitter.com/MrUn1k0d3r), [Dr. Nestori Syynimaa(@DrAzureAD)](https://twitter.com/DrAzureAD), [Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt)
+
 [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
 
 
@@ -30,7 +32,6 @@ Techniques APTs use that are typically out of scope for RTOs:
 The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organizations spam filters & email protection services.   
 
 When an Azure user registers a tenant in Azure Active Directory, they are provided with an `.onmicrosoft.com` domain. This `.onmicrosoft.com` subdomain can confuse targeted users who are unfamiliar with how Azure services work.
-![image](https://user-images.githubusercontent.com/19784872/131536543-8dfd44ff-8ff4-452f-bec0-d8ce509de223.png)
 
 First read Dr Nestori Syynimaa's blog post. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
