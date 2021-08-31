@@ -89,10 +89,18 @@ Import-Module ExchangeOnlineManagement
 ```
 + Connect to Exchange Online (EXO) with your admin user and enable DKIM for your AAD tenant.
 ```powershell
-Connect-ExchangeOnline -UserPrincipalName admin@msftauth.onmicrosoft.com
+Connect-ExchangeOnline -UserPrincipalName admin@msftsec.onmicrosoft.com
 # Login to prompt
-New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
+New-DkimSigningConfig -DomainName msftsec.onmicrosoft.com -Enabled $true
 ```
++ Return your DKIM Selector records for testing your domains DKIM setup.
+```powershell
+PS C:\Users\boku\TokenTactics> Get-DkimSigningConfig –identity msftsec.onmicrosoft.com| Format-List Identity,Selector1CNAME,Selector2CNAME
+Identity       : msftsec.onmicrosoft.com
+Selector1CNAME : selector1-msftsec-onmicrosoft-com._domainkey.msftsec.onmicrosoft.com
+Selector2CNAME : selector2-msftsec-onmicrosoft-com._domainkey.msftsec.onmicrosoft.com
+```
++ [Useful blog for Azure DKIM debugging](https://dirteam.com/bas/2020/08/17/field-notes-dkim-and-missing-selector-records/).
 
 ## Phishing Operator Setup
 In this section we will setup Windows 10 Virtual Machines (VMs) for Red Team Operators, install the desktop Outlook Client on the Operators VMs using the Office 365 trials, enable powershell scripts, install the [AADInternals](https://o365blog.com/aadinternals/) powershell module, install the [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) powershell module, and install the [AzureAD](https://docs.microsoft.com/en-us/powershell/module/azuread/?view=azureadps-2.0) powershell module. 
@@ -167,7 +175,7 @@ We will install the AzureAD powershell module for enumerating the targets AzureA
 Install-Module AzureAD
 ```
 
-## Azure AD Recon
+## Reconnaissance & Phish Strength Testing
 The Azure Device Code phishing technique is dependant on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
 ### Check if the target domain uses Azure Active Directory
 
