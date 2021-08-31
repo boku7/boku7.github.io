@@ -17,21 +17,29 @@ Azure Methodology & Tool Credits: [Charles Hamilton (@Mr.Un1k0d3r)](https://twit
 [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
 
 ## Overview
-In this blog will walkthrough the entire Azure Device Code Phishing attack, from creating a malicous Azure phishing infrastructure, to achieving Azure Account Take-Over (ATO). We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Online (EXO), spinning up hypervisors, creating Virtual Machines (VMs), creating phishing accounts for Red Team Operators (RTOs), honing our HTML phishing emails, launching an Azure Device Code Phishing campaign, bypassing Multi-Factor Authentication (MFA), bypassing Conditional Access Polcies (CSPs), swapping tokens, dumping Azure AD, dumping exchange mailboxes, and accessing the targets Outlook Web Application (OWA) via our browser. We will do most of this with free trials, while staying in the strict scope that Red Teams must abide too. This is the poor-RTO's guide to Azure ATO.
+In this blog will walkthrough the entire Azure Device Code Phishing attack, from creating a malicous Azure phishing infrastructure, to achieving Azure Account Take-Over (ATO). We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Online (EXO), spinning up hypervisors, creating Virtual Machines (VMs), creating phishing accounts for Red Team Operators (RTOs), honing our HTML phishing emails, launching an Azure Device Code Phishing campaign, bypassing Multi-Factor Authentication (MFA), bypassing Conditional Access Polcies (CSPs), swapping tokens, dumping Azure AD, dumping exchange mailboxes, and accessing the targets Outlook Web Application (OWA) via our browser. We will do most of this with free trials, while staying in the strict scope that Red Teams must abide too. This is the poor-RTO's guide to Azure ATO!
 
-While real Advanced Persistent Threats (APTs) have no scope in their attacks, Red Team Operators do. These rules make the Initial Access phase much easier for real threat actors, while security providers continue to raise the bar of difficulty for RTOs performing threat emulation services.  
+## Overcoming Red Team Scope Limitations with the Cloud
+While real Advanced Persistent Threats (APTs) have no scope in their attacks, Red Team Operators do. These rules make the Initial Access phase much easier for real threat actors, while security providers continue to raise the difficulty bar for RTOs performing threat emulation services.  
 
-Some attack techniques APTs use which are typically out of scope for RTOs:
+#### Some attack techniques APTs use which are typically out of scope for RTOs:
 - Compromising out-of-scope organizations email systems, email accounts, and marketing systems email accounts to launch a phishing campaign.
   - [New sophisticated email-based attack from NOBELIUM - Microsoft Threat Intelligence Center (MSTIC)](https://www.microsoft.com/security/blog/2021/05/27/new-sophisticated-email-based-attack-from-nobelium/)
   - ".. CISA and FBI are engaged in addressing a sophisticated spearphishing campaign. A cyber threat actor leveraged a compromised end-user account from Constant Contact, a legitimate email marketing software company, to send phishing emails to more than 7,000 accounts across approximately 350 government organizations, IGOs, and NGOs. The threat actor sent spoofed emails that appeared to originate from a U.S. Government organization.. " 
     -  [US-Cert.CISA.Gov](https://us-cert.cisa.gov/ncas/alerts/aa21-148a)
 - Compromising out-of-scope organizations web servers to host malware.
-- Leveraging Zero Day vulnerabilities onout-of-scope organizations web sites to reflect or redirect targets to malware downloads.
+- Leveraging Zero Day vulnerabilities on out-of-scope organizations web sites, to reflect or redirect phishing victims to malware downloads.
   - [Phishing campaign uses UPS.com XSS vuln to distribute malware](https://www.bleepingcomputer.com/news/security/phishing-campaign-uses-upscom-xss-vuln-to-distribute-malware/)
   - [Microsoft Security Intelligence - Active Phishing Campaign Abusing URL Redirects of Vulnerable Organizations Websites](https://twitter.com/MsftSecIntel/status/1432479171813445635)
     - ![](/assets/images/devcode/msftRedir.png)
-- Compromising personal computers, online accounts, smartphones and personal home networks of employees, of the in scope organization.
+- Compromising personal computers, online accounts, smartphones, and personal home networks of employees, of the in scope organization.
+- Supply-Chain Attacks
+  - [SANS - What You Need to Know About the SolarWinds Supply-Chain Attack](https://www.sans.org/blog/what-you-need-to-know-about-the-solarwinds-supply-chain-attack/)
+
+#### Initial Access Methods for Red Teams
+While the easier paths to Initial-Access are out of scope for Red Team Operators performing threat emulation services, we still have some viable options remaining. The mass adoption of Cloud services continues to open up additional paths for Initial-Access. As RTOs we can typically leverage Cloud services to our advantage.
+
+Traditional RTO Initial-Access methods for Business Email Compromise (BEC) are epicly documented in the [Red Team Infrastructure Wiki]( https://github.com/bluscreenofjeff/Red-Team-Infrastructure-Wiki) created by 
 
 
 The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organizations spam filters & email protection services.   
