@@ -120,16 +120,31 @@ To create a windows Virtual Machine (VM) you can use a prebuilt VM image for you
 + After installation of the Outlook application on the Red Team Operators VM, login to Outlook using the Red Team Operators phishing email address.
   + For this walkthough, our Red Team Operators phishing email is 'DevOps@msftsec.onmicrosoft.com'.
 
-### Install and import AADInternals into powershell
+### [AADInternals PowerShell Module Installation](https://o365blog.com/aadinternals/#installation)
+We will be using the AADInternals powershell module to determine if the target uses Azure. AADInternals also has a Device Code phishing functionality, and the TokenTactics module is derived from the epic AADInternals project.
 ```powershell
 # Install the module
 Install-Module AADInternals
-# Import the module
-Import-Module AADInternals
 ```
-  - https://o365blog.com/aadinternals/#installation
++ Now that the AADInternals module is installed, we can use `import-module` for a powershell session to get access to the AADInternals commands.
++ Just like all the powershell modules, we will need to import them into every new powershell session we want to use them in.
+
+### [TokenTactics PowerShell Module Installation](https://o365blog.com/aadinternals/#installation)
++ Download or clone the [TokenTactics GitHub repository](https://github.com/rvrsh3ll/TokenTactics)
++ Ensure the TokenTactics folder is on the RTOs Window VMs file system.
+```powershell
+PS C:\Users\boku> cd .\TokenTactics
+PS C:\Users\boku\TokenTactics> Import-Module .\TokenTactics.psd1
+```
++ You will need to import TokenTactics when you want to use it within a powershell session.
++ Ignore the warning about the naming convention. We did not follow proper Microsoft powershell naming convention, so it throws a warning.
 
 
+### [AzureAD PowerShell Module Installation](https://docs.microsoft.com/en-us/powershell/azure/active-directory/install-adv2?view=azureadps-2.0)
+We will install the AzureAD powershell module for enumerating the targets AzureAD after acquiring a Refresh Token from the Device Code Phish campaign.
+```powershell
+Install-Module AzureAD
+```
 
 ## Azure AD Recon
 The Azure Device Code phishing technique is dependant on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
