@@ -12,9 +12,9 @@ tags:
 --- 
 Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f), [Octavio Paguaga(@oakTree__)](https://twitter.com/oakTree__), [John Jackson(@johnjhacking)](https://twitter.com/johnjhacking)  
 
-Azure Methodology & Tool Credits: [Charles Hamilton (@Mr.Un1k0d3r)](https://twitter.com/MrUn1k0d3r), [Dr. Nestori Syynimaa(@DrAzureAD)](https://twitter.com/DrAzureAD), [Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt)
-
 [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
+
+ShoutOuts: [Charles Hamilton (@Mr.Un1k0d3r)](https://twitter.com/MrUn1k0d3r), [Dr. Nestori Syynimaa(@DrAzureAD)](https://twitter.com/DrAzureAD), [Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt)
 
 ## Overview
 In this blog we'll walkthrough the Azure Device Code Phishing attack, from creating a malicous Azure phishing infrastructure, to achieving Azure Account Take-Over (ATO). 
