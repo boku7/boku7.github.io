@@ -45,18 +45,27 @@ While real Advanced Persistent Threats (APTs) have no scope in their attacks, Re
     - [SANS - What You Need to Know About the SolarWinds Supply-Chain Attack](https://www.sans.org/blog/what-you-need-to-know-about-the-solarwinds-supply-chain-attack/)
 
 ### Initial Access Methods for Red Teams
-While the golden paths to Initial Access are out of scope for Red Team Operators performing threat emulation services, we as RTOs still have some viable options remaining. As legacy methods continue to increase in difficulty, new Initial Access opportunities are being discovered with the mass adoption of Cloud services. Not only can we as RTOs leverage the Cloud for offensive operations, but the Cloud also opens up an entirely new attack-surface. In this walkthrough we will be using our Cloud to attack and breach other Clouds. Welcome to Cloud Wars!
+While the above paths to Initial Access are out of scope for Red Team Operators performing threat emulation services, we as RTOs still have some viable options remaining. 
+
+As legacy methods continue to increase in difficulty, new Initial Access opportunities are being discovered with the mass adoption of Cloud services. Not only can we as RTOs leverage the Cloud for offensive operations, but the Cloud also opens up an entirely new attack-surface. 
+
+In this walkthrough we will be using our Cloud to attack and breach other Clouds. Welcome to Cloud Wars!
 
 ### Traditional Initial Access Methods
 
 Traditional RTO Initial Access methods for Business Email Compromise (BEC) are epicly documented in the [Red Team Infrastructure Wiki]( https://github.com/bluscreenofjeff/Red-Team-Infrastructure-Wiki) created by [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f) and [Jeff Dimmock(@bluscreenofjeff)](https://twitter.com/bluscreenofjeff).
 
-If we rule out the out-of-scope ATP methods listed above & physical/wireless attacks, we will likely need to gain access to the company by:
+If we rule out the out-of-scope ATP methods listed above, we will likely need to gain access to the company by:
++ Physical / Wireless Attacks
 + Exploiting Unpatched Systems that are Exposed to the Internet
 + Compromising a Web Server via a 0-day with a vulnerability like Remote Code Execution (RCE) or Server-Side Request Forgery (SSRF)
 + Credential-Based Attacks such as Password Brute-Forcing, Password-Spraying, or Discovering Active Credentials from a Recent Breach
 + Accessing the Targets VPN via Credential-Based Attacks or some form of Social Engineering
-+ 
++ Phishing Emails
+
+While there are many vulnerable systems on the internet, it is likely that the Blue Teams of companies performing Red Team exercises have locked down most of the in-scope methods above. It is common that Physical/Wireless attacks are out-of-scope, that the permiter is hardened, and login interfacing including the VPN require MFA or Assemetric Keys. If the Web surface is also hardened, we can turn to finding and attacking Cloud resources. Pentester Academy has great courses on attacking AWS & Azure Active Directory.
+
+
 
 
 The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organizations spam filters & email protection services.   
