@@ -16,7 +16,6 @@ Azure Methodology & Tool Credits: [Charles Hamilton (@Mr.Un1k0d3r)](https://twit
 
 [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
 
-
 ## Overview
 In this blog we are taking a journey, from creating an Azure phishing infrastructure from scratch, to achieving Azure Account Take-Over (ATO). We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Online, spinning up hypervisors, creating Virtual Machines (VMs), creating phishing accounts for Red Team Operators (RTOs), honing our HTML phishing emails, launching an Azure Device Code Phishing campaign, bypassing Multi-Factor Authentication (MFA), bypassing Conditional Access Polcies (CSPs), swapping tokens, dumping Azure AD, dumping exchange mailboxes, and accessing the targets Outlook Web Application (OWA) via our browser. We will be doing most of this with free trials, while staying in the strict scope that Red Teams must abide too. This is the poor-RTO's guide to Azure ATO.
 
@@ -104,17 +103,22 @@ Assign Red Team Operators a license bundle which includes Exchange Online & the 
 
 ### Enable DKIM for Malicious Azure AD
 + Open PowerShell, then install & import the ExchangeOnlineManagement module.
+
 ```powershell
 Install-Module -Name ExchangeOnlineManagement
 Import-Module ExchangeOnlineManagement
 ```
+
 + Connect to Exchange Online (EXO) with your admin user and enable DKIM for your AAD tenant.
+
 ```powershell
 Connect-ExchangeOnline -UserPrincipalName admin@msftsec.onmicrosoft.com
 # Login to prompt
 New-DkimSigningConfig -DomainName msftsec.onmicrosoft.com -Enabled $true
 ```
+
 + Return your DKIM Selector records for testing your domains DKIM setup.
+
 ```powershell
 PS C:\Users\boku\TokenTactics> Get-DkimSigningConfig –identity msftsec.onmicrosoft.com| Format-List Identity,Selector1CNAME,Selector2CNAME
 Identity       : msftsec.onmicrosoft.com
@@ -160,6 +164,7 @@ VMWare & VirtualBox are great options for type-2 hypervisors:
 + You're not done though, local user permissions will still be restricted, to fix this, do the following:
   - Run PowerShell as Administrator
   - Copy and paste this command in PowerShell: 
+ 
  ```powershell
  Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
  ```
@@ -192,6 +197,7 @@ PS C:\Users\boku\TokenTactics> Import-Module .\TokenTactics.psd1
 
 ### [AzureAD PowerShell Module Installation](https://docs.microsoft.com/en-us/powershell/azure/active-directory/install-adv2?view=azureadps-2.0)
 We will install the AzureAD PowerShell module for enumerating the targets AzureAD after acquiring a Refresh Token from the Device Code Phish campaign.
+
 ```powershell
 Install-Module AzureAD
 ```
@@ -201,6 +207,7 @@ The Azure Device Code phishing technique is dependant on your target using Azure
 ### Check if the target domain uses Azure Active Directory
 
 ##### Target is registered to Azure Active Directory
+
 ```powershell
 Invoke-AADIntReconAsOutsider -Domain theharvester.world | Format-Table
 Tenant brand:       The Harvester
@@ -212,14 +219,17 @@ Name                          DNS   MX  SPF DMARC Type    STS
 theharvester.onmicrosoft.com True True True False Managed
 theharvester.world           True True True False Managed
 ```
+
 - We observe that the target domain theharvester.world is registered to Azure Active Directory, and their email services are True. This means that the target uses Exchange Online for their email.
   - We can confirm this by using the linux dig tool:
+
 ```bash
 dig -t MX +short theHarvester.World
 0 theharvester-world.mail.protection.outlook.com.
 ```
 
 ##### Target is *NOT* registered to Azure Active Directory
+
 ```powershell
 Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
 Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
