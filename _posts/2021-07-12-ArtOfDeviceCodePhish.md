@@ -23,9 +23,9 @@ We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Onl
 
 Most of this with will be done with free trials, and we'll do our best to stay within the strict scope that Red Teams must abide too.
 
-We will be launching the Azure Device Code Phishing campaign from the domain `msftsec.onmicrosoft.com` which is provided by Microsoft when we create an Azure Active Directory. We will be attacking the domain `theHarvester.World` which is a domain I am hosting on Azure. We will phish the users of `theHarvester.World` by sending phishing emails from the attacker controlled `msftsec.onmicrosoft.com` domain.
+We will launch our Azure Device Code Phishing campaign from the domain `msftsec.onmicrosoft.com`, which is given to us when we create an Azure Active Directory. In this blog we will be attacking users of the domain `theHarvester.World`, which is a domain I am hosting on Azure. We will phish `theHarvester.World` users by sending them phishing emails from our attacker controlled `msftsec.onmicrosoft.com` domain.
 
-Being that the root domain for our attacker domain is `onmicrosoft.com` and is owned by Microsoft & sent from valid Microsoft servers, this may allow us to evade detection.
+Since our attacker root domain is `onmicrosoft.com`, which is registered to Microsoft & sent from Microsoft servers, this may allow us to evade detection.
 
 ### A Deep Dive into the Device Code Phish Attack
 I suggest reading this AADInternals blog post by Dr Nestori Syynimaa's, to learn how the Device Code Phishing attack works. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
