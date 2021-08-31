@@ -197,17 +197,25 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ```
 
 ## Phishing
-In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email.
+In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email. We've included a [Device Code phishing Outlook email template in the TokenTactics repo](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/DeviceCodePhishingEmailTemplate.oft) to get you started!
 
-### Creating a Phishing Email Template
-For the phishing campaign we will need a convincing phishing email to send to the targets. AADInterals is capable of sending basic text phishing emails using the Microsoft Graph API. For testing this works great, but for Red Team engagements we wanted to go the extra mile and get some convincing HTML&CSS phishing emails going. Initially we were using this [DeviceCodePhish.ps1 PowerShell script created by Mr. Un1k0d3r & Rvrsh3ll](https://gist.github.com/rvrsh3ll/b8bfc113acf5726746929bef2e620f8d), but we kept adding more & more functionality, so we dubbed it TokenTactics!
+### Device Code Phishing Email Template Setup
+For the phishing campaign we'll need a convincing phishing email to send to targets. This was the main issue we had with using the AADInterals module to send phishing emails. AADInternals sends phishing emails using the Microsoft Graph API. For testing this works great, but for Red Team engagements we wanted to go the extra mile and get some convincing HTML&CSS phishing emails going. 
+
+Initially we were using this [DeviceCodePhish.ps1 PowerShell script created by Mr. Un1k0d3r & Rvrsh3ll](https://gist.github.com/rvrsh3ll/b8bfc113acf5726746929bef2e620f8d), but we kept adding more & more functionality, so we dubbed it TokenTactics!
 
 To get some ideas, we began digging through Microsoft One-Time Password (OTP) emails. We created a phishing template in HTML&CSS, and we've included it in the TokenTactics GitHub repository for you!
-+ [Azure Device Code HTML&CSS Phishing Template](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/example_phish.html)
++ [Device Code Phishing Outlook Email Template](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/DeviceCodePhishingEmailTemplate.oft)
++ [Device Code Phishing Email Template in HTML](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/example_phish.html)
 
-![](/assets/images/azure-phish-temp.png)
+On the RTO Windows VM, open the TokenTactics folder and double-click the DeviceCodePhishingEmailTemplate.oft file.  
 
-+ You'll notice that the template already has a device code populated. After you generate a code with TokenTactics, you can edit the HTML code that you'll be using for the template and replace the placeholder code "571012" with the code that you have generated. In addition you'll see that the phishing template's title is "Device Code" - feel free to modify this within the template to "Action Required" depending on the nature of your phishing campaign.
+![](/assets/images/devcode/phishTemplateExp.png) 
++ This file is an Outlook Item Template (OTF) file, so it will open in the desktop Outlook application.
+
+![](/assets/images/devcode/devcodePhishEmail1.png)
++ For the Azure Device Code Phishing Campaign we will be replacing the `<REPLACE-WITH-DEVCODE-FROM-TOKENTACTICS>` text with the device codes that are generated from the TokenTactics powershell module.
++ Feel free to modify this template. You may need to, as this email template may have been signatured and is "burned".
 
 #### Phishing with TokenTactics
 
