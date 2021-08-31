@@ -100,7 +100,7 @@ In this section we will setup Windows 10 Virtual Machines (VMs) for Red Team Ope
 ### Windows 10 Virtual Machine Setup 
 We will need a powershell environment to run the AADInternals, TokenTactics, and AzureAD powershell modules. Sometimes I use [macOS powershell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-macos?view=powershell-7.1) which runs TokenTactics fine. Although I have ran into issues running other modules, as some require DLLs. 
 
-For sending the phishing emails, a windows environment is optional. For HTML/CSS emails, we recommend sending from the Windows Outlook desktop client if the target is a Windows shop that uses Outlook internally. Sending HTML/CSS emails from macOS clients to targets with Windows email clients has had mixed results.
+For sending the phishing emails, a windows environment is optional. For HTML&CSS emails, we recommend sending from the Windows Outlook desktop client if the target is a Windows shop that uses Outlook internally. Sending HTML&CSS emails from macOS clients to targets with Windows email clients has had mixed results.
 
 VMWare & VirtualBox are great options for type-2 hypervisors:
 + VMWare offers free 30 day trials for [VMWare Fusion](https://www.vmware.com/products/fusion/fusion-evaluation.html) for macOS & [VMWare Workstation Pro](https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html) for Linux or Windows.
@@ -176,10 +176,13 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ```
 
 ## Phishing
+In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email.
 
-#### Creating a Phishing Email Template
-+ You'll want to create a template that makes sense. Obviously, you should adapt if the Azure code template changes but for the time being, you should be able to use a basic template. 
-+ An [Azure Device Code phishing template is included in TokenTactics Github repository](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/example_phish.html)
+### Creating a Phishing Email Template
+For the phishing campaign we will need a convincing phishing email to send to the targets. AADInterals is capable of sending basic text phishing emails using the Microsoft Graph API. For testing this works great, but for Red Team engagements we wanted to go the extra mile and get some convincing HTML&CSS phishing emails going. Initially we were using this [DeviceCode PowerShell script created by Mr. Un1k0d3r & Rvrsh3ll](https://gist.github.com/rvrsh3ll/b8bfc113acf5726746929bef2e620f8d), but we kept adding more & more functionality, so we dubbed it TokenTactics!
+
+To get some ideas, we began digging through Microsoft One-Time Password (OTP) emails. We created a phishing template in HTML&CSS, and we've included it in the TokenTactics GitHub repository for you!
++ [Azure Device Code HTML&CSS Phishing Template](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/example_phish.html)
 
 ![](/assets/images/azure-phish-temp.png)
 
