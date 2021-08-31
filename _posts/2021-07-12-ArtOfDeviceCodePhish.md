@@ -120,6 +120,21 @@ To create a windows Virtual Machine (VM) you can use a prebuilt VM image for you
 + After installation of the Outlook application on the Red Team Operators VM, login to Outlook using the Red Team Operators phishing email address.
   + For this walkthough, our Red Team Operators phishing email is 'DevOps@msftsec.onmicrosoft.com'.
 
+### Changing the VMs Powershell Execution Policy
++ You'll have to change the Powershell Execution Policy, otherwise you'll be prevented from invoking the script in Windows.
+  - Navigate to Windows Settings, click on 'Update & Security'
+  - On the left side towards the bottom, you'll see a 'For developers' tab
+  - After clicking that, you should see a PowerShell header towards the bottom, click on the 'Apply' button.
+  
+![](/assets/images/devcode/powershell-global-bypass.png)
+
++ You're not done though, local user permissions will still be restricted, to fix this, do the following:
+  - Run Powershell as Administrator
+  - Copy and paste this command in Powershell: 
+ ```powershell
+ Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+ ```
+
 ### [AADInternals PowerShell Module Installation](https://o365blog.com/aadinternals/#installation)
 We will be using the AADInternals powershell module to determine if the target uses Azure. AADInternals also has a Device Code phishing functionality, and the TokenTactics module is derived from the epic AADInternals project.
 ```powershell
@@ -130,14 +145,20 @@ Install-Module AADInternals
 + Just like all the powershell modules, we will need to import them into every new powershell session we want to use them in.
 
 ### [TokenTactics PowerShell Module Installation](https://o365blog.com/aadinternals/#installation)
+
 + Download or clone the [TokenTactics GitHub repository](https://github.com/rvrsh3ll/TokenTactics)
+
 + Ensure the TokenTactics folder is on the RTOs Window VMs file system.
+
 ```powershell
 PS C:\Users\boku> cd .\TokenTactics
 PS C:\Users\boku\TokenTactics> Import-Module .\TokenTactics.psd1
 ```
+
 + You will need to import TokenTactics when you want to use it within a powershell session.
 + Ignore the warning about the naming convention. We did not follow proper Microsoft powershell naming convention, so it throws a warning.
+
+![](/assets/images/devcode/import-mod-warning.png)
 
 
 ### [AzureAD PowerShell Module Installation](https://docs.microsoft.com/en-us/powershell/azure/active-directory/install-adv2?view=azureadps-2.0)
@@ -179,7 +200,7 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email.
 
 ### Creating a Phishing Email Template
-For the phishing campaign we will need a convincing phishing email to send to the targets. AADInterals is capable of sending basic text phishing emails using the Microsoft Graph API. For testing this works great, but for Red Team engagements we wanted to go the extra mile and get some convincing HTML&CSS phishing emails going. Initially we were using this [DeviceCode PowerShell script created by Mr. Un1k0d3r & Rvrsh3ll](https://gist.github.com/rvrsh3ll/b8bfc113acf5726746929bef2e620f8d), but we kept adding more & more functionality, so we dubbed it TokenTactics!
+For the phishing campaign we will need a convincing phishing email to send to the targets. AADInterals is capable of sending basic text phishing emails using the Microsoft Graph API. For testing this works great, but for Red Team engagements we wanted to go the extra mile and get some convincing HTML&CSS phishing emails going. Initially we were using this [DeviceCodePhish.ps1 PowerShell script created by Mr. Un1k0d3r & Rvrsh3ll](https://gist.github.com/rvrsh3ll/b8bfc113acf5726746929bef2e620f8d), but we kept adding more & more functionality, so we dubbed it TokenTactics!
 
 To get some ideas, we began digging through Microsoft One-Time Password (OTP) emails. We created a phishing template in HTML&CSS, and we've included it in the TokenTactics GitHub repository for you!
 + [Azure Device Code HTML&CSS Phishing Template](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/example_phish.html)
@@ -189,23 +210,6 @@ To get some ideas, we began digging through Microsoft One-Time Password (OTP) em
 + You'll notice that the template already has a device code populated. After you generate a code with TokenTactics, you can edit the HTML code that you'll be using for the template and replace the placeholder code "571012" with the code that you have generated. In addition you'll see that the phishing template's title is "Device Code" - feel free to modify this within the template to "Action Required" depending on the nature of your phishing campaign.
 
 #### Phishing with TokenTactics
-+ Download TokenTactics on a Windows Machine: [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)
-+ You'll have to change the Powershell Execution Policy, otherwise you'll be prevented from invoking the script in Windows.
-  - Navigate to Windows Settings, click on "Update & Security"
-  - On the left side towards the bottom, you'll see a "For developers" tab
-  - After clicking that, you should see a PowerShell header towards the bottom, click on the "Apply" button:
-  
-![](/assets/images/devcode/powershell-global-bypass.png)
-
-+ You're not done though, local user permissions will still be restricted, to fix this, do the following:
-  - Run Powershell as Administrator
-  - Copy and paste this command in Powershell: Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
-  - Navigate to the TokenTactics Directory and run this command to prevent warnings: Unblock-File 'C:\Users\yourusername\Desktop\TokenTactics-main\TokenTactics-main\modules\\*.ps1'
-  - You can now import the module and begin.
-  - Run this command: Import-Module .\TokenTactics.psd1
-  - You may see this warning, ignore it:
-
-![](/assets/images/devcode/import-mod-warning.png)
 
 + You can now begin generating a code to phish with, there are two basic commands depending on the organization you're attempting to hack:
   - Get-AzureToken -Client MSGraph <This command will generate a basic code that you'll use against most standard organizations>
