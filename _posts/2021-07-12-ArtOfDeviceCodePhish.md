@@ -23,56 +23,12 @@ We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Onl
 
 Most of this with will be done with free trials, and we'll do our best to stay within the strict scope that Red Teams must abide too.
 
-## Overcoming Red Team Scope Limitations with the Cloud
-While real Advanced Persistent Threats (APTs) have no scope in their attacks, Red Team Operators do. These rules make the Initial Access phase much easier for real threat actors, while security providers continue to raise the difficulty bar for RTOs performing threat emulation services.  
+We will be launching the Azure Device Code Phishing campaign from the domain `msftsec.onmicrosoft.com` which is provided by Microsoft when we create an Azure Active Directory. We will be attacking the domain `theHarvester.World` which is a domain I am hosting on Azure. We will phish the users of `theHarvester.World` by sending phishing emails from the attacker controlled `msftsec.onmicrosoft.com` domain.
 
-### Some attack techniques APTs use which are typically out of scope for RTOs:
-- Compromising out-of-scope organizations email systems & email accounts to launch a phishing campaign.
-  - The threat actors "Nobelium" compromised a marketing email account for launching their phishing campaign.
-    - [New sophisticated email-based attack from NOBELIUM - Microsoft Threat Intelligence Center (MSTIC)](https://www.microsoft.com/security/blog/2021/05/27/new-sophisticated-email-based-attack-from-nobelium/)
-    - ".. CISA and FBI are engaged in addressing a sophisticated spearphishing campaign. A cyber threat actor leveraged a compromised end-user account from Constant Contact, a legitimate email marketing software company, to send phishing emails to more than 7,000 accounts across approximately 350 government organizations, IGOs, and NGOs. The threat actor sent spoofed emails that appeared to originate from a U.S. Government organization.. " 
-      -  [US-Cert.CISA.Gov](https://us-cert.cisa.gov/ncas/alerts/aa21-148a)
-- Compromising out-of-scope organizations web servers to host malware.
-- Leveraging Zero Day vulnerabilities on out-of-scope organizations web sites, to reflect or redirect phishing victims to malware downloads.
-  - A threat actor exploited a Zero Day Cross-Site Scripting (XSS) attack to distribute malware in their phishing campaign.
-    - [Phishing campaign uses UPS.com XSS vuln to distribute malware](https://www.bleepingcomputer.com/news/security/phishing-campaign-uses-upscom-xss-vuln-to-distribute-malware/)
-  - A threat actor is abusing Zero Day URL Redirect vulnerabilities to bypass email Safe-Link protections to distribute malicious hyperlinks in their phishing emails.
-    - [Microsoft Security Intelligence - Active Phishing Campaign Abusing URL Redirects of Vulnerable Organizations Websites](https://twitter.com/MsftSecIntel/status/1432479171813445635)
-    - ![](/assets/images/devcode/msftRedir.png)
-- Compromising personal computers, online accounts, smartphones, and personal home networks of employees, of the in scope organization.
-- Supply-Chain Attacks
-  - Threat actors compromised many down-stream companies by exploiting the SolarWinds application supply-chain.
-    - [SANS - What You Need to Know About the SolarWinds Supply-Chain Attack](https://www.sans.org/blog/what-you-need-to-know-about-the-solarwinds-supply-chain-attack/)
+Being that the root domain for our attacker domain is `onmicrosoft.com` and is owned by Microsoft & sent from valid Microsoft servers, this may allow us to evade detection.
 
-### Initial Access Methods for Red Teams
-While the above paths to Initial Access are out of scope for Red Team Operators performing threat emulation services, we as RTOs still have some viable options remaining. 
-
-As legacy methods continue to increase in difficulty, new Initial Access opportunities are being discovered with the mass adoption of Cloud services. Not only can we as RTOs leverage the Cloud for offensive operations, but the Cloud also opens up an entirely new attack-surface. 
-
-In this walkthrough we will be using our Cloud to attack and breach other Clouds. Welcome to Cloud Wars!
-
-### Traditional Initial Access Methods
-
-Traditional RTO Initial Access methods for Business Email Compromise (BEC) are epicly documented in the [Red Team Infrastructure Wiki]( https://github.com/bluscreenofjeff/Red-Team-Infrastructure-Wiki) created by [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f) and [Jeff Dimmock(@bluscreenofjeff)](https://twitter.com/bluscreenofjeff).
-
-If we rule out the out-of-scope ATP methods listed above, we will likely need to gain access to the company by:
-+ Physical / Wireless Attacks
-+ Exploiting Unpatched Systems that are Exposed to the Internet
-+ Compromising a Web Server via a 0-day with a vulnerability like Remote Code Execution (RCE) or Server-Side Request Forgery (SSRF)
-+ Credential-Based Attacks such as Password Brute-Forcing, Password-Spraying, or Discovering Active Credentials from a Recent Breach
-+ Accessing the Targets VPN via Credential-Based Attacks or some form of Social Engineering
-+ Phishing Emails
-
-While there are many vulnerable systems on the internet, it is likely that the Blue Teams of companies performing Red Team exercises have locked down most of the in-scope methods above. It is common that Physical/Wireless attacks are out-of-scope, that the permiter is hardened, and login interfacing including the VPN require MFA or Assemetric Keys. If the Web surface is also hardened, we can turn to finding and attacking Cloud resources. Pentester Academy has great courses on attacking AWS & Azure Active Directory.
-
-
-
-
-The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organizations spam filters & email protection services.   
-
-When an Azure user registers a tenant in Azure Active Directory, they are provided with an `.onmicrosoft.com` domain. This `.onmicrosoft.com` subdomain can confuse targeted users who are unfamiliar with how Azure services work.
-
-First read Dr Nestori Syynimaa's blog post. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
+### A Deep Dive into the Device Code Phish Attack
+I suggest reading this AADInternals blog post by Dr Nestori Syynimaa's, to learn how the Device Code Phishing attack works. The aim of this post is not to republish his great work, but to build on it; providing a detailed "How to Guide" for red teams aiming to succeed in a successful Device Code Phish. 
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 
 ## Azure Phishing Infrastructure Setup
