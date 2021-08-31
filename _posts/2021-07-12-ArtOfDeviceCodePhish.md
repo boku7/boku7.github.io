@@ -95,30 +95,31 @@ New-DkimSigningConfig -DomainName msftauth.onmicrosoft.com -Enabled $true
 ```
 
 ## Phishing Operator Setup
-In this section we will setup Windows 10 Virtual Machines (VMs) for Red Team Operators, install the desktop Outlook Client on the Operators VMs using the Office 365 trials, enable powershell scripts, install the [AADInternals](https://o365blog.com/aadinternals/) powershell module, and install the [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) powershell module. 
+In this section we will setup Windows 10 Virtual Machines (VMs) for Red Team Operators, install the desktop Outlook Client on the Operators VMs using the Office 365 trials, enable powershell scripts, install the [AADInternals](https://o365blog.com/aadinternals/) powershell module, install the [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) powershell module, and install the [AzureAD](https://docs.microsoft.com/en-us/powershell/module/azuread/?view=azureadps-2.0) powershell module. 
 
-### Windows 10 Virtual Machine Setup (Optional)
-A windows environment is optional. Personally we have had the best success when sending from the Windows Outlook desktop client when sending convincing phishing emails which incorporate HTML and CSS. We recommend creating a Windows 10 VM with your choice of hypervisor, installing the Outlook application from your Office 365 phishing tenant, and testing before you begin your phishing campaign.
+### Windows 10 Virtual Machine Setup 
+We will need a powershell environment to run the AADInternals, TokenTactics, and AzureAD powershell modules. Sometimes I use [macOS powershell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-macos?view=powershell-7.1) which runs TokenTactics fine. Although I have ran into issues running other modules, as some require DLLs. 
+
+For sending the phishing emails, a windows environment is optional. For HTML/CSS emails, we recommend sending from the Windows Outlook desktop client if the target is a Windows shop that uses Outlook internally. Sending HTML/CSS emails from macOS clients to targets with Windows email clients has had mixed results.
 
 VMWare & VirtualBox are great options for type-2 hypervisors:
 + VMWare offers free 30 day trials for [VMWare Fusion](https://www.vmware.com/products/fusion/fusion-evaluation.html) for macOS & [VMWare Workstation Pro](https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html) for Linux or Windows.
 + [VirtualBox](https://www.virtualbox.org/wiki/Downloads) works too.
 
-
-To create a windows Virtual Machine (VM) you will need a prebuilt VM image for your chosen hypervisor, or you can create your own Windows 10 VM by using the Windows 10 ISO. The Windows 10 ISO does not require a license to use. You can click to skip entering a license key while installing Windows. The unlicensed Windows version works well for this, although you will find difficulty in changing the background. Alternatively you can use the Windows 10 developer prebuilt VM images. The issue with the prebuilt VM's is they will expire and you may end up getting locked out of the VM. The Windows ISO method does not expire.
+To create a windows Virtual Machine (VM) you can use a prebuilt VM image for your chosen hypervisor, or you can create your own Windows 10 VM by using the Windows 10 ISO. The Windows 10 ISO does not require a license to use. You can click to skip entering a license key while installing Windows. The unlicensed Windows version works well for this, although you will find difficulty in changing the background. Alternatively you can use the Windows 10 developer prebuilt VM images. The issue with the prebuilt VM's is they will expire and you may end up getting locked out of the VM. The Windows ISO method does not expire.
 
 - [Windows 10 ISO Download](https://www.microsoft.com/en-us/software-download/windows10ISO)
     - Download the ISO from macOS or Linux.
 - [Windows 10 Developer VM Download](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/)
 
-### Outlook Application
+### Outlook Application Setup for RTO
 
 + On your windows 10 VM, install office by going to [office.com](https://www.office.com), login, and click 'Install Office' from the splash page.
-+ I have noticed that while creating HTML emails from different operating systems & email clients, formatting can change drastically. 
-  - The Outlook desktop app on windows appears to be the most stable client to send from. You may need to adapt this based on your targets email client environment.
++ Unfortunately you will need to install the entire Office desktop application Suite just to get the Outlook application.
++ After the download, follow the instructions to install.
++ After installation of the Outlook application on the Red Team Operators VM, login to Outlook using the Red Team Operators phishing email address.
+  + For this walkthough, our Red Team Operators phishing email is 'DevOps@msftsec.onmicrosoft.com'.
 
-## Azure AD Recon
-The Azure Device Code phishing technique is dependant on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
 ### Install and import AADInternals into powershell
 ```powershell
 # Install the module
@@ -128,6 +129,10 @@ Import-Module AADInternals
 ```
   - https://o365blog.com/aadinternals/#installation
 
+
+
+## Azure AD Recon
+The Azure Device Code phishing technique is dependant on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
 ### Check if the target domain uses Azure Active Directory
 
 ##### Target is registered to Azure Active Directory
