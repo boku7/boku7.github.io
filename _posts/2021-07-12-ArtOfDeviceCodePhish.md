@@ -22,12 +22,15 @@ In this blog will walkthrough the entire Azure Device Code Phishing attack, from
 While real Advanced Persistent Threats (APTs) have no scope in their attacks, Red Team Operators do. These rules make the Initial Access phase much easier for real threat actors, while security providers continue to raise the bar of difficulty for RTOs performing threat emulation services.  
 
 Some attack techniques APTs use which are typically out of scope for RTOs:
-- Compromising out-of-scope organizations email systems & accounts to launch a phishing campaign.
+- Compromising out-of-scope organizations email systems, email accounts, and marketing systems email accounts to launch a phishing campaign.
+  - [New sophisticated email-based attack from NOBELIUM - Microsoft Threat Intelligence Center (MSTIC)](https://www.microsoft.com/security/blog/2021/05/27/new-sophisticated-email-based-attack-from-nobelium/)
+  - ".. CISA and FBI are engaged in addressing a sophisticated spearphishing campaign. A cyber threat actor leveraged a compromised end-user account from Constant Contact, a legitimate email marketing software company, to send phishing emails to more than 7,000 accounts across approximately 350 government organizations, IGOs, and NGOs. The threat actor sent spoofed emails that appeared to originate from a U.S. Government organization.. " 
+    -  [US-Cert.CISA.Gov](https://us-cert.cisa.gov/ncas/alerts/aa21-148a)
 - Compromising out-of-scope organizations web servers to host malware.
 - Leveraging Zero Day vulnerabilities onout-of-scope organizations web sites to reflect or redirect targets to malware downloads.
   - [Phishing campaign uses UPS.com XSS vuln to distribute malware](https://www.bleepingcomputer.com/news/security/phishing-campaign-uses-upscom-xss-vuln-to-distribute-malware/)
   - [Microsoft Security Intelligence - Active Phishing Campaign Abusing URL Redirects of Vulnerable Organizations Websites](https://twitter.com/MsftSecIntel/status/1432479171813445635)
-  - ![](/assets/images/devcode/msftRedir.png)
+    - ![](/assets/images/devcode/msftRedir.png)
 - Compromising personal computers, online accounts, smartphones and personal home networks of employees, of the in scope organization.
 
 
