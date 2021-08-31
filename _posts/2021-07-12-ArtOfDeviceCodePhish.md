@@ -10,10 +10,22 @@ tags:
   - DeviceCode
   - RedTeam
 --- 
-## Co-Author & Co-Developer: Stephan Borosh
+Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f), [Octavio Paguaga(@oakTree__)](https://twitter.com/oakTree__), [(John Jackson(@johnjhacking)](https://twitter.com/johnjhacking)  
+Azure Methodology & Tool Credits: [Charles Hamilton (@Mr.Un1k0d3r)](https://twitter.com/MrUn1k0d3r), [Dr. Nestori Syynimaa(@DrAzureAD)](https://twitter.com/DrAzureAD), [Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt)
+[TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
+
 
 ## Overview
-Guide for Azure Device Code phishing - infrastructure setup to exploitation.
+In this blog we are taking a journey, from creating an Azure phishing infrastructure from scratch, to achieving Azure Account Take-Over (ATO). We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Online, spinning up hypervisors, creating Virtual Machines (VMs), creating phishing accounts for Red Team Operators (RTOs), honing our HTML phishing emails, launching an Azure Device Code Phishing campaign, bypassing Multi-Factor Authentication (MFA), bypassing Conditional Access Polcies (CSPs), swapping tokens, dumping Azure AD, dumping exchange mailboxes, and accessing the targets Outlook Web Application (OWA) via our browser. We will be doing most of this with free trials, while staying in the strict scope that Red Teams must abide too. This is the poor-RTO's guide to Azure ATO.
+
+While real Advanced Persistent Threats (APTs) have no scope in their attacks, we as Red Team Operators do. These rules make the Initial Access phase much easier for real threat actors, while security providers continue to raise the bar of difficulty for RTOs performing threat emulation services.  
+Techniques APTs use that are typically out of scope for RTOs:
+- Compromising an out of scope organizations email systems, to launch a phishing campaign.
+- Compromising an out of scope organizations web servers, to host malware.
+- Leveraging Zero Day vulnerabilities on an out of scope organizations web server to reflect or redirect targets to malware downloads.
+  - [Phishing campaign uses UPS.com XSS vuln to distribute malware](https://www.bleepingcomputer.com/news/security/phishing-campaign-uses-upscom-xss-vuln-to-distribute-malware/)
+- Compromising personal computers, online accounts, smartphones and personal home networks of employees, of the in scope organization.
+
 
 The Azure cloud services can be used by offensive operators to host phishing infrastructure that sometimes bypasses organizations spam filters & email protection services.   
 
