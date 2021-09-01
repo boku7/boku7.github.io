@@ -347,7 +347,7 @@ At the time of testing out AADInternals for Red Team engagements, I could only r
 
 The `Get-Help` command shows us that `Dump-OWAMailboxViaMSGraphApi` allows us to select the mail folder, return an arbitrary amount of emails with the top flag, spoof our device, and spoof our browser.
 
-```PowerShell
+```powershell
 Get-Help Dump-OWAMailboxViaMSGraphApi
 SYNTAX
     Dump-OWAMailboxViaMSGraphApi [-AccessToken] <String> [-mailFolder] <String> [[-top] <Int32>] [[-Device] <String>] [[-Browser] <String>] [<CommonParameters>]
