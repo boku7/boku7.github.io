@@ -291,14 +291,98 @@ user_code        : ERDVDCNHH
 
 + We will replace `<REPLACE-WITH-DEVCODE-FROM-TOKENTACTICS>` in the phishing email with value of the user_code `ERDVDCNHH`.
 
+![](/assets/images/devcode/getDevCode.png)
 
-#### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
++ Now we will leave TokenTactics running in the PowerShell window and send the phishing email to `Bob@TheHarvester.World`.
++ Bob receives the phishing email from our operators email address `DevOps@msftsec.onmicrosoft.com`.
 
-#### RefreshTo-Outlook
+![](/assets/images/devcode/PhishBobEmail.png)
 
-#### Dumping Emails with TokenTactics
++ Bob clicks the `https://microsoft.com/devicelogin` hyperlink which opens the link in his default browser. Bob follows the phishing emails instructions and copies the device code from the phishing email and pastes it into the Microsoft Device Code authentication form.
 
-#### Opening Outlook Web App in a Browser with TokenTactics
+![](/assets/images/devcode/enterDevCode.png)
+
++ Since Bob is already logged into his account on his default browser, Bob is not required to authenticate with his credentials and MFA.
++ If Bob is not logged into his browser, he will need to enter his credentials and complete the MFA challenge.
++ Recently I've noticed that Bob may be prompted with a secuirty prompt to ask Bob if he knows what he's about to do.
+
+![](/assets/images/devcode/BobWhatAreYouDoingBro.png)
+
++ After Bob completes the Device Code form, our TokenTactics PowerShell window will dump Bob's Access Token & Refresh Token.
++ Azure access tokens are typically short lived, around 60-90 minutes.
++ Azure Refresh Tokens last for much longer, sometimes up to 90 days.
+ 
+![](/assets/images/devcode/tokens.png)
+
+## TokenTactics
+Now that we have a refresh token we can use TokenTactics to get access tokens for Azure resources. Since we acquired this token via the Device Code phish we should be able to access all the Azure resources that the real user can access. Although, we may run into issues if their Azure tenant has a Conditional Access Poilicy (CSP) that prevents us from accessing resources based on conditions like IP address filtering, checking if the device is joined to Intune, checking if the device type is allowed, checking if the browser is allowed, and various other conditional options.
+
+### Dump Azure AD with AzureAD Module
+We will import the AzureAD module to our PowerShell window and pass the AadGraph Token from TokenTactics to the AzureAD.
+```powershell
+PS C:\Users\boku> import-module AzureAD
+PS C:\Users\boku> Connect-AzureAD -AadAccessToken $response.access_token -AccountId bob@theharvester.world
+```
+
+![](/assets/images/devcode/dumpUsers.png)
+
+Using the AzureAD module we can do allot more than just dumping the users. To continue on from here check out the 
+[AzureAD PowerShell Module Documenation](https://docs.microsoft.com/en-us/powershell/module/azuread/?view=azureadps-2.0)
+
+[Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt) has a great course goes deep on Azure AD Red Teaming. 
+
+### RefreshTo-MSGraph
+Now that we have the refresh token for `Bob@TheHarvester.World`, we will use it to refresh to a MS Graph access token. With this MS Graph access token, we will use TokenTactics to dump Bob's email.
++ Pass the refresh token to the `RefreshTo-MSGraph` command.
++ We will also add the flags `-Device iPhone` & `-Browser Safari`. 
+  + TokenTactics has the ability to spoof the Device and Browser that the API requests are sent from. 
+  + This can bypass Conditional Access Polciies (CSPs) that are device & browser based.
+
+![](/assets/images/devcode/RefreshToMSGraph.png)
+
+### Dumping Bob's Email with TokenTactics
+At the time of testing out AADInternals for Red Team engagements, I could only return the unread emails from the mailbox. To overcome this limitiation I created the `Dump-OWAMailboxViaMSGraphApi` command in TokenTactics.  
+
+`Dump-OWAMailboxViaMSGraphApi` can return all the emails from all the mail folders.
+
+The `Get-Help` command shows us that `Dump-OWAMailboxViaMSGraphApi` allows us to select the mail folder, return an arbitrary amount of emails with the top flag, spoof our device, and spoof our browser.
+
+```PowerShell
+Get-Help Dump-OWAMailboxViaMSGraphApi
+SYNTAX
+    Dump-OWAMailboxViaMSGraphApi [-AccessToken] <String> [-mailFolder] <String> [[-top] <Int32>] [[-Device] <String>] [[-Browser] <String>] [<CommonParameters>]
+```
+
+Valid options for the `-mailFolder` arguments are:
++ AllItems: Returns emails from all mail folders
++ inbox: Returns emails in the inbox
++ archive: Returns emails the user has archived
++ deleteditems: Returns emails the user has deleted
++ drafts: Returns draft emails
++ recoverableitemsdeletions: Returns emails that the user has deleted in their trash
++ sentitems: Returns emails the user sent
+
+** Warning! If you do not use the `-top <#>` flag to limit the number of emails you want to return, then you will return all the users emails. This will be done over multiple requests to the MS Graph API. **
+
+To return the most recent email in Bob's inbox we will supply `inbox` to the `-mailFolder` parameter and `1` to the `-top` parameter. We will also use the `-Device` and `-Browser` parameters to spoof that we are reading the email from an iPhone device using the Safari browser.
+
+```powershell
+PS C:\Users\boku> Dump-OWAMailboxViaMSGraphApi -AccessToken $MSGraphToken.access_token -mailFolder inbox -top 1 -Device iPhone -Browser Safari
+```
+
+![](/assets/images/devcode/dump1email.png)
+
+### Opening OWA in a Browser with TokenTactics
+Both the MSGraph API and the Outlook API can be used to access the EXO mailbox. Although, it is common security practice to restrict access to the MSGraph API & the Outlook API from external devices not joined to the companies Azure AD. To bypass this Conditional Access Policy (CAP), we can abuse the Microsoft Substrate API to access OWA in a browser.
+
+The `Open-OWAMailboxInBrowser` command in TokenTactics has this built in. The best way i've discovered to open OWA in the browser using a Substrate token is to use BurpSuite.
++ Pass the refresh token to the `RefreshTo-SubstrateToken` command in TokenTactics.
+
+```powershell
+PS C:\Users\boku> RefreshTo-SubstrateToken -refreshToken $response.refresh_token -domain TheHarvester.World -Device AndroidMobile -Browser Android
+```
+
+![](/assets/images/devcode/refresh2substrate.png)
 
 ## References 
 + [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)  
