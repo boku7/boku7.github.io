@@ -198,7 +198,7 @@ We will install the AzureAD PowerShell module for enumerating the targets AzureA
 Install-Module AzureAD
 ```
 
-## Reconnaissance & Phish Strength Testing
+## AAD Reconnaissance
 The Azure Device Code phishing technique is dependant on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
 ### Check if the target domain uses Azure Active Directory
 
@@ -216,9 +216,9 @@ theharvester.onmicrosoft.com True True True False Managed
 theharvester.world           True True True False Managed
 ```
 
-- We observe that the target domain theharvester.world is registered to Azure Active Directory, and their email services are True. This means that the target uses Exchange Online for their email.
-  - We can confirm this by using the linux dig tool:
+- Our target domain `TheHarvester.World` is registered to Azure Active Directory and has `MX` set to `True`.
 
+- Another way is by checking their DNS `MX` record:
 ```bash
 dig -t MX +short theHarvester.World
 0 theharvester-world.mail.protection.outlook.com.
@@ -230,22 +230,6 @@ dig -t MX +short theHarvester.World
 Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
 Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ```
-
-### Assess Phishing Strength
-To test the spam score of our phishing emails we will use [www.mail-tester.com](https://www.mail-tester.com/).
-+ We will copy the email Mail-Tester presents us with.
-
-![](/assets/images/devcode/mailtester.png) 
-
-+ Open the phishing template and send the phishing email to the Mail-Tester address.
-
-![](/assets/images/devcode/phishtest.png) 
-
-+ On Mail-Tester, click 'Then check your score'.
-
-![](/assets/images/devcode/phishtestResults.png) 
-
-Great success! We have achieved a 10/10 score for Mail-Tester!
 
 ## Phishing
 In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email. We've included a [Device Code phishing Outlook email template in the TokenTactics repo](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/DeviceCodePhishingEmailTemplate.oft) to get you started!
@@ -267,6 +251,22 @@ On the RTO Windows VM, open the TokenTactics folder and double-click the DeviceC
 ![](/assets/images/devcode/devcodePhishEmail1.png)
 + For the Azure Device Code Phishing Campaign we will be replacing the `<REPLACE-WITH-DEVCODE-FROM-TOKENTACTICS>` text with the device codes that are generated from the TokenTactics PowerShell module.
 + Feel free to modify this template. You may need to, as this email template may have been signatured and is "burned".
+
+### Phish Strength Testing
+To test the spam score of our phishing emails we will use [www.mail-tester.com](https://www.mail-tester.com/).
++ We will copy the email Mail-Tester presents us with.
+
+![](/assets/images/devcode/mailtester.png) 
+
++ Open the phishing template and send the phishing email to the Mail-Tester address.
+
+![](/assets/images/devcode/phishtest.png) 
+
++ On Mail-Tester, click 'Then check your score'.
+
+![](/assets/images/devcode/phishtestResults.png) 
+
+Great success! We have achieved a 10/10 score for Mail-Tester!
 
 #### Phishing with TokenTactics
 
