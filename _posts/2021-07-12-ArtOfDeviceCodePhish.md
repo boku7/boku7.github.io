@@ -19,7 +19,7 @@ Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Ste
 
 [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
 
-ShoutOuts: [Charles Hamilton (@Mr.Un1k0d3r)](https://twitter.com/MrUn1k0d3r), [Dr. Nestori Syynimaa(@DrAzureAD)](https://twitter.com/DrAzureAD), [Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt)
+Shout-Outs: [Charles Hamilton (@Mr.Un1k0d3r)](https://twitter.com/MrUn1k0d3r), [Dr. Nestori Syynimaa(@DrAzureAD)](https://twitter.com/DrAzureAD), [Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt)
 
 ## Overview
 In this blog we'll walkthrough the Azure Device Code Phishing attack, from creating a malicous Azure phishing infrastructure, to achieving Azure Account Take-Over (ATO). 
@@ -231,7 +231,7 @@ Invoke-AADIntReconAsOutsider -Domain isNotRegisteredToAzureAD.com | Format-Table
 Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 ```
 
-## Phishing
+## Azure Device Code Phishing Setup
 In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email. We've included a [Device Code phishing Outlook email template in the TokenTactics repo](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/DeviceCodePhishingEmailTemplate.oft) to get you started!
 
 ### Device Code Phishing Email Template Setup
@@ -268,16 +268,29 @@ To test the spam score of our phishing emails we will use [www.mail-tester.com](
 
 Great success! We have achieved a 10/10 score for Mail-Tester!
 
-#### Phishing with TokenTactics
+## Executing the Azure Device Code Phishing Attack
+Now that we have a strong phishing email, we will start our Azure Device Code Phishing against the user `Bob@TheHarvester.World`.
 
-+ You can now begin generating a code to phish with, there are two basic commands depending on the organization you're attempting to hack:
-  - Get-AzureToken -Client MSGraph <This command will generate a basic code that you'll use against most standard organizations>
-  - Get-AzureToken -Client DODMSGraph <This command will generate a code that you'll use again Department of Depense / Military Organizations>
-+ After picking one of the above commands, run it and you should be able to generate a code with it. This is what you'll use with the email template above.
+### TokenTactics Setup
+On the RTO Windows VM we will setup TokenTactics for our phishing attack. It is important to keep in mind that these device codes typically expire after 15 minutes. We will want to make sure to queue a device code with TokenTactics at the same time we send our phishing email.
++ Open the Azure Device Code Phishing template in Outlook on the RTO Windows VM.
++ Open a PowerShell window and import the TokenTactics module.
 
-![](/assets/images/devcode/generating-token.png)
+```powershell
+PS C:\Users\boku\> Import-Module C:\Users\boku\TokenTactics\TokenTactics.psd1
+```
+Now that we have the phishing email and TokenTactics queued, we will send our phishing email!
 
-## Hooking a Phish
+### Phishing Bob
++ First we will request a device code for the Azure Graph API using TokenTactics.
+
+```powershell
+PS C:\Users\boku\> Get-AzureToken -Client Graph
+user_code        : ERDVDCNHH
+```
+
++ We will replace `<REPLACE-WITH-DEVCODE-FROM-TOKENTACTICS>` in the phishing email with value of the user_code `ERDVDCNHH`.
+
 
 #### AzureAD Module - Dumping Users, Apps, Conditial Access Policies ++
 
