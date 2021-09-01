@@ -22,9 +22,9 @@ Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Ste
 Shout-Outs: [Charles Hamilton (@Mr.Un1k0d3r)](https://twitter.com/MrUn1k0d3r), [Dr. Nestori Syynimaa(@DrAzureAD)](https://twitter.com/DrAzureAD), [Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt)
 
 ## Overview
-In this blog we'll walkthrough the Azure Device Code Phishing attack, from creating a malicous Azure phishing infrastructure, to achieving Azure Account Take-Over (ATO). 
+In this blog we'll walkthrough the Azure Device Code Phishing attack, from creating a malicious Azure phishing infrastructure, to achieving Azure Account Take-Over (ATO).
 
-We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Online (EXO), spinning up hypervisors, creating Virtual Machines (VMs), creating phishing accounts for Red Team Operators (RTOs), honing our HTML phishing emails, launching an Azure Device Code Phishing campaign, bypassing Multi-Factor Authentication (MFA), bypassing Conditional Access Polcies (CSPs), swapping tokens, dumping Azure AD, dumping exchange mailboxes, and accessing the targets Outlook Web Application (OWA) via our browser. 
+We'll be setting up Azure accounts, Azure Active Directories (AAD), Exchange Online (EXO), spinning up hypervisors, creating Virtual Machines (VMs), creating phishing accounts for Red Team Operators (RTOs), honing our HTML phishing emails, launching an Azure Device Code Phishing campaign, bypassing Multi-Factor Authentication (MFA), bypassing Conditional Access Policies (CAPs), swapping tokens, dumping Azure AD, dumping exchange mailboxes, and accessing the targets Outlook Web Application (OWA) via our browser. 
 
 Most of this with will be done with free trials, and we'll do our best to stay within the strict scope that Red Teams must abide too.
 
@@ -199,7 +199,7 @@ Install-Module AzureAD
 ```
 
 ## AAD Reconnaissance
-The Azure Device Code phishing technique is dependant on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
+The Azure Device Code phishing technique is dependent on your target using Azure Active Directory. Before launching an Azure Device Code phishing campaign, it is wise to ensure your target uses Azure.
 ### Check if the target domain uses Azure Active Directory
 
 ##### Target is registered to Azure Active Directory
@@ -235,7 +235,7 @@ Domain isNotRegisteredToAzureAD.com is not registered to Azure AD
 In this section we will create a working HTML&CSS Azure Device Code phishing template email, ensure it works in Outlook, and send an Azure Device Code phishing email. We've included a [Device Code phishing Outlook email template in the TokenTactics repo](https://github.com/rvrsh3ll/TokenTactics/blob/main/resources/DeviceCodePhishingEmailTemplate.oft) to get you started!
 
 ### Device Code Phishing Email Template Setup
-For the phishing campaign we'll need a convincing phishing email to send to targets. This was the main issue we had with using the AADInterals module to send phishing emails. AADInternals sends phishing emails using the Microsoft Graph API. For testing this works great, but for Red Team engagements we wanted to go the extra mile and get some convincing HTML&CSS phishing emails going. 
+For the phishing campaign we'll need a convincing phishing email to send to targets. This was the main issue we had with using the AADInternals module to send phishing emails. AADInternals sends phishing emails using the Microsoft Graph API. For testing this works great, but for Red Team engagements we wanted to go the extra mile and get some convincing HTML&CSS phishing emails going. 
 
 Initially we were using this [DeviceCodePhish.ps1 PowerShell script created by Mr. Un1k0d3r & Rvrsh3ll](https://gist.github.com/rvrsh3ll/b8bfc113acf5726746929bef2e620f8d), but we kept adding more & more functionality, so we dubbed it TokenTactics!
 
@@ -249,7 +249,7 @@ On the RTO Windows VM, open the TokenTactics folder and double-click the DeviceC
 + This file is an Outlook Item Template (OTF) file, so it will open in the desktop Outlook application.
 
 ![](/assets/images/devcode/devcodePhishEmail1.png)
-+ For the Azure Device Code Phishing Campaign we will be replacing the `<REPLACE-WITH-DEVCODE-FROM-TOKENTACTICS>` text with the device codes that are generated from the TokenTactics PowerShell module.
++ For the Azure Device Code Phishing Campaign, we will be replacing the `<REPLACE-WITH-DEVCODE-FROM-TOKENTACTICS>` text with the device codes that are generated from the TokenTactics PowerShell module.
 + Feel free to modify this template. You may need to, as this email template may have been signatured and is "burned".
 
 ### Phish Strength Testing
@@ -304,7 +304,7 @@ user_code        : ERDVDCNHH
 
 + Since Bob is already logged into his account on his default browser, Bob is not required to authenticate with his credentials and MFA.
 + If Bob is not logged into his browser, he will need to enter his credentials and complete the MFA challenge.
-+ Recently I've noticed that Bob may be prompted with a secuirty prompt to ask Bob if he knows what he's about to do.
++ Recently I've noticed that Bob may be prompted with a security prompt to ask Bob if he knows what he's about to do.
 
 ![](/assets/images/devcode/BobWhatAreYouDoingBro.png)
 
@@ -315,7 +315,7 @@ user_code        : ERDVDCNHH
 ![](/assets/images/devcode/tokens.png)
 
 ## TokenTactics
-Now that we have a refresh token we can use TokenTactics to get access tokens for Azure resources. Since we acquired this token via the Device Code phish we should be able to access all the Azure resources that the real user can access. Although, we may run into issues if their Azure tenant has a Conditional Access Poilicy (CSP) that prevents us from accessing resources based on conditions like IP address filtering, checking if the device is joined to Intune, checking if the device type is allowed, checking if the browser is allowed, and various other conditional options.
+Now that we have a refresh token we can use TokenTactics to get access tokens for Azure resources. Since we acquired this token via the Device Code phish we should be able to access all the Azure resources that the real user can access. Although, we may run into issues if their Azure tenant has a Conditional Access Policy (CAP) that prevents us from accessing resources based on conditions like IP address filtering, checking if the device is joined to Intune, checking if the device type is allowed, checking if the browser is allowed, and various other conditional options.
 
 ### Dump Azure AD with AzureAD Module
 We will import the AzureAD module to our PowerShell window and pass the AadGraph Token from TokenTactics to the AzureAD.
@@ -354,13 +354,13 @@ SYNTAX
 ```
 
 Valid options for the `-mailFolder` arguments are:
-+ AllItems: Returns emails from all mail folders
-+ inbox: Returns emails in the inbox
-+ archive: Returns emails the user has archived
-+ deleteditems: Returns emails the user has deleted
-+ drafts: Returns draft emails
-+ recoverableitemsdeletions: Returns emails that the user has deleted in their trash
-+ sentitems: Returns emails the user sent
++ `AllItems`: Returns emails from all mail folders
++ `inbox`: Returns emails in the inbox
++ `archive`: Returns emails the user has archived
++ `deleteditems`: Returns emails the user has deleted
++ `drafts`: Returns draft emails
++ `recoverableitemsdeletions`: Returns emails that the user has deleted in their trash
++ `sentitems`: Returns emails the user sent
 
 ** Warning! If you do not use the `-top <#>` flag to limit the number of emails you want to return, then you will return all the users emails. This will be done over multiple requests to the MS Graph API. **
 
@@ -400,13 +400,13 @@ We follow the instructions and send the API request using BurpSuites Repeater.
 
 ![](/assets/images/devcode/burp2Browser.png)
 
-Next we right-click the response in repeater, click 'Show response in browser', copy the URL, go to the Proxy Tab, disable intercept, and click 'Open Browser'. We paste the URL from our buffer and press Enter.
+We'll right-click the response in repeater, click 'Show response in browser', copy the URL, go to the Proxy Tab, disable intercept, and click 'Open Browser'. We paste the URL from our buffer and press Enter.
 
 We are now presented with an Outlook Web Application Error. We will refresh the page.
 
 ![](/assets/images/devcode/refresh2Pwn.png)
 
-After refreshing the page, we have full access to Bobs email. We can also access SharePoint and Bobs OneDrive by creating emails, adding attachments from cloud locations, downloading the attachments locally, and then deleting the draft email. Additionally we can send emails as Bob.
+After refreshing the page, we have full access to Bobs email. We can also access SharePoint and Bobs OneDrive by creating emails, adding attachments from cloud locations, downloading the attachments locally, and then deleting the draft email. We can also send emails as Bob.
 
 ![](/assets/images/devcode/WereTheBobNow.png)
 
