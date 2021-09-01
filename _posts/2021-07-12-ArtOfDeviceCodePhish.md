@@ -37,7 +37,7 @@ I suggest reading this AADInternals blog post by Dr Nestori Syynimaa's, to learn
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)
 
 ## Azure Phishing Infrastructure Setup
-In this section we will setup an Azure Account Subscription, which will host our malicious Azure Active Directory (AAD) phishing domain 'msftsec.onmicrosoft.com'. We will create an 'Admin' Global Administrator user to acquire 30-day Office 365 trial licenses, setup Exchange Online, enable DKIM, and create phishing accounts for Red Team Operators.
+In this section we will setup an Azure Account Subscription, which will host our malicious Azure Active Directory (AAD) phishing domain `msftsec.onmicrosoft.com`. We will create an `Admin` Global Administrator user to acquire 30-day Office 365 trial licenses, setup Exchange Online, enable DKIM, and create phishing accounts for Red Team Operators.
 
 ### Azure Account Subscription Setup
 + Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/).
