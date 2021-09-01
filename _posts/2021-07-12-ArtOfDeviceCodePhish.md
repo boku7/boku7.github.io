@@ -384,6 +384,34 @@ PS C:\Users\boku> RefreshTo-SubstrateToken -refreshToken $response.refresh_token
 
 ![](/assets/images/devcode/refresh2substrate.png)
 
++ Now we will pass the Substrate access token to the `Open-OWAMailboxInBrowser`.
+
+```powershell
+PS C:\Users\boku> Open-OWAMailboxInBrowser -AccessToken $SubstrateToken.access_token -Device Mac -Browser Chrome
+```
+
+![](/assets/images/devcode/Refresh2SubstratePwn.png)
+
+We follow the instructions and send the API request using BurpSuites Repeater.
+1. Open a new BurpSuite Repeater tab & set the Target to 'https://Substrate.office.com'
+2. Paste the below request into Repeater & Send
+3. Right click the response > 'Show response in browser', then open the response in Burp's embedded browser
+4. Refresh the page to access the mailbox
+
+![](/assets/images/devcode/burp2Browser.png)
+
+Next we right-click the response in repeater, click 'Show response in browser', copy the URL, go to the Proxy Tab, disable intercept, and click 'Open Browser'. We paste the URL from our buffer and press Enter.
+
+We are now presented with an Outlook Web Application Error. We will refresh the page.
+
+![](/assets/images/devcode/refresh2Pwn.png)
+
+After refreshing the page, we have full access to Bobs email. We can also access SharePoint and Bobs OneDrive by creating emails, adding attachments from cloud locations, downloading the attachments locally, and then deleting the draft email. Additionally we can send emails as Bob.
+
+![](/assets/images/devcode/WereTheBobNow.png)
+
+This technique of abusing Substrate to access Outlook, OneDrive, and SharePoint will bypass application specific Conditional Access Policies (CAP) which explicity restrict access to those applications.
+
 ## References 
 + [rvrsh3ll/TokenTactics Tool](https://github.com/rvrsh3ll/TokenTactics)  
 + [o365blog.com - Introducing a new phishing technique for compromising Office 365 accounts](https://o365blog.com/post/phishing/)  
