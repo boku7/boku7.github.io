@@ -15,7 +15,7 @@ tags:
 
 ![](/assets/images/devcode/banner.png)
 
-Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f), [Octavio Paguaga(@oakTree__)](https://twitter.com/oakTree__), [John Jackson(@johnjhacking)](https://twitter.com/johnjhacking)  
+Blog Contributors: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f), [Octavio Paguaga(@oakTree__)](https://twitter.com/oakTree__), [John Jackson(@johnjhacking)](https://twitter.com/johnjhacking), [Matt Kingstone(@n00bRage)](https://twitter.com/n00bRage)    
 
 [TokenTactics](https://github.com/rvrsh3ll/TokenTactics) Creators: [Bobby Cooke(Boku/@0xBoku)](https://twitter.com/0xBoku), [Stephan Borosh(rvrsh3ll/@424f424f)](https://twitter.com/424f424f)     
 
