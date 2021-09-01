@@ -329,7 +329,7 @@ PS C:\Users\boku> Connect-AzureAD -AadAccessToken $response.access_token -Accoun
 Using the AzureAD module we can do allot more than just dumping the users. To continue on from here check out the 
 [AzureAD PowerShell Module Documenation](https://docs.microsoft.com/en-us/powershell/module/azuread/?view=azureadps-2.0)
 
-[Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt) has a great course goes deep on Azure AD Red Teaming. 
+[Nikhil Mittal(@nikhil_mitt)](https://twitter.com/nikhil_mitt) has a great course which dives deep into Azure AD Red Teaming. I definitely recommend this course, as it's the best I've seen for AAD Red Teaming!
 
 ### RefreshTo-MSGraph
 Now that we have the refresh token for `Bob@TheHarvester.World`, we will use it to refresh to a MS Graph access token. With this MS Graph access token, we will use TokenTactics to dump Bob's email.
