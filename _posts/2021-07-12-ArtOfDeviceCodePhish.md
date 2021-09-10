@@ -42,6 +42,8 @@ In this section we will setup an Azure Account Subscription, which will host our
 ### Azure Account Subscription Setup
 + Create an Azure account at [azure.microsoft.com](https://azure.microsoft.com/en-us/free/).
   +  You will be required to verify with a valid email, phone number, and credit card.
+  + _When creating an Azure Account, help the Microsoft DFIR team by attributing your account to your Red Team organization. This helps save time for their team when they are investigating if you are a real threat, performing threat emulation services, or performing offensive security research._
+  + _See [Nick Carr- Lead, Cyber Crime Intelligence / Investigations @Microsoft](https://twitter.com/ItsReallyNick/status/1290850096683388930) for more insight._
 + Login to your newly created Azure subscription at [portal.azure.com](https://portal.azure.com/).
 
 #### Create an Azure Active Directory Tenant
