@@ -627,7 +627,7 @@ if __name__ == "__main__":
 
 Running the exploit we are able to dump the admin credentials table!
 
-![](/assets/images/webwb/dumpAdmins.png)
+![](/assets/images/webwb/xdev.png)
 
 Using the MySQL CLI we confirm that our exploit properly dumps the admin credentials:
 
