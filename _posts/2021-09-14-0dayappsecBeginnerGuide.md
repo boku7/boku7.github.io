@@ -692,6 +692,7 @@ Make a proof of concept exploit and submit it to:
 - [Exploit-DB - Submissions](https://www.exploit-db.com/submit)
 - [packetstormsecurity](https://packetstormsecurity.com/submit/)
 - [MITRE CVE Submission Form](https://cveform.mitre.org/)
+  - Follow Adeeb & I's blog for more info on requesting a CVE from MITRE: [A Simple Guide to Getting CVE’s](https://hyd3.home.blog/2020/10/02/a-simple-guide-to-getting-cves/) 
 - [CXSecurity Submit](https://cxsecurity.com/wlb/add/)
 
 After knocking out some of the easier apps, move on to bigger open source projects. Get used to setting up applications for different environments like .NET, Java, Go, Python, ++. The harder the environment is to setup, the more likely it hasn't been security tested. Good luck!
