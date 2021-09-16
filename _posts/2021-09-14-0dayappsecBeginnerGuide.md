@@ -77,7 +77,8 @@ sudo systemctl start mysql.service
 Access the MySQL CLI as `root`.
 ```bash
 # login to the MySQL service using as root user or by using sudo.
-# The default username password for a fresh MySQL service on kali is user 'root' with password as nothing (blank)
+# The default username password for a fresh MySQL 
+#   service on kali is user 'root' with password as nothing (blank)
 sudo mysql -u root
 ```
 
@@ -395,9 +396,9 @@ Our Blind SQL Injection payload to read administrators password so far:
 SELECT returnDate from borrow where borrowId = 'inject' UNION SELECT IF(SUBSTRING(password,1,1) = '{CHAR-WE-ARE-GUESSING}',sleep(1),null) FROM admin WHERE adminId=1;
 ```
 
-When we guess that the first letter of the password for admin #1 is '2', the response is returned in `0.001` seconds.
+When we guess that the first letter of the password for admin #1 is `2`, the response is returned in `0.001` seconds.
 
-When we guess that the first letter of the password for admin #1 is '1', the response is returned in `1.001` seconds. Using this method we can enumerate all the charaters of the admins password.
+When we guess that the first letter of the password for admin #1 is `1`, the response is returned in `1.001` seconds. Using this method we can enumerate all the charaters of the admins password.
 
 ![](/assets/images/webwb/blindtimeguess.png)
 
