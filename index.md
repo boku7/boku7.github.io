@@ -21,6 +21,7 @@ OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
     - [xDev Files](https://github.com/boku7/onlineCourseReg-RCE)
 
 # Web Application Pentesting
++ [Beginners Guide to 0day/CVE AppSec Research](/_posts/2021-09-14-0dayappsecBeginnerGuide.md)
 + [PHP - File Upload Bypass](/_posts/2020-05-21-WebApp_PHP-FileUploadBypass.md)
 + [Cross-Site Scripting (XSS) Payloads](https://github.com/boku7/XSS-Clientside-Attacks)
 
