@@ -18,7 +18,7 @@ tags:
 ### Blog Contributors: [Adeeb Shah @hyd3sec](https://twitter.com/hyd3sec) & [John Jackson(@johnjhacking)](https://twitter.com/johnjhacking)
 
 # About
-A while ago I took up the challenge to get the [Offensive Security Web Expert (OSWE)](https://www.offensive-security.com/awae-oswe/) certification. During this journey I learned many awesome things. Specifically, I learned that with the source code and a debugger, I could find vulnerabilities exponentially faster than by using traditional Blackbox/Bug-Bounty methods. This made me fall in love with debugging web applications. While pursuing the OSWE, I took a very unorthodox approach. I read through the materials over, and over, and over, and over again. I took the methods that OffSec taught me, and rather than completing the coursework, I applied it to the real world.
+A while ago I took up the challenge to get the [Offensive Security Web Expert (OSWE)](https://www.offensive-security.com/awae-oswe/) certification. During this journey I learned many awesome things. The most important lesson learned was that with source code and a debugger, I could find vulnerabilities exponentially faster than by using traditional Blackbox/Bug-Bounty methods. This made me fall in love with hunting for 0days in web applications. While pursuing the OSWE, I took a very unorthodox approach. I read through the materials over, and over, and over, and over again. I took the methods that OffSec taught me, and rather than completing the coursework, I applied it to the real world.
 
 This was one of the best things I ever did, and (with allot of luck) lead me to some awesome personal accomplishments:
 - Exploit research featured in Hack the Box Buff Box (Thanks Shaun!)
