@@ -373,7 +373,9 @@ If we were to have hosted this on Windows, we could simply inject into the `SELE
 ![](/assets/images/webwb/sqlError.png)
 
 ## Looks Like Sleep Based Blind SQL it is!
-Since we cannot write a webshell for RCE, lets exploit Blind SQL Injection. We'll use our injection point to inject a `UNION SELECT` statement that will read the admins password.
+Since we cannot write a webshell for RCE, we will use this SQL Injection vulnerability to dump the data within the database. We'll use our injection point to inject `UNION SELECT` statements that will read the admins password.
+
+After testing our payload in BurpSuite, we discover that there is no difference in the server response based on our SQL Injection. If the responses contained the result of the SQL query, we could trivially dump the tables in the servers response. After investigating the code we see that the result of the SQL query is never injected into the HTML response, and does not differ based on SQL errors. Therefor we will use Time-Based Blind SQL Injection to exploit this vulnerability!
 
 ## Looking in "the back of the book" for SQL Answers
 We save some time, and just use the MySQL CLI to enumerate what the admin credentials table name is, and what the columns are:
