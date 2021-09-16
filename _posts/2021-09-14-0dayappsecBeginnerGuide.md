@@ -162,10 +162,6 @@ Open VSCode. Select the `Extensions` tab from the left, search for the `PHP Debu
 
 Select the `Explorer` tab from the left, click the `Open Folder` button, and select the `/var/www/html/LibraryManagement/` folder.
 
-![](/assets/images/webwb/openFolder.png)
-
-Accept the trust verification prompt.
-
 We are now able to see the applications PHP code within the VSCode Explorer:
 
 ![](/assets/images/webwb/seeCode.png)
