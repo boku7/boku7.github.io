@@ -3,6 +3,8 @@ title: Beginners Guide to 0day/CVE AppSec Research
 date: 2021-9-14
 layout: single
 classes: wide
+header:
+  teaser: /assets/images/devcode/xdev.png
 tags:
   - 0day
   - CVE
@@ -11,7 +13,23 @@ tags:
   - Beginner
 --- 
 
+![](/assets/images/devcode/xdev.png)
+
+# Blog Contrubutors: [Adeeb Shah @hyd3sec](https://twitter.com/hyd3sec)
+
 # About
+A while ago I took up the challenge to get the [Offensive Security Web Expert (OSWE)](https://www.offensive-security.com/awae-oswe/) certification. During this journey I learned many awesome things. Specifically, I learned that with the source code and a debugger, I could find vulnerabilities exponentially faster than by using traditional Blackbox/Bug-Bounty methods. This made me fall in love with debugging web applications. While pursuing the OSWE, I took a very unorthodox approach. I read through the materials over, and over, and over, and over again. I took the methods that OffSec taught me, and rather than completing the coursework, I applied it to the real world.
+
+This was one of the best things I ever did, and (with allot of luck) lead me to some awesome personal accomplishments:
+- Exploit research featured in Hack the Box Buff Box (Thanks Shaun!)
+- Exploit research featured in DEFCON Safe-Mode 2020
+- Exploit research featured in Offensive Security Proving Grounds 
+- 10+ Web Application Exploits published on Exploit-DB
+- 20+ CVE's
+- 0-day discoveries
+- Critical vulnerabilities in private programs
+
+My real world web application xdev & security research started by setting up easy PHP web applications, and conducting "free" whitebox pentests against them. When I'd find something, I'd write it up and ship it out to anywhere that would publish it. As I continued on this journey, I progressed to harder and harder targets. My hope is that someone will find this blog post useful, and it will help them step into the world of security research and exploit development!
 
 # Target Web Application Discovery
 To start honing our Whitebox pentest skills, we'll want an app which is easy to setup, and has some guaranteed vulns. Setting up the security research environment can be half the battle; best to take a walk, run approach. There are many websites online where developers publish and share their projects as they hone their dev skills. These websites, like SourceCodester.com, are great choices for stepping into the world of Whitebox web application pentesting.
@@ -615,6 +633,32 @@ Using the MySQL CLI we confirm that our exploit properly dumps the admin credent
 
 ![](/assets/images/webwb/cliDump.png)
 
+# Submitting the Exploit!
+Now that we have a working exploit, lets submit it!
+
+## Adding the Header
+We will add this to the top of exploit:
+```bash
+# Exploit Title: Library Management System v1.0 - Unauthenticated Blind Time-Based SQL Injection
+# Exploit Author: Bobby Cooke (boku)
+# Date: September 16, 2021
+# Vendor Homepage: https://www.sourcecodester.com/php/12469/library-management-system-using-php-mysql.html
+# Software Link: https://www.sourcecodester.com/sites/default/files/download/oretnom23/librarymanagement.zip
+# Tested on: Kali Linux, Apache, Mysql
+# Vendor: breakthrough2
+# Version: v1.0
+# Exploit Description:
+#   Library Management System v1.0 suffers from an unauthenticated SQL Injection Vulnerability allowing remote attackers to dump the SQL database using a Blind SQL Injection attack.  
+```
+
+## Submitting to Exploit-DB
+Now we review the submission guidlines at [Exploit-DB - Submissions](https://www.exploit-db.com/submit).
+
+![](/assets/images/webwb/edbSubmit.png)
+
+We have saved the exploit as a file, and will email it to: Offsec Exploits <submit@offensive-security.com>
+
+![](/assets/images/webwb/sendEmail.png)
 
 ## Discovering Broken Access Control
 Another quick win is checking if the webpages check for session authentication before allowing access to the resource. This is a common vulnerability and has been categoried by OWASP as [A5:2017-Broken Access Control](https://owasp.org/www-project-top-ten/2017/A5_2017-Broken_Access_Control). These vulnerabilities typically requiring a developer or code reviewer to know which pages are supposed to be public, and which require access controls. For this reason, SAST scanners are poor at detecting these vulnerabilities, and they can slip by undiscovered in a secure SDLC, right into production.
@@ -627,10 +671,11 @@ Awesome we just got started and we've already found another vuln! We check to ma
 
 ![](/assets/images/webwb/accessAdmin.png)
 
+
 ## Discover More Vulns!
 Now continue on with this setup and discover more vulnerabilties!
 
-When you make a discovery, try to get them published!
+When you make a discovery, try to get them published! 
 
 Make a proof of concept exploit and submit it to:
 - [Exploit-DB - Submissions](https://www.exploit-db.com/submit)
@@ -638,3 +683,4 @@ Make a proof of concept exploit and submit it to:
 - [MITRE CVE Submission Form](https://cveform.mitre.org/)
 - [CXSecurity Submit](https://cxsecurity.com/wlb/add/)
 
+After knocking out some of the easier apps, move on to bigger open source projects. Get used to setting up applications for different environments like .NET, Java, Go, Python, ++. The harder the environment is to setup, the more likely it hasn't been security tested. Good luck!
