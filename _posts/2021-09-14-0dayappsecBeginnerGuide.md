@@ -15,7 +15,7 @@ tags:
 
 ![](/assets/images/webwb/xdev.png)
 
-# Blog Contrubutors: [Adeeb Shah @hyd3sec](https://twitter.com/hyd3sec)
+# Blog Contributors: [Adeeb Shah @hyd3sec](https://twitter.com/hyd3sec)
 
 # About
 A while ago I took up the challenge to get the [Offensive Security Web Expert (OSWE)](https://www.offensive-security.com/awae-oswe/) certification. During this journey I learned many awesome things. Specifically, I learned that with the source code and a debugger, I could find vulnerabilities exponentially faster than by using traditional Blackbox/Bug-Bounty methods. This made me fall in love with debugging web applications. While pursuing the OSWE, I took a very unorthodox approach. I read through the materials over, and over, and over, and over again. I took the methods that OffSec taught me, and rather than completing the coursework, I applied it to the real world.
@@ -29,7 +29,7 @@ This was one of the best things I ever did, and (with allot of luck) lead me to 
 - 0-day discoveries
 - Critical vulnerabilities in private programs
 
-My real world web application xdev & security research started by setting up easy PHP web applications, and conducting "free" whitebox pentests against them. When I'd find something, I'd write it up and ship it out to anywhere that would publish it. As I continued on this journey, I progressed to harder and harder targets. My hope is that someone will find this blog post useful, and it will help them step into the world of security research and exploit development!
+My real-world web application xDev & security research started by setting up easy PHP web applications and conducting "free" Whitebox pen tests against them. When I'd find something, I'd write it up and ship it out to anywhere that would publish it. As I continued this journey, I progressed to harder and harder targets. My hope is that someone will find this blog post useful, and it will help them step into the world of security research and exploit development!!
 
 # Target Web Application Discovery
 To start honing our Whitebox pentest skills, we'll want an app which is easy to setup, and has some guaranteed vulns. Setting up the security research environment can be half the battle; best to take a walk, run approach. There are many websites online where developers publish and share their projects as they hone their dev skills. These websites, like SourceCodester.com, are great choices for stepping into the world of Whitebox web application pentesting.
@@ -261,7 +261,7 @@ Some blog posts that may help you if you get stuck:
 - [Installing XDebug on anything for VSCode in 5 minutes](https://technex.us/2020/06/installing-xdebug-on-anything-for-vscode-in-5-minutes/)
 
 ## Restart Apache Service
-With the changes made to the Apache PHP configuation, restart the Apache2 service using Systemd.
+With the changes made to the Apache PHP configuration, restart the Apache2 service using Systemd.
 ```bash
 sudo systemctl restart apache2.service
 ```
@@ -466,7 +466,7 @@ python3 -m pip install argparse
 
 We will also be running this through BurpSuite proxy at this point in our exploit development.
 
-Running the exploit, we see that when we guess the correct charater of the password, the time delay will be >1 second:
+Running the exploit, we see that when we guess the correct character of the password, the time delay will be >1 second:
 
 ![](/assets/images/webwb/getChar1.png)
 
@@ -625,7 +625,7 @@ if __name__ == "__main__":
         dumpnumber += 1
 ```
 
-Running the exploit we are able to dump the admin's crendentials table!
+Running the exploit we are able to dump the admin credentials table!
 
 ![](/assets/images/webwb/dumpAdmins.png)
 
@@ -652,7 +652,7 @@ We will add this to the top of exploit:
 ```
 
 ## Submitting to Exploit-DB
-Now we review the submission guidlines at [Exploit-DB - Submissions](https://www.exploit-db.com/submit).
+Now we review the submission guidelines at [Exploit-DB - Submissions](https://www.exploit-db.com/submit).
 
 ![](/assets/images/webwb/edbSubmit.png)
 
@@ -661,7 +661,7 @@ We have saved the exploit as a file, and will email it to: Offsec Exploits <subm
 ![](/assets/images/webwb/sendEmail.png)
 
 ## Discovering Broken Access Control
-Another quick win is checking if the webpages check for session authentication before allowing access to the resource. This is a common vulnerability and has been categoried by OWASP as [A5:2017-Broken Access Control](https://owasp.org/www-project-top-ten/2017/A5_2017-Broken_Access_Control). These vulnerabilities typically requiring a developer or code reviewer to know which pages are supposed to be public, and which require access controls. For this reason, SAST scanners are poor at detecting these vulnerabilities, and they can slip by undiscovered in a secure SDLC, right into production.
+Another quick win is checking if the webpages check for session authentication before allowing access to the resource. This is a common vulnerability and has been categorized by OWASP as [A5:2017-Broken Access Control](https://owasp.org/www-project-top-ten/2017/A5_2017-Broken_Access_Control). These vulnerabilities typically requiring a developer or code reviewer to know which pages are supposed to be public, and which require access controls. For this reason, SAST scanners are poor at detecting these vulnerabilities, and they can slip by undiscovered in a secure SDLC, right into production.
 
 For PHP code pages like these, the logic for handling sessions and access controls is typically at the top. We can see by going to the `admin.php` page that the code logic which is supposed to protect this page from unauthenticated access is commented out:
 
