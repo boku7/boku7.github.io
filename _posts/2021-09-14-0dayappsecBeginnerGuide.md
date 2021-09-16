@@ -346,7 +346,11 @@ We setup our SQL injection request in BurpSuite:
 
 ![](/assets/images/webwb/bs1.png)
 
-In the VSCode debugger we set a breakpoint on line 22 of the `fine-student.php` file. We then send our burp request to trigger the breakpoint. Once we hit the breakpoint, we walk through the code using `F10` to `Step Over` the code. This means that we will execute the lines sequentially in front of us, but we will not "Step Over" things like functions which would jump us to different sections of code. Once we get to line 40, we can hover over the `$query` and see what the SQL query is in the applications memory:
+In the VSCode debugger we set a breakpoint on `line 22` of the `fine-student.php` file. We then send our burp request to trigger the breakpoint. 
+
+Once we hit the breakpoint, we walk through the code using `F10` to `Step Over` the code. This means that we will execute the lines sequentially in front of us, but we will not `Step Into` things like functions which would jump us to different sections of code. 
+
+Once we get to line 40, we can hover over the `$query` and see what the SQL query is in the applications memory:
 
 ![](/assets/images/webwb/walkCode.png)
 
