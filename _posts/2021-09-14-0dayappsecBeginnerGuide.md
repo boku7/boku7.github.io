@@ -4,7 +4,7 @@ date: 2021-9-14
 layout: single
 classes: wide
 header:
-  teaser: /assets/images/devcode/xdev.png
+  teaser: /assets/images/webwb/xdev.png
 tags:
   - 0day
   - CVE
@@ -13,7 +13,7 @@ tags:
   - Beginner
 --- 
 
-![](/assets/images/devcode/xdev.png)
+![](/assets/images/webwb/xdev.png)
 
 # Blog Contrubutors: [Adeeb Shah @hyd3sec](https://twitter.com/hyd3sec)
 
