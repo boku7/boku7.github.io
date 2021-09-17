@@ -685,6 +685,37 @@ Awesome we just got started and we've already found another vuln! We check to ma
 
 ![](/assets/images/webwb/accessAdmin.png)
 
+# Production & Drive-by Hacking and Exploit Brokering
+On the other hand, there are several parts about CVE research that people don't tell you about, or have limited experience with. The biggest portion of CVE hunting comes from hackers who don't set out to look for them. For example, with the expansion of vulnerability disclosure and bug bounty programs, it's not a surprise that people get to pull off a lot of hacking they weren't able to do otherwise. These expansions typically include a lot of integrations of third party components, which is predominantly where you're likely to find CVEs if anywhere.
+
+Take for instance, all of the components in play while testing Web Applications or Networks. If you find a vulnerability on an apache server and it appears to be specific to Apache - that's a CVE. If you're testing on a web application and find yourself in the posession of sensitive files and it's a misconfiguration seen in that same application elsewhere, you're sitting on a 0day, congrats!
+
+Nonetheless it's important to know that there are additional routes. Exploit-DB is a great resource when you seek vulnerabilities on purpose, however, there are caveats. Offensive Security is fairly busy therefore it may not be the most adequate route to go with if you dealing with heavy vendor resistance. In this case, self-hosted blogs and Github are great alternatives.
+
+## The Golden Edge
+It's not a surprise that 0days are lucrative. Especially if you happen to identify one in a widely used product. Most bug bounty programs prohibit the submission of CVEs that have been disclosed within 'x' amount of days, but that's not to say it's impossible or not worthwhile to use. There's a distinction between a 0day vulnerability and one that has been disclosed and pending a patch, therefore use your vulnerabilities that are identified wisely if profit is the name of the game (and responsibly)
+
+How does one identify widespread instances of a CVE? Google Dorking or Shodan are two of the best ways. 
+
+Consider the following: intext:"Website Title - Powered by X" This query might be an effective way of searching across a wide span of websites to validate the vulnerability elsewhere. Make sure you don't hack unless they have a VDP/BBP.
+
+## Exploit Brokering
+It exists. I won't get into it but review the following platforms:
+[Zerodium](https://zerodium.com/)
+[Zero Day Initiative](https://www.zerodayinitiative.com/)
+
+## Example workflow
+1. Vulnerability is identified
+2. It is then disclosed to the vendor
+3. Hacker submits for the CVE assignment through MITRE
+4. The hacker waits for a patch
+5. The patch is now complete
+6. A writeup is published to the hacker's blog OR the vendor releases notification OR the hacker publishes a PoC on Github
+7. With one of the three publication types, the hacker then returns to to MITRE with these "References" and provides them via a "Reply-All" email response to their CVE assignment.
+
+## Emergencies
+Did you identify a vulnerability that affects National Security? CERT/CC has established a vulnerability reporting platform known as "VINCE" where 0days can be submitted. Especially as it pertains to vulnerabilities not being addressed by the vendor (if serious) and NatSec matters.
+[CERT/CC VINCE](https://www.kb.cert.org/vince/)
 
 ## Discover More Vulns!
 Now continue on with this setup and discover more vulnerabilties!
@@ -695,7 +726,7 @@ Make a proof of concept exploit and submit it to:
 - [Exploit-DB - Submissions](https://www.exploit-db.com/submit)
 - [packetstormsecurity](https://packetstormsecurity.com/submit/)
 - [MITRE CVE Submission Form](https://cveform.mitre.org/)
-  - Follow Adeeb & I's blog for more info on requesting a CVE from MITRE: [A Simple Guide to Getting CVE’s](https://hyd3.home.blog/2020/10/02/a-simple-guide-to-getting-cves/) 
+  - Follow the blog written by Adeeb & I for more info on requesting a CVE from MITRE: [A Simple Guide to Getting CVE’s](https://hyd3.home.blog/2020/10/02/a-simple-guide-to-getting-cves/) 
 - [CXSecurity Submit](https://cxsecurity.com/wlb/add/)
 
 After knocking out some of the easier apps, move on to bigger open source projects. Get used to setting up applications for different environments like .NET, Java, Go, Python, ++. The harder the environment is to setup, the more likely it hasn't been security tested. Good luck!
