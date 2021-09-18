@@ -30,6 +30,9 @@ author:
       url: "https://www.linkedin.com/in/bobby-cooke/"
 teaser: assets/images/slae32-teaser.png
 
+# Google Analytics
+google_analytics: G-8ZGTLNXWYL
+
 #Site Settings
 locale: "en-US"
 title: "Boku"
