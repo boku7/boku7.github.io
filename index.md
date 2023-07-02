@@ -5,6 +5,7 @@ OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
 --- 
 # Red Team
 *Cobalt Strike*     
++ [Defining the Cobalt Strike Reflective Loader](https://securityintelligence.com/posts/defining-cobalt-strike-reflective-loader/)
 + [Creating the "Where Am I" Cobalt Strike BOF](_posts/2021-08-19-Bof-WhereAmI.md)
 
 *Azure Cloud*      
