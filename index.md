@@ -7,9 +7,13 @@ OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
 *Cobalt Strike*     
 + [Defining the Cobalt Strike Reflective Loader](https://securityintelligence.com/posts/defining-cobalt-strike-reflective-loader/)
 + [Creating the "Where Am I" Cobalt Strike BOF](_posts/2021-08-19-Bof-WhereAmI.md)
++ [BokuLoader](https://github.com/boku7/BokuLoader/tree/main)
++ [Ninja_UUID_Runner](https://github.com/boku7/Ninja_UUID_Runner)
 
 *Azure Cloud*      
 + [The Art of the Device Code Phish](_posts/2021-07-12-ArtOfDeviceCodePhish.md)
++ [Azure Outlook C2](https://github.com/boku7/azureOutlookC2)
++ [TokenTactics](https://github.com/rvrsh3ll/TokenTactics)
 
 # macOS Shellcoding
 + [macOS/x64 - Execve Caesar Cipher String Null-Free Shellcode (286 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/51178)
