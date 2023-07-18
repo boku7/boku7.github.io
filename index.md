@@ -11,6 +11,19 @@ OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
 *Azure Cloud*      
 + [The Art of the Device Code Phish](_posts/2021-07-12-ArtOfDeviceCodePhish.md)
 
+# macOS Shellcoding
++ [macOS/x64 - Execve Caesar Cipher String Null-Free Shellcode (286 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/51178)
++ [macOS/x64 - Execve Null-Free Shellcode (253 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/51177)
++ [macOS/x64 zsh RickRolling Shellcode - PacketStormSecurity](https://packetstormsecurity.com/files/157884/macOS-x64-zsh-RickRolling-Shellcode.html)
+
+# Windows Shellcoding
++ [ Windows/x86 - MSVCRT System + Dynamic Null-free + Add RDP Admin + Disable Firewall + Enable RDP Shellcode (644 Bytes)](https://www.exploit-db.com/shellcodes/48355)
++ [Windows/x64 - Dynamic NoNull Add RDP Admin (BOKU:SP3C1ALM0V3) Shellcode (387 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/49820)
++ [Windows/x64 - WinExec Add-Admin (ROOT/I@mR00T$) Dynamic Null-Free Shellcode (210 Bytes)](https://www.exploit-db.com/shellcodes/48252)
++ [Windows/x64 - Dynamic MessageBoxA or MessageBoxW PEB & Import Table Method Shellcode (232 bytes)](https://www.exploit-db.com/shellcodes/48229)
++ [Windows\x86 - Null-Free WinExec Calc.exe Shellcode (195 bytes)](https://www.exploit-db.com/shellcodes/48116)
++ [Windows/x86 - Dynamic Bind Shell + Null-Free Shellcode (571 Bytes)](https://www.exploit-db.com/shellcodes/47980)
+
 # Published
 + [Libre Health EHR - Remote Code Execution 0-day (Exploit-DB)](https://www.exploit-db.com/exploits/48702)
     - [xDev Files](https://github.com/boku7/LibreHealth-authRCE)
@@ -26,10 +39,6 @@ OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
 + [PHP - File Upload Bypass](/_posts/2020-05-21-WebApp_PHP-FileUploadBypass.md)
 + [Cross-Site Scripting (XSS) Payloads](https://github.com/boku7/XSS-Clientside-Attacks)
 
-# macOS Shellcoding
-+ [macOS/x64 - Execve Caesar Cipher String Null-Free Shellcode (286 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/51178)
-+ [macOS/x64 - Execve Null-Free Shellcode (253 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/51177)
-+ [macOS/x64 zsh RickRolling Shellcode - PacketStormSecurity](https://packetstormsecurity.com/files/157884/macOS-x64-zsh-RickRolling-Shellcode.html)
 
 # Linux/x64 Shellcoding
 + [Linux/x64 - Password (P3WP3Wl4ZerZ) + Bind (0.0.0.0:4444/TCP) Shell (/bin/bash) + Null-free Shellcode (272 Bytes) - Exploit-DB](https://www.exploit-db.com/shellcodes/48379)
