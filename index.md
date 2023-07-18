@@ -27,6 +27,8 @@ OSCE|OSWE|WPTX|CRTP|OSCP|SLAE
 + [Cross-Site Scripting (XSS) Payloads](https://github.com/boku7/XSS-Clientside-Attacks)
 
 # macOS Shellcoding
++ [macOS/x64 - Execve Caesar Cipher String Null-Free Shellcode (286 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/51178)
++ [macOS/x64 - Execve Null-Free Shellcode (253 Bytes) - exploit-db](https://www.exploit-db.com/shellcodes/51177)
 + [macOS/x64 zsh RickRolling Shellcode - PacketStormSecurity](https://packetstormsecurity.com/files/157884/macOS-x64-zsh-RickRolling-Shellcode.html)
 
 # Linux/x64 Shellcoding
